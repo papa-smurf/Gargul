@@ -53,7 +53,7 @@ function EditAuction:draw(session, checksum)
     Window.frame:Show();
 
     local ItemLink = AceGUI:Create("Label");
-    ItemLink:SetFontObject(_G["GameFontNormal"]);
+    ItemLink:SetFontObject(_G.GameFontNormal);
     ItemLink:SetFullWidth(true);
     ItemLink:SetText((L["\n%s paid |c00%s%s for\n%s"]):format(
         GL:formatPlayerName(Auction.Winner.name, { colorize = true, }),
@@ -131,7 +131,7 @@ function EditAuction:draw(session, checksum)
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText(L["Ok"]);
     SaveButton:SetFullWidth(true);
-    SaveButton:SetCallback("OnClick", function()
+    SaveButton:SetCallback("OnClick", function ()
         local newName = strtrim(PlayernameInput:GetText());
         local note = strtrim(NoteInput:GetText());
         local paid = strtrim(AdjustPaidInput:GetText());
@@ -168,7 +168,7 @@ function EditAuction:draw(session, checksum)
     local CancelButton = AceGUI:Create("Button");
     CancelButton:SetText(L["Cancel"]);
     CancelButton:SetFullWidth(true);
-    CancelButton:SetCallback("OnClick", function()
+    CancelButton:SetCallback("OnClick", function ()
         self:close();
     end);
     Window:AddChild(CancelButton);

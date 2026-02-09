@@ -560,7 +560,7 @@ function Test.PackMule:roundRobin(itemID)
 
     for i = 1, iterations do
         local target = GL.PackMule:roundRobinTargetForRule(Rule);
-        GL:xd{ [i] = target, };
+        GL:xd({ [i] = target, });
     end
 end
 

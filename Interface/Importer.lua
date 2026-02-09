@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -39,7 +39,7 @@ function Importer:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 300,
         height = 200,
@@ -48,7 +48,7 @@ function Importer:build()
         maxWidth = 500,
         maxHeight = 200,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

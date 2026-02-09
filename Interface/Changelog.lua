@@ -208,7 +208,7 @@ function Changelog:draw()
     Window:SetHeight(500);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -216,7 +216,7 @@ function Changelog:draw()
     Window:SetPoint(GL.Interface:getPosition("Changelog"));
 
     --[[ CHRISTMAS HOLIDAYS SANTA HAT ]]
-    local month, day = tonumber(date('%m')), tonumber(date('%d'));
+    local month, day = tonumber(date("%m")), tonumber(date("%d"));
     if (month and day
         and ((month == 12 and day >= 3)
             or (month == 1 and day <= 12)
@@ -243,7 +243,7 @@ function Changelog:draw()
 
     local WhatIsGargul = GL.AceGUI:Create("Label");
     WhatIsGargul:SetText(L["Gargul makes handing out loot super easy, click the button below to get started!"]);
-    WhatIsGargul:SetFontObject(_G["GameFontNormal"]);
+    WhatIsGargul:SetFontObject(_G.GameFontNormal);
     WhatIsGargul:SetFullWidth(true);
     ScrollFrame:AddChild(WhatIsGargul);
 
@@ -255,7 +255,7 @@ function Changelog:draw()
 
     local OpenGargul = GL.AceGUI:Create("Button");
     OpenGargul:SetText(L["Open Gargul"]);
-    OpenGargul:SetCallback("OnClick", function()
+    OpenGargul:SetCallback("OnClick", function ()
         self:close();
         return GL.Commands:call("settings");
     end);
@@ -270,7 +270,7 @@ function Changelog:draw()
 
     local DiscordLabel = GL.AceGUI:Create("Label");
     DiscordLabel:SetText(("|c00A79EFF%s|r"):format(L["Get support or share ideas on our Discord"]));
-    DiscordLabel:SetFontObject(_G["GameFontNormal"]);
+    DiscordLabel:SetFontObject(_G.GameFontNormal);
     DiscordLabel:SetFullWidth(true);
     ScrollFrame:AddChild(DiscordLabel);
 
@@ -292,7 +292,7 @@ function Changelog:draw()
         -- Version label
         local VersionLabel = AceGUI:Create("Label");
         VersionLabel:SetText(("|c00A79EFFv%s - |r%s"):format(LogEntry.version or "", LogEntry.date or ""));
-        VersionLabel:SetFontObject(_G["GameFontNormal"]);
+        VersionLabel:SetFontObject(_G.GameFontNormal);
         VersionLabel:SetHeight(10);
         VersionLabel:SetFullWidth(true);
         ScrollFrame:AddChild(VersionLabel);
@@ -318,7 +318,7 @@ function Changelog:draw()
 
                 local ChangeLabel = AceGUI:Create("Label");
                 ChangeLabel:SetText(("\n|c00FFF569%s|r\n \n"):format(change));
-                ChangeLabel:SetFontObject(_G["GameFontNormal"]);
+                ChangeLabel:SetFontObject(_G.GameFontNormal);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);
                 ScrollFrame:AddChild(ChangeLabel);
@@ -331,7 +331,7 @@ function Changelog:draw()
             else
                 local ChangeLabel = AceGUI:Create("Label");
                 ChangeLabel:SetText(("|c00A79EFF-|r|c00FFF569 %s|r"):format(change));
-                ChangeLabel:SetFontObject(_G["GameFontNormal"]);
+                ChangeLabel:SetFontObject(_G.GameFontNormal);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);
                 ScrollFrame:AddChild(ChangeLabel);
@@ -346,7 +346,7 @@ function Changelog:draw()
     Checkbox:SetLabel(L["Enable changelog"]);
     Checkbox:SetDescription("");
     Checkbox:SetWidth(220);
-    Checkbox:SetCallback("OnValueChanged", function()
+    Checkbox:SetCallback("OnValueChanged", function ()
         GL.Settings:set("changeLog", Checkbox:GetValue());
     end);
     Window:AddChild(Checkbox);

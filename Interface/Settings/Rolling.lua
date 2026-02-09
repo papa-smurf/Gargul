@@ -71,7 +71,7 @@ function Rolling:draw(Parent)
     ItemOfInterestSoundDropdown:SetList(Sounds);
     ItemOfInterestSoundDropdown:SetText(GL.Settings:get("Rolling.itemOfInterestSound"));
     ItemOfInterestSoundDropdown:SetWidth(250);
-    ItemOfInterestSoundDropdown:SetCallback("OnValueChanged", function()
+    ItemOfInterestSoundDropdown:SetCallback("OnValueChanged", function ()
         local value = ItemOfInterestSoundDropdown:GetValue();
 
         if (value ~= "None") then
@@ -98,7 +98,7 @@ function Rolling:draw(Parent)
     Scale:SetFullWidth(true);
     Scale:SetValue(GL.Settings:get("Rolling.scale", 35));
     Scale:SetSliderValues(.8, 1.8, .1);
-    Scale:SetCallback("OnValueChanged", function(Slider)
+    Scale:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (value) then

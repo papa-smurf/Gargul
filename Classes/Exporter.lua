@@ -62,12 +62,12 @@ function Exporter:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     Window:SetTitle((L["Gargul v%s"]):format(GL.version));
-    Window:SetStatusText(L["v"] ..GL.version);
+    Window:SetStatusText(L["v"] .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(500);
     Window:EnableResize(false);
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("Exporter"));
@@ -76,7 +76,7 @@ function Exporter:draw()
     GL.Interface:set(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_EXPORTER_WINDOW"] = Window.frame;
+    _G.GARGUL_EXPORTER_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_EXPORTER_WINDOW");
 
     --[[ DON'T EDIT STOOPID! ]]
@@ -125,7 +125,7 @@ This is an export feature ONLY, there is no point editing any of the values: THE
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText(L["Clear"]);
     ClearButton:SetWidth(140);
-    ClearButton:SetCallback("OnClick", function()
+    ClearButton:SetCallback("OnClick", function ()
         Exporter:clearData();
     end);
     FooterFrame:AddChild(ClearButton);
@@ -133,7 +133,7 @@ This is an export feature ONLY, there is no point editing any of the values: THE
     local SettingsButton = AceGUI:Create("Button");
     SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(140);
-    SettingsButton:SetCallback("OnClick", function()
+    SettingsButton:SetCallback("OnClick", function ()
         GL.Settings:draw("ExportingLoot");
     end);
     FooterFrame:AddChild(SettingsButton);
@@ -151,7 +151,7 @@ function Exporter:clearData()
     -- No date is selected, delete everything!
     if (GL:empty(self.SelectedDates)) then
         warning = L["Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!"];
-        onConfirm = function()
+        onConfirm = function ()
             GL.Events:fire("GL.ITEM_UNAWARDED");
             DB:set("AwardHistory", {});
 
@@ -161,7 +161,7 @@ function Exporter:clearData()
 
     else -- Only delete entries on the selected date
         warning = (L["Are you sure you want to remove all data for %s? This cannot be undone!"]):format(table.concat(self.SelectedDates, ", "));
-        onConfirm = function()
+        onConfirm = function ()
             for key, AwardEntry in pairs(DB:get("AwardHistory")) do
                 local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
 
@@ -177,7 +177,7 @@ function Exporter:clearData()
     end
 
     -- Show a confirmation dialog before clearing entries
-    GL.Interface.Dialogs.PopupDialog:open{
+    GL.Interface.Dialogs.PopupDialog:open({
         question = warning,
         OnYes = function ()
             onConfirm();
@@ -185,7 +185,7 @@ function Exporter:clearData()
             -- Let the application know that an item was unawarded (deleted)
             GL.Events:fire("GL.ITEM_UNAWARDED");
         end,
-    };
+    });
 end
 
 --- Show the export data (either all or for the selected date)
@@ -228,7 +228,7 @@ function Exporter:getLootEntries(raw)
     raw = raw == true;
 
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-        (function()
+        (function ()
             local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
 
             local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
@@ -320,7 +320,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
             if (ItemDetails) then
                 local Values = {
                     ["@ID"] = AwardEntry.itemID,
-                    ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
+                    ["@LINK"] = ItemDetails.link:gsub("\124","\124\124"),
                     ["@ITEM"] = ItemDetails.name,
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
@@ -334,14 +334,14 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
                     ["@TMB"] = GL:toboolean(AwardEntry.TMB),
                     ["@ROLLTYPE"] = AwardEntry.winningRollType,
                     ["@CHECKSUM"] = AwardEntry.checksum,
-                    ["@YEAR"] = date('%Y', AwardEntry.timestamp),
-                    ["@YY"] = date('%y', AwardEntry.timestamp),
-                    ["@MONTH"] = date('%m', AwardEntry.timestamp),
-                    ["@DAY"] = date('%d', AwardEntry.timestamp),
-                    ["@HOUR"] = date('%H', AwardEntry.timestamp),
-                    ["@MINUTE"] = date('%M', AwardEntry.timestamp),
+                    ["@YEAR"] = date("%Y", AwardEntry.timestamp),
+                    ["@YY"] = date("%y", AwardEntry.timestamp),
+                    ["@MONTH"] = date("%m", AwardEntry.timestamp),
+                    ["@DAY"] = date("%d", AwardEntry.timestamp),
+                    ["@HOUR"] = date("%H", AwardEntry.timestamp),
+                    ["@MINUTE"] = date("%M", AwardEntry.timestamp),
                     ["@DATE"] = date(L["%Y-%m-%d"], AwardEntry.timestamp),
-                    ["@TIME"] = date('%H:%M', AwardEntry.timestamp),
+                    ["@TIME"] = date("%H:%M", AwardEntry.timestamp),
                     ["@WOWHEAD"] = wowheadLink,
                     ["\\t"] = "\t",
                 };
@@ -413,9 +413,9 @@ function Exporter:transformEntriesToDFTFormat(Entries)
 
         -- Check whether the player wants an EU or US date string
         if (exportFormat == Constants.ExportFormats.DFTEU) then
-            dateString = date('%d/%m/%Y', AwardEntry.timestamp);
+            dateString = date("%d/%m/%Y", AwardEntry.timestamp);
         else
-            dateString = date('%m/%d/%Y', AwardEntry.timestamp);
+            dateString = date("%m/%d/%Y", AwardEntry.timestamp);
         end
 
         exportString = ("%s%s;[%s];%s\n"):format(
@@ -481,16 +481,16 @@ function Exporter:drawDatesTable(Parent, Dates)
     Table:SetWidth(120);
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 50, -80);
 
-    Table:RegisterEvents{
-        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
+    Table:RegisterEvents({
+        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
-            GL.Ace:ScheduleTimer(function()
+            GL.Ace:ScheduleTimer(function ()
                 self.SelectedDates = {};
                 for _, row in pairs(Table:GetSelection() or {}) do
                     local Row = Table:GetRow(row) or {};
 
-                    if (Row["cols"]) then
+                    if (Row.cols) then
                         local date = GL:tableGet(Row, "cols.1.value");
 
                         if (date) then
@@ -502,7 +502,7 @@ function Exporter:drawDatesTable(Parent, Dates)
                 self:refreshExportString();
             end, .1);
         end
-    };
+    });
 
     local TableData = {};
     local selectedRow = nil;

@@ -54,12 +54,12 @@ function GroupVersionCheck:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = WINDOW_WIDTH,
         height = WINDOW_HEIGHT,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -315,10 +315,10 @@ function GroupVersionCheck:refresh()
         GL.Interface.Alerts:fire("GargulNotification", {
             message = ("|c00BE3333%s|r"):format(L["Update Gargul!"]),
             onClick = function ()
-                GL.Interface.Dialogs.HyperlinkDialog:open{
+                GL.Interface.Dialogs.HyperlinkDialog:open({
                     description = L["Download on CurseForge"],
                     hyperlink = L["https://addons.wago.io/addons/gargul/versions?stability=stable"],
-                };
+                });
             end,
         });
 
@@ -351,32 +351,32 @@ function GroupVersionCheck:refresh()
 
     local upToDate, outdated, unresponsive, offline = 0, 0, 0, 0;
 
-    local addUpToDate = function(player)
+    local addUpToDate = function (player)
         upToDate = upToDate + 1;
         tinsert(self.Results.UpToDate, GL:formatPlayerName(player));
         Window._UpToDateCountLabel:SetText(upToDate);
     end
 
-    local addOutdated = function(player)
+    local addOutdated = function (player)
         outdated = outdated + 1;
         tinsert(self.Results.Outdated, GL:formatPlayerName(player));
         Window._OutdatedCountLabel:SetText(outdated);
     end
 
-    local addUnresponsive = function(player)
+    local addUnresponsive = function (player)
         unresponsive = unresponsive + 1;
         tinsert(self.Results.Unresponsive, GL:formatPlayerName(player));
         Window._UnresponsiveCountLabel:SetText(unresponsive);
     end
 
-    local addOffline = function(player)
+    local addOffline = function (player)
         offline = offline + 1;
         tinsert(self.Results.Offline, GL:formatPlayerName(player));
         Window._OfflineCountLabel:SetText(offline);
     end
 
     -- Loop through all members of the group (party or raid)
-    GL:forEachGroupMember(function(Member)
+    GL:forEachGroupMember(function (Member)
         Window:addPlayer(Member);
         local PlayerRow = self.PlayerRows[Member.fqn];
 
@@ -433,7 +433,7 @@ function GroupVersionCheck:refresh()
         end);
         tinsert(self.Timers, timerIdentifier);
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = GL.Data.Constants.Comm.Actions.requestAppVersion,
             channel = "WHISPER",
             recipient = Member.fqn,
@@ -465,7 +465,7 @@ function GroupVersionCheck:refresh()
                     Status:SetColor("WARNING");
                 end
             end,
-        }:send();
+        }):send();
     end);
 
     self.ItemRows = {};

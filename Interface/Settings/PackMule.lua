@@ -15,14 +15,14 @@ function PackMule:draw(Parent)
 
     local ItemRules = GL.AceGUI:Create("Button");
     ItemRules:SetText("Item Rules");
-    ItemRules:SetCallback("OnClick", function()
+    ItemRules:SetCallback("OnClick", function ()
         GL.Settings:draw("PackMuleRules");
     end);
     Parent:AddChild(ItemRules);
 
     local IgnoredItems = GL.AceGUI:Create("Button");
     IgnoredItems:SetText("Ignored Items");
-    IgnoredItems:SetCallback("OnClick", function()
+    IgnoredItems:SetCallback("OnClick", function ()
         GL.Settings:draw("PackMuleIgnores");
     end);
     Parent:AddChild(IgnoredItems);

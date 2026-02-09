@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -48,6 +48,7 @@ function CreateSession:build()
     Title:SetHeight(20);
     Title:SetFullWidth(true);
     Title:SetLabel(L["Name"]);
+    Window.TitleBox = Title;
     Window:AddChild(Title);
 
     local ManagementCut = GL.AceGUI:Create("EditBox");
@@ -56,6 +57,7 @@ function CreateSession:build()
     ManagementCut:SetFullWidth(true);
     ManagementCut:SetLabel(L["Management Cut %"]);
     ManagementCut:SetText(GL.Settings:get("UI.GDKP.Create.managementCut", ""));
+    Window.ManagementCutBox = ManagementCut;
     Window:AddChild(ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");
@@ -84,6 +86,7 @@ function CreateSession:build()
     local SessionTypeDropdown = GL.AceGUI:Create("Dropdown");
     SessionTypeDropdown:SetList(SessionType);
     SessionTypeDropdown:SetWidth(250);
+    Window.SessionTypeDropdown = SessionTypeDropdown;
     Window:AddChild(SessionTypeDropdown);
 
     -- Prefill previously selected session type
@@ -104,14 +107,15 @@ function CreateSession:build()
     SwitchCheckbox:SetFullWidth(true);
     SwitchCheckbox:SetValue(GDKPSession:getActive() == false);
     SwitchCheckbox.text:SetTextColor(.99, .85, .06);
-    SwitchCheckbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
+    SwitchCheckbox.text:SetFontObject(_G.GameFontHighlightSmall);
     Interface:set(self, "Switch", SwitchCheckbox);
+    Window.SwitchCheckbox = SwitchCheckbox;
     Window:AddChild(SwitchCheckbox);
 
     local Save = AceGUI:Create("Button");
     Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
-    Save:SetCallback("OnClick", function()
+    Save:SetCallback("OnClick", function ()
         local title = strtrim(Title:GetText());
         if (GL:empty(title)) then
             GL:warning(L["Invalid data supplied"]);
@@ -157,14 +161,16 @@ function CreateSession:build()
 
         GL:notice(L["Session created. We advise you to /reload regularly so that it's stored properly in case your game crashes!"]);
     end);
+    Window.SaveButton = Save;
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
     Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
-    Cancel:SetCallback("OnClick", function()
+    Cancel:SetCallback("OnClick", function ()
         self:close();
     end);
+    Window.CancelButton = Cancel;
     Window:AddChild(Cancel);
 
     return Window;

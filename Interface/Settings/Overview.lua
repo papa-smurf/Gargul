@@ -99,7 +99,7 @@ function Overview:draw(section, onCloseCallback)
     GL.Interface:set(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("Settings"));
 
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close(onCloseCallback);
     end);
 
@@ -112,7 +112,7 @@ function Overview:draw(section, onCloseCallback)
     end
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_SETTING_WINDOW"] = Window.frame;
+    _G.GARGUL_SETTING_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_SETTING_WINDOW");
 
     --[[
@@ -151,7 +151,7 @@ function Overview:draw(section, onCloseCallback)
     Window:AddChild(SecondColumn);
 
     local SectionTitle = AceGUI:Create("Label");
-    SectionTitle:SetFontObject(_G["GameFontNormalLarge"]);
+    SectionTitle:SetFontObject(_G.GameFontNormalLarge);
     SectionTitle:SetFullWidth(true);
     SectionTitle:SetText(" ");
     SecondColumn:AddChild(SectionTitle);
@@ -174,7 +174,7 @@ function Overview:draw(section, onCloseCallback)
 
     local ChangelogButton = GL.AceGUI:Create("Button");
     ChangelogButton:SetText("Changelog");
-    ChangelogButton:SetCallback("OnClick", function()
+    ChangelogButton:SetCallback("OnClick", function ()
         GL.Interface.Changelog:draw();
         self:close(function ()
             self:draw(self.activeSection);
@@ -185,26 +185,26 @@ function Overview:draw(section, onCloseCallback)
 
     local ResetUIButton = GL.AceGUI:Create("Button");
     ResetUIButton:SetText(L["Reset Gargul UI"]);
-    ResetUIButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ResetUIButton:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure you want to reset all of Gargul's window sizes, positions and scale? This can't be undone!"],
             OnYes = function ()
                 GL.Commands:call("resetui");
             end,
-        };
+        });
     end);
     ResetUIButton:SetWidth(136);
     SecondColumn:AddChild(ResetUIButton);
 
     local ResetSettingsButton = GL.AceGUI:Create("Button");
     ResetSettingsButton:SetText(L["Reset Settings"]);
-    ResetSettingsButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ResetSettingsButton:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure you want to reset all of Gargul's settings? This can't be undone!"],
             OnYes = function ()
                 GL.Commands:call("resetsettings");
             end,
-        };
+        });
     end);
     ResetSettingsButton:SetWidth(136);
     SecondColumn:AddChild(ResetSettingsButton);
@@ -222,12 +222,12 @@ function Overview:draw(section, onCloseCallback)
     PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
     PatreonButton:SetHighlightTexture(HighlightTexture);
 
-    PatreonButton:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
-            GL.Interface.Dialogs.HyperlinkDialog:open{
+    PatreonButton:SetScript("OnClick", function (_, button)
+        if (button == "LeftButton") then
+            GL.Interface.Dialogs.HyperlinkDialog:open({
                 description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
                 hyperlink = "patreon.com/gargul",
-            };
+            });
         end
     end);
 
@@ -295,7 +295,7 @@ function Overview:drawSectionsTable(Parent, section)
     Table:SetWidth(145);
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 23, -40);
 
-    Table:RegisterEvents{
+    Table:RegisterEvents({
         OnClick = function (_, _, _, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)) then
@@ -304,7 +304,7 @@ function Overview:drawSectionsTable(Parent, section)
 
             self:showSection(self.Sections[realrow][2]);
         end
-    };
+    });
 
     local TableData = {};
     for _, Entry in pairs(self.Sections) do
@@ -381,7 +381,7 @@ function Overview:showSection(section)
     if (not GL:empty(SectionClass.description)) then
         local SectionDescription = GL.AceGUI:Create("Label");
         SectionDescription:SetText(SectionClass.description .. "\n\n");
-        SectionDescription:SetFontObject(_G["GameFontNormal"]);
+        SectionDescription:SetFontObject(_G.GameFontNormal);
         SectionDescription:SetFullWidth(true);
         ScrollFrame:AddChild(SectionDescription);
     end
@@ -390,7 +390,7 @@ function Overview:showSection(section)
     if (not GL:empty(SectionClass.wikiUrl)) then
         local MoreInfoLabel = GL.AceGUI:Create("Label");
         MoreInfoLabel:SetText("\nVisit our Wiki for more info:\n");
-        MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
+        MoreInfoLabel:SetFontObject(_G.GameFontNormal);
         MoreInfoLabel:SetFullWidth(true);
         ScrollFrame:AddChild(MoreInfoLabel);
 
@@ -440,7 +440,7 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
         Checkbox:SetDescription(Entry.description);
         Checkbox:SetFullWidth(true);
         Checkbox.text:SetTextColor(1, .95686, .40784);
-        Checkbox:SetCallback("OnValueChanged", function()
+        Checkbox:SetCallback("OnValueChanged", function ()
             GL.Settings:set(Entry.setting, Checkbox:GetValue());
 
             if (type(Entry.callback) == "function") then

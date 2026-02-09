@@ -122,14 +122,14 @@ function MasterLooterDialog:draw()
     Window:SetHeight(160);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("MasterLooterDialog"));
     GL.Interface:set(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_MASTER_LOOTER_DIALOG_WINDOW"] = Window.frame;
+    _G.GARGUL_MASTER_LOOTER_DIALOG_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_MASTER_LOOTER_DIALOG_WINDOW");
 
     local DescriptionFrame = AceGUI:Create("SimpleGroup");
@@ -139,7 +139,7 @@ function MasterLooterDialog:draw()
     Window:AddChild(DescriptionFrame);
 
     local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFontObject(_G.GameFontNormal);
     Description:SetFullWidth(true);
     Description:SetJustifyH("CENTER");
     Description:SetText(L["You were given the role of Master Looter"]);
@@ -155,7 +155,7 @@ function MasterLooterDialog:draw()
     SoftResButton:SetText(SoftResButtonText);
     SoftResButton:SetHeight(20);
     SoftResButton:SetWidth(124);
-    SoftResButton:SetCallback("OnClick", function()
+    SoftResButton:SetCallback("OnClick", function ()
         if (GL.SoftRes:available()) then
             GL.SoftRes:clear();
             SoftResButton:SetText(L["Import SoftRes"]);
@@ -186,7 +186,7 @@ function MasterLooterDialog:draw()
     TMBButton:SetText(TMBButtonText);
     TMBButton:SetHeight(20);
     TMBButton:SetWidth(120);
-    TMBButton:SetCallback("OnClick", function()
+    TMBButton:SetCallback("OnClick", function ()
         if (GL.TMB:available()) then
             TMBButton:SetText(L["Import TMB"]);
             GL.TMB:clear();
@@ -211,7 +211,7 @@ function MasterLooterDialog:draw()
     GDKPButton:SetText(L["GDKP"]);
     GDKPButton:SetHeight(20);
     GDKPButton:SetWidth(120);
-    GDKPButton:SetCallback("OnClick", function()
+    GDKPButton:SetCallback("OnClick", function ()
         GL.Interface.GDKP.Overview:open();
     end);
     Window:AddChild(GDKPButton);
@@ -226,7 +226,7 @@ function MasterLooterDialog:draw()
     PlusOneButton:SetText(L["+1"]);
     PlusOneButton:SetHeight(20);
     PlusOneButton:SetWidth(50);
-    PlusOneButton:SetCallback("OnClick", function()
+    PlusOneButton:SetCallback("OnClick", function ()
         GL.Interface.PlusOnes.Overview:draw();
     end);
     Window:AddChild(PlusOneButton);
@@ -244,18 +244,18 @@ function MasterLooterDialog:draw()
     AutoOpenCheckbox:SetHeight(20);
     AutoOpenCheckbox:SetWidth(24);
     AutoOpenCheckbox:SetValue(GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true));
-    AutoOpenCheckbox:SetCallback("OnValueChanged", function(Checkbox)
+    AutoOpenCheckbox:SetCallback("OnValueChanged", function (Checkbox)
         GL.Settings:set("MasterLooting.autoOpenMasterLooterDialog", Checkbox:GetValue());
     end);
     Window:AddChild(AutoOpenCheckbox);
 
     -- Auto open label
     local CheckBoxLabel = AceGUI:Create("InteractiveLabel");
-    CheckBoxLabel:SetFontObject(_G["GameFontNormal"]);
+    CheckBoxLabel:SetFontObject(_G.GameFontNormal);
     CheckBoxLabel:SetWidth(200);
     CheckBoxLabel:SetText(L["Open this window automatically"]);
 
-    CheckBoxLabel:SetCallback("OnClick", function()
+    CheckBoxLabel:SetCallback("OnClick", function ()
         AutoOpenCheckbox:ToggleChecked();
         AutoOpenCheckbox:Fire("OnValueChanged");
     end);

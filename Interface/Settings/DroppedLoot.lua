@@ -38,7 +38,7 @@ function DroppedLoot:draw(Parent)
     MinimumQuality:SetList(DropDownItems);
     MinimumQuality:SetText(DropDownItems[GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4)]);
     MinimumQuality:SetWidth(150);
-    MinimumQuality:SetCallback("OnValueChanged", function()
+    MinimumQuality:SetCallback("OnValueChanged", function ()
         GL.Settings:set("DroppedLoot.minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
     end);
     Parent:AddChild(MinimumQuality);
@@ -118,7 +118,7 @@ function DroppedLoot:draw(Parent)
 
     local OpenDataButton = GL.AceGUI:Create("Button");
     OpenDataButton:SetText("Simulate drop");
-    OpenDataButton:SetCallback("OnClick", function()
+    OpenDataButton:SetCallback("OnClick", function ()
         GL.DroppedLoot:announceTest(GL:explode(TestItems:GetText(), ";"));
     end);
     Parent:AddChild(OpenDataButton);

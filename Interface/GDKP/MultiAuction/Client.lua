@@ -142,7 +142,7 @@ function ClientInterface:build()
     end;
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = WINDOW_WIDTH,
         minWidth = WINDOW_WIDTH,
@@ -165,7 +165,7 @@ function ClientInterface:build()
 
             GL:notice(L["Bidding window closed, use |c00A79EFF/gl bid to reopen it!"])
         end,
-    };
+    });
 
     local SoundOptions = {{
         text = "Gargul: uh-oh",
@@ -390,14 +390,14 @@ function ClientInterface:build()
 
     --[[ SELECT ALL ]]
     ---@type CheckButton
-    local ToggleFilters = Interface:createCheckbox{
+    local ToggleFilters = Interface:createCheckbox({
         Parent = Window,
         checked = ClientInterface.enableFilters,
         callback = function (_, value)
             ClientInterface.enableFilters = value;
             filter();
         end,
-    };
+    });
     ToggleFilters:SetPoint("TOPLEFT", Filters, "TOPRIGHT", -12, -4);
     Interface:addTooltip(ToggleFilters, L["Enable / Disable the hidden items filter"]);
 
@@ -428,13 +428,13 @@ function ClientInterface:build()
     --[[ MAIN ADMIN WINDOW (FOOTER) ]]
     do
         ---@type Frame
-        local AdminWindow = Interface:createWindow{
+        local AdminWindow = Interface:createWindow({
             name = self.adminWindowName,
             height = 80,
             hideAllButtons = true,
             hideWatermark = true,
             Parent = Window,
-        };
+        });
         AdminWindow:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 0, 4);
         AdminWindow:SetPoint("RIGHT", Window, "RIGHT");
         AdminWindow:Hide();
@@ -451,14 +451,14 @@ function ClientInterface:build()
         CloseAllButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT");
         CloseAllButton:SetText(L["Close all"]);
         CloseAllButton:SetScript("OnClick", function ()
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Close ALL auctions?"],
                 OnYes = function ()
                     for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
                         Auctioneer:closeAuction(auctionID);
                     end
                 end,
-            };
+            });
         end);
         Interface:addTooltip(CloseAllButton, L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"]);
 
@@ -467,7 +467,7 @@ function ClientInterface:build()
         FinalCallButton:SetPoint("TOPLEFT", CloseAllButton, "TOPRIGHT", 4, 0);
         FinalCallButton:SetText(L["Final Call"]);
         FinalCallButton:SetScript("OnClick", function ()
-            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                 question = L["Give a final call timer of how many seconds?"],
                 inputValue = GL.Settings:get("GDKP.finalCallTime"),
                 OnYes = function (seconds)
@@ -483,7 +483,7 @@ function ClientInterface:build()
                     end
                 end,
                 focus = true,
-            };
+            });
         end);
         Interface:addTooltip(FinalCallButton, L["Start a final call for this auction by giving a (usually shorter) bid timer"]);
 
@@ -508,13 +508,13 @@ function ClientInterface:build()
                 return;
             end
 
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Close ALL auctions and wrap up this multi-auction session?"],
                 OnYes = function ()
                     Auctioneer:finish();
                     self:close();
                 end,
-            };
+            });
         end);
         Interface:addTooltip(FinishButton, L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"]);
 
@@ -533,12 +533,12 @@ function ClientInterface:build()
         DisenchantButton:SetPoint("TOPLEFT", TerminateButton, "TOPRIGHT", 4, 0);
         DisenchantButton:SetText(L["Disenchant"]);
         DisenchantButton:SetScript("OnClick", function ()
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Disenchant all finished but unsold items?"],
                 OnYes = function ()
                     Auctioneer:disenchant();
                 end,
-            };
+            });
         end);
         Interface:addTooltip(DisenchantButton, L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"]);
 
@@ -563,7 +563,7 @@ function ClientInterface:build()
     --[[ AUCTION ADMIN WINDOW ]]
     do
         ---@type Frame
-        local AuctionAdminWindow = Interface:createWindow{
+        local AuctionAdminWindow = Interface:createWindow({
             name = self.auctionAdminWindowName,
             width = 320,
             height = 90,
@@ -572,7 +572,7 @@ function ClientInterface:build()
             hideMoveButton = true,
             hideWatermark = true,
             Parent = Window,
-        };
+        });
         AuctionAdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
         AuctionAdminWindow:Hide();
 
@@ -629,12 +629,12 @@ function ClientInterface:build()
                 return self:resetAdminWindow();
             end
 
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:closeAuction(AuctionAdminWindow._auctionID);
                 end,
-            };
+            });
         end);
         Interface:addTooltip(CloseButton, L["Close the auction. Players can no longer bid but the highest bid remains active"]);
 
@@ -648,7 +648,7 @@ function ClientInterface:build()
                 return self:resetAdminWindow();
             end
 
-            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                 question = L["Give a final call timer of how many seconds?"],
                 inputValue = GL.Settings:get("GDKP.finalCallTime"),
                 OnYes = function (seconds)
@@ -661,7 +661,7 @@ function ClientInterface:build()
                     Auctioneer:finalCall(AuctionAdminWindow._auctionID, seconds);
                 end,
                 focus = true,
-            };
+            });
         end);
         Interface:addTooltip(FinallCallButton, L["Start a final call for this auction by giving a (usually shorter) bid timer"]);
 
@@ -675,12 +675,12 @@ function ClientInterface:build()
                 return self:resetAdminWindow();
             end
 
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:clearBid(AuctionAdminWindow._auctionID);
                 end,
-            };
+            });
         end);
         Interface:addTooltip(ClearButton, L["Remove all bids from the auction"]);
 
@@ -694,13 +694,13 @@ function ClientInterface:build()
                 return self:resetAdminWindow();
             end
 
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:deleteAuction(AuctionAdminWindow._auctionID);
                     self:resetAdminWindow();
                 end,
-            };
+            });
         end);
         Interface:addTooltip(DeleteButton, L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"]);
 
@@ -793,7 +793,7 @@ function ClientInterface:build()
                             or not ItemRow._Details.link
                             or ItemRow._Details.link ~= AuctionRow._Details.link
                         ) then
-                            return
+                            return;
                         end
 
                         ItemRow.toggleFavorite(AuctionRow._Details.isFavorite, false);

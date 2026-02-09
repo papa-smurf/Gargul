@@ -24,7 +24,7 @@ function GDKPPrices:draw(Parent)
     local ImportPerItemSettings = GL.AceGUI:Create("Button");
     ImportPerItemSettings:SetText("Import item prices and increments");
     ImportPerItemSettings:SetFullWidth(true);
-    ImportPerItemSettings:SetCallback("OnClick", function()
+    ImportPerItemSettings:SetCallback("OnClick", function ()
         GL.Interface.GDKP.ImportPrices:open();
     end);
     Parent:AddChild(ImportPerItemSettings);

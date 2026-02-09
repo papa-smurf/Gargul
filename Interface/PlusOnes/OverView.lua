@@ -34,7 +34,7 @@ function Overview:draw()
     Window:SetHeight(490);
     Window.statustext:GetParent():Show(); -- Show the statustext bar
     Window:EnableResize(false);
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -49,14 +49,14 @@ function Overview:draw()
         ));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_PLUSONES_OVERVIEW_WINDOW"] = Window.frame;
+    _G.GARGUL_PLUSONES_OVERVIEW_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_PLUSONES_OVERVIEW_WINDOW");
 
     --[[
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function()
+        onClick = function ()
             GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure you want to broadcast your plus one data to everyone in your party/raid?"],
                 OnYes = function ()
@@ -128,7 +128,7 @@ function Overview:draw()
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText(L["Clear"]);
     ClearButton:SetWidth(80);
-    ClearButton:SetCallback("OnClick", function()
+    ClearButton:SetCallback("OnClick", function ()
         GL.Interface.Dialogs.PopupDialog:open({
             question = L["This will clear all your +1 data. Continue?"],
             OnYes = function ()
@@ -149,7 +149,7 @@ function Overview:draw()
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(80);
-    ImportButton:SetCallback("OnClick", function()
+    ImportButton:SetCallback("OnClick", function ()
         self:close();
         GL.Interface.PlusOnes.Importer:draw();
     end);
@@ -164,7 +164,7 @@ function Overview:draw()
     local ExportButton = AceGUI:Create("Button");
     ExportButton:SetText(L["Export"]);
     ExportButton:SetWidth(80);
-    ExportButton:SetCallback("OnClick", function()
+    ExportButton:SetCallback("OnClick", function ()
         PlusOnes:export(true);
     end);
     ButtonFrame:AddChild(ExportButton);
@@ -254,7 +254,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         Row:SetHeight(30);
 
         local PlayerName = AceGUI:Create("Label");
-        PlayerName:SetFontObject(_G["GameFontNormal"]);
+        PlayerName:SetFontObject(_G.GameFontNormal);
         PlayerName:SetText(GL:formatPlayerName(Entry.name, { colorize = true, }));
         PlayerName:SetHeight(28);
         PlayerName:SetWidth(320);
@@ -263,7 +263,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         local DeductButton = AceGUI:Create("Button");
         DeductButton:SetText(L["<"]);
         DeductButton:SetWidth(38);
-        DeductButton:SetCallback("OnClick", function()
+        DeductButton:SetCallback("OnClick", function ()
             Entry.total = max(Entry.total -1, 0);
             GL.PlusOnes:queueUpdate(Entry.name, Entry.total);
             self:update();
@@ -271,7 +271,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         Row:AddChild(DeductButton);
 
         local PlusOneStatus = AceGUI:Create("Label");
-        PlusOneStatus:SetFontObject(_G["GameFontNormal"]);
+        PlusOneStatus:SetFontObject(_G.GameFontNormal);
         PlusOneStatus:SetText(Entry.total);
         PlusOneStatus:SetHeight(28);
         PlusOneStatus:SetWidth(30);
@@ -282,7 +282,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         local AddButton = AceGUI:Create("Button");
         AddButton:SetText(L[">"]);
         AddButton:SetWidth(38);
-        AddButton:SetCallback("OnClick", function()
+        AddButton:SetCallback("OnClick", function ()
             Entry.total = Entry.total + 1;
             GL.PlusOnes:queueUpdate(Entry.name, Entry.total);
             self:update();

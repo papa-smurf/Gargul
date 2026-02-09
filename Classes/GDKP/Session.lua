@@ -262,7 +262,7 @@ function Session:tradeInitiated(Details)
         Window:SetWidth(190);
         Window:SetHeight(30);
         Window.frame:SetParent(TradeFrame);
-        Window.frame:SetScript("OnHide", function()
+        Window.frame:SetScript("OnHide", function ()
             GL.Interface:release(Window);
             Window.frame:Hide();
         end);
@@ -271,7 +271,7 @@ function Session:tradeInitiated(Details)
 
         local DescriptionLabel = GL.AceGUI:Create("Label");
         DescriptionLabel:SetFullWidth(true);
-        DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
+        DescriptionLabel:SetFontObject(_G.GameFontNormalSmall);
         DescriptionLabel:SetText(message);
         DescriptionLabel:SetColor(1, .95686, .40784);
         Window:AddChild(DescriptionLabel);
@@ -281,10 +281,10 @@ function Session:tradeInitiated(Details)
             -- Good job Blizzard, now it's even easier for people to make mistakes whilst trading gold
             -- local insufficientFunds = GetMoney() < balance;
             -- local PickupGoldButton = GL.AceGUI:Create("Button");
-            
+
             -- PickupGoldButton:SetText(insufficientFunds and L["Not enough gold"] or L["Pick up %s"]:format(dueTexture));
             -- PickupGoldButton:SetFullWidth(true);
-            -- PickupGoldButton:SetCallback("OnClick", function()
+            -- PickupGoldButton:SetCallback("OnClick", function ()
             --     if (insufficientFunds) then
             --         GL:warning(L["Not enough gold"]);
             --         return;
@@ -350,7 +350,7 @@ function Session:tradeInitiated(Details)
         IncludeTradeInSession:SetDescription(L["Gold traded will not be added to amount given or received"]);
         IncludeTradeInSession:SetFullWidth(true);
         IncludeTradeInSession.text:SetTextColor(1, .95686, .40784);
-        IncludeTradeInSession:SetCallback("OnValueChanged", function()
+        IncludeTradeInSession:SetCallback("OnValueChanged", function ()
             self.includeTradeInSession = not IncludeTradeInSession:GetValue();
         end);
         Window:AddChild(IncludeTradeInSession);
@@ -358,7 +358,7 @@ function Session:tradeInitiated(Details)
         local TradeHistoryButton = GL.AceGUI:Create("Button");
         TradeHistoryButton:SetText(L["Gold Trades"]);
         TradeHistoryButton:SetFullWidth(true);
-        TradeHistoryButton:SetCallback("OnClick", function()
+        TradeHistoryButton:SetCallback("OnClick", function ()
             GL.Interface.GDKP.GoldTrades.Overview:open(self:activeSessionID(), partnerGUID);
         end);
         Window:AddChild(TradeHistoryButton);
@@ -372,7 +372,7 @@ function Session:tradeInitiated(Details)
         if (balance > GetMoney()) then
             GL:error((L["You don't have enough money to pay %s"]):format(Details.partner));
         else
-            GL.TradeWindow:setCopper(balance, Details.partner, function(success)
+            GL.TradeWindow:setCopper(balance, Details.partner, function (success)
                 if (success) then
                     return;
                 end

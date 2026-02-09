@@ -49,7 +49,7 @@ function Overview:draw()
     Window:SetHeight(540);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitly show the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
        self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -68,14 +68,14 @@ function Overview:draw()
     end
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_BOOSTEDROLLS_OVERVIEW_WINDOW"] = Window.frame;
+    _G.GARGUL_BOOSTEDROLLS_OVERVIEW_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_BOOSTEDROLLS_OVERVIEW_WINDOW");
 
     --[[
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function()
+        onClick = function ()
             GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure you want to broadcast your boosted roll data to everyone in your party/raid?"],
                 OnYes = function ()
@@ -135,7 +135,7 @@ function Overview:draw()
     Window:AddChild(PlayerFrame);
 
     local PlayerNameLabel = AceGUI:Create("Label");
-    PlayerNameLabel:SetFontObject(_G["GameFontNormal"]);
+    PlayerNameLabel:SetFontObject(_G.GameFontNormal);
     PlayerNameLabel:SetWidth(100);
     PlayerNameLabel:SetJustifyH("LEFT");
     PlayerNameLabel:SetText(("|cff%s%s|r"):format(GL:classHexColor(), L["None"]));
@@ -146,7 +146,7 @@ function Overview:draw()
     DecrementButton:SetText(L["-"] .. step);
     DecrementButton:SetWidth(60);
     DecrementButton:SetHeight(20);
-    DecrementButton:SetCallback("OnClick", function()
+    DecrementButton:SetCallback("OnClick", function ()
         self:adjustPoints(step * -1, true);
     end);
     PlayerFrame:AddChild(DecrementButton);
@@ -172,7 +172,7 @@ function Overview:draw()
     IncrementButton:SetText(L["+"] .. step);
     IncrementButton:SetWidth(60);
     IncrementButton:SetHeight(20);
-    IncrementButton:SetCallback("OnClick", function()
+    IncrementButton:SetCallback("OnClick", function ()
         self:adjustPoints(step, true);
     end);
     PlayerFrame:AddChild(IncrementButton);
@@ -186,7 +186,7 @@ function Overview:draw()
     local DeleteButton = AceGUI:Create("Button");
     DeleteButton:SetText(L["Delete"]);
     DeleteButton:SetWidth(120);
-    DeleteButton:SetCallback("OnClick", function()
+    DeleteButton:SetCallback("OnClick", function ()
         self:deleteEntry();
     end);
     PlayerFrame:AddChild(DeleteButton);
@@ -198,7 +198,7 @@ function Overview:draw()
     Window:AddChild(AliasesFrame);
 
     local AliasesLabel = AceGUI:Create("Label");
-    AliasesLabel:SetFontObject(_G["GameFontNormalSmall"]);
+    AliasesLabel:SetFontObject(_G.GameFontNormalSmall);
     AliasesLabel:SetWidth(46);
     AliasesLabel:SetJustifyH("RIGHT");
     AliasesLabel:SetText(L["Aliases"]);
@@ -220,7 +220,7 @@ function Overview:draw()
     local ApplyAliasesButton = AceGUI:Create("Button");
     ApplyAliasesButton:SetText(L["Apply aliases"]);
     ApplyAliasesButton:SetWidth(120);
-    ApplyAliasesButton:SetCallback("OnClick", function()
+    ApplyAliasesButton:SetCallback("OnClick", function ()
         local text = GL.Interface:get(self, "EditBox.Aliases"):GetText();
         self:updateAliases(strtrim(text));
     end);
@@ -234,7 +234,7 @@ function Overview:draw()
 
     local BroadcastProgressLabel = AceGUI:Create("Label");
     BroadcastProgressLabel:SetWidth(200);
-    BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
+    BroadcastProgressLabel:SetFontObject(_G.GameFontNormal);
     ProgressFrame:AddChild(BroadcastProgressLabel);
     GL.Interface:set(GL.BoostedRolls, "BroadcastProgress", BroadcastProgressLabel);
 
@@ -255,7 +255,7 @@ function Overview:draw()
     local ClearDataButton = AceGUI:Create("Button");
     ClearDataButton:SetText(L["Clear"]);
     ClearDataButton:SetWidth(102);
-    ClearDataButton:SetCallback("OnClick", function()
+    ClearDataButton:SetCallback("OnClick", function ()
         GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure you want to clear all boosted roll data?"],
             OnYes = function ()
@@ -270,7 +270,7 @@ function Overview:draw()
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(78);
-    ImportButton:SetCallback("OnClick", function()
+    ImportButton:SetCallback("OnClick", function ()
         self:close();
         GL.Interface.BoostedRolls.Importer:draw();
     end);
@@ -279,7 +279,7 @@ function Overview:draw()
     local ExportButton = AceGUI:Create("Button");
     ExportButton:SetText(L["Export"]);
     ExportButton:SetWidth(76);
-    ExportButton:SetCallback("OnClick", function()
+    ExportButton:SetCallback("OnClick", function ()
         BoostedRolls:export(true);
     end);
     ButtonFrame:AddChild(ExportButton);
@@ -287,7 +287,7 @@ function Overview:draw()
     local AddRaidersButton = AceGUI:Create("Button");
     AddRaidersButton:SetText(L["Add missing raiders"]);
     AddRaidersButton:SetWidth(156);
-    AddRaidersButton:SetCallback("OnClick", function()
+    AddRaidersButton:SetCallback("OnClick", function ()
         BoostedRolls:addMissingRaiders();
         self:refreshTable();
     end);
@@ -296,8 +296,8 @@ function Overview:draw()
     local AddToRaid = AceGUI:Create("Button");
     AddToRaid:SetText(L["Add points to raid"]);
     AddToRaid:SetWidth(140);
-    AddToRaid:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+    AddToRaid:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
             question = L["\nAdd how many points for everyone currently in the raid?\n\n|c00BE3333Use the 'Add missing raiders' button first if you want everyone to get points, even those without a boosted roll entry!"],
             inputValue = step,
             OnYes = function (value)
@@ -319,7 +319,7 @@ function Overview:draw()
                 self:refreshTable();
             end,
             focus = true,
-        };
+        });
     end);
     ButtonFrame:AddChild(AddToRaid);
 
@@ -422,7 +422,7 @@ function Overview:drawBoostedRollDataTable(Parent)
                 --- Unfortunately, the default handler is called *after* ours.
                 --- So, we need to check whether the selection is cleared ourselves!
                 local cleared = tbl:GetSelection() == realrow;
-                    
+
                 --- Make sure something is actually selected, better safe than lua error
                 if (cleared
                     or not GL:higherThanZero(realrow)
@@ -521,7 +521,7 @@ function Overview:deleteEntry()
         return;
     end
 
-    return GL.Interface.Dialogs.PopupDialog:open{
+    return GL.Interface.Dialogs.PopupDialog:open({
         question = (L["Delete %s?"]):format(GL:formatPlayerName(self.selectedCharacter, { colorize = true, })),
         OnYes = function ()
             BoostedRolls:deletePoints(self.selectedCharacter);
@@ -529,7 +529,7 @@ function Overview:deleteEntry()
             self.selectedCharacter = nil;
             self:loadPlayer();
         end,
-    };
+    });
 end
 
 ---@param points number
@@ -603,7 +603,7 @@ function Overview:loadPlayer()
         name = GL:formatPlayerName(self.selectedCharacter, { includeRealm = "never", });
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
-    
+
     GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(BoostedRolls:getPoints(self.selectedCharacter));
     GL.Interface:get(self, "Label.PlayerName"):SetText(GL:formatPlayerName(name, { colorize = true, }));
 

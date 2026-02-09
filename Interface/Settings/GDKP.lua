@@ -23,7 +23,7 @@ function GDKP:draw(Parent)
     local OpenGDKP = GL.AceGUI:Create("Button");
     OpenGDKP:SetText("Open GDKP");
     OpenGDKP:SetWidth(130);
-    OpenGDKP:SetCallback("OnClick", function()
+    OpenGDKP:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("gdkp");
     end);
@@ -37,7 +37,7 @@ function GDKP:draw(Parent)
     local GoToHotkeys = GL.AceGUI:Create("Button");
     GoToHotkeys:SetText("Hotkeys");
     GoToHotkeys:SetWidth(90);
-    GoToHotkeys:SetCallback("OnClick", function()
+    GoToHotkeys:SetCallback("OnClick", function ()
         GL.Settings:draw("ShortcutKeys");
     end);
     Parent:AddChild(GoToHotkeys);
@@ -53,7 +53,7 @@ function GDKP:draw(Parent)
         {
             label = "Show the GDKP bid queue that allows you to prebid on queued items",
             setting = "GDKP.enableBidderQueue",
-            callback = function()
+            callback = function ()
                 local BidderQueue = GL.Interface.GDKP.BidderQueue;
 
                 if (not GL.Settings:get("GDKP.enableBidderQueue")) then
@@ -82,7 +82,7 @@ function GDKP:draw(Parent)
     BidderScale:SetFullWidth(true);
     BidderScale:SetValue(GL.Settings:get("GDKP.bidderScale"));
     BidderScale:SetSliderValues(.8, 1.8, .1);
-    BidderScale:SetCallback("OnValueChanged", function(Slider)
+    BidderScale:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (not value) then
@@ -112,7 +112,7 @@ function GDKP:draw(Parent)
     Precision:SetFullWidth(true);
     Precision:SetValue(GL.Settings:get("GDKP.precision"));
     Precision:SetSliderValues(0, 4, 1);
-    Precision:SetCallback("OnValueChanged", function(Slider)
+    Precision:SetCallback("OnValueChanged", function (Slider)
         local value = GL:floor(Slider:GetValue());
 
         if (not value) then
@@ -142,7 +142,7 @@ function GDKP:draw(Parent)
     OutbidSoundDropdown:SetList(Sounds);
     OutbidSoundDropdown:SetText(GL.Settings:get("GDKP.outbidSound"));
     OutbidSoundDropdown:SetWidth(250);
-    OutbidSoundDropdown:SetCallback("OnValueChanged", function()
+    OutbidSoundDropdown:SetCallback("OnValueChanged", function ()
         local value = OutbidSoundDropdown:GetValue();
         local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
 
@@ -186,7 +186,7 @@ function GDKP:draw(Parent)
     AuctionBidLeeway:SetFullWidth(true);
     AuctionBidLeeway:SetValue(GL.Settings:get("GDKP.auctionEndLeeway", 2));
     AuctionBidLeeway:SetSliderValues(1, 5, .5);
-    AuctionBidLeeway:SetCallback("OnValueChanged", function(Slider)
+    AuctionBidLeeway:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue()) or 0;
 
         if (value >= 1) then
@@ -220,7 +220,7 @@ function GDKP:draw(Parent)
     LedgerAuctionSize:SetFullWidth(true);
     LedgerAuctionSize:SetValue(GL.Settings:get("GDKP.ledgerAuctionScale"));
     LedgerAuctionSize:SetSliderValues(11, 50, 1);
-    LedgerAuctionSize:SetCallback("OnValueChanged", function(Slider)
+    LedgerAuctionSize:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
         local currentValue = GL.Settings:get("GDKP.ledgerAuctionScale");
 
@@ -258,21 +258,21 @@ function GDKP:draw(Parent)
     local ResetPerItemSettings = GL.AceGUI:Create("Button");
     ResetPerItemSettings:SetText("Reset all minimum prices and increments");
     ResetPerItemSettings:SetFullWidth(true);
-    ResetPerItemSettings:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ResetPerItemSettings:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to reset all individual item settings?",
             OnYes = function ()
                 GL.GDKP:resetPerItemSettings();
             end,
-        };
+        });
     end);
     Parent:AddChild(ResetPerItemSettings);
 
     local ResetGDKPSettings = GL.AceGUI:Create("Button");
     ResetGDKPSettings:SetText("Reset GDKP settings to default");
     ResetGDKPSettings:SetFullWidth(true);
-    ResetGDKPSettings:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ResetGDKPSettings:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to reset all GDKP settings?",
             OnYes = function ()
                 local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {});
@@ -280,21 +280,21 @@ function GDKP:draw(Parent)
                 Settings:set("GDKP.SettingsPerItem", PerItemSettings);
                 GL.ReloadUI();
             end,
-        };
+        });
     end);
     Parent:AddChild(ResetGDKPSettings);
 
     local ResetGDKPSessionData = GL.AceGUI:Create("Button");
     ResetGDKPSessionData:SetText("Reset GDKP session data");
     ResetGDKPSessionData:SetFullWidth(true);
-    ResetGDKPSessionData:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ResetGDKPSessionData:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to delete all session data? You will lose ALL auction data. Use with extreme caution!",
             OnYes = function ()
                 GL.DB:set("GDKP", {});
                 GL.ReloadUI();
             end,
-        };
+        });
     end);
     Parent:AddChild(ResetGDKPSessionData);
 

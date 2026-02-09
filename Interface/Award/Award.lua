@@ -77,7 +77,7 @@ function Award:draw(itemLink, callback)
     Window:EnableResize(false);
     Window.rendered = true;
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     Window._callback = callback or function () end;
@@ -94,7 +94,7 @@ function Award:draw(itemLink, callback)
     self.SettingsButton = SettingsButton;
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_AWARD_WINDOW"] = Window.frame;
+    _G.GARGUL_AWARD_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_AWARD_WINDOW");
 
     --[[
@@ -133,7 +133,7 @@ function Award:draw(itemLink, callback)
     FirstRow:AddChild(ItemBox);
 
     -- Show a gametooltip if the icon shown belongs to an item
-    ItemIcon:SetCallback("OnEnter", function()
+    ItemIcon:SetCallback("OnEnter", function ()
         if (not Award.ItemBoxHoldsValidItem) then
             GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
             GameTooltip:AddLine(L["Drag and drop or shift+click an item in the box on the right"]);
@@ -147,7 +147,7 @@ function Award:draw(itemLink, callback)
         GameTooltip:Show();
     end)
 
-    ItemIcon:SetCallback("OnLeave", function()
+    ItemIcon:SetCallback("OnLeave", function ()
         GameTooltip:Hide();
     end)
 
@@ -167,7 +167,7 @@ function Award:draw(itemLink, callback)
     AwardButton:SetWidth(70); ---@TODO: TOO SHORT FOR FR
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
-    AwardButton:SetCallback("OnClick", function()
+    AwardButton:SetCallback("OnClick", function ()
         local PlayersTable = GL.Interface:get(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
         itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
@@ -209,13 +209,13 @@ function Award:draw(itemLink, callback)
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice) and GL.GDKP.Session:activeSessionID()) then
-                    local awardChecksum = GL.AwardedLoot:addWinner{
+                    local awardChecksum = GL.AwardedLoot:addWinner({
                         brCost = boostedRollCost,
                         gdkpCost = GDKPPrice,
                         isOS = isOS,
                         itemLink = itemLink,
                         winner = winner,
-                    };
+                    });
 
                     GDKPAuction:create(itemLink, GDKPPrice, winner, nil, nil, nil, awardChecksum);
                     added = true;
@@ -224,12 +224,12 @@ function Award:draw(itemLink, callback)
 
             if (not added) then
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner{
+                GL.AwardedLoot:addWinner({
                     brCost = boostedRollCost,
                     isOS = isOS,
                     itemLink = itemLink,
                     winner = winner,
-                };
+                });
             end
 
             GL.Interface.Award.Award:reset();
@@ -247,7 +247,7 @@ function Award:draw(itemLink, callback)
 
             if (GL:empty(winner)) then
                 -- Show a confirmation dialog asking whether we should award this to a random person
-                return GL.Interface.Dialogs.PopupDialog:open{
+                return GL.Interface.Dialogs.PopupDialog:open({
                     question = (L["Do you want to award %s to a random player?"]):format(itemLink),
                     OnYes = function ()
                         local GroupMembers = GL.User:groupMembers();
@@ -263,17 +263,17 @@ function Award:draw(itemLink, callback)
                         GL:sendChatMessage((L.CHAT["Random winner for %s selected (%s)"]):format(itemLink, winner), "GROUP");
                         award(true);
                     end,
-                };
+                });
             end
         else
             winner = selected.cols[1].value;
         end
 
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.Dialogs.AwardDialog:open{
+        GL.Interface.Dialogs.AwardDialog:open({
             question = (L["Award %s to %s?"]):format(itemLink, GL:formatPlayerName(winner, { colorize = true, })),
             OnYes = award,
-        };
+        });
     end);
     FirstRow:AddChild(AwardButton);
     GL.Interface:set(self, "Award", AwardButton);
@@ -296,17 +296,17 @@ function Award:draw(itemLink, callback)
     AwardHistoryButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/award-disabled");
     AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
 
-    AwardHistoryButton:SetScript("OnEnter", function()
+    AwardHistoryButton:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
         GameTooltip:SetText(L["Award history"]);
         GameTooltip:Show();
     end);
 
-    AwardHistoryButton:SetScript("OnLeave", function()
+    AwardHistoryButton:SetScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
-    AwardHistoryButton:SetScript("OnClick", function()
+    AwardHistoryButton:SetScript("OnClick", function ()
         GL.Interface.Award.Overview:open();
     end);
 
@@ -324,7 +324,7 @@ function Award:draw(itemLink, callback)
     DisenchantButton:SetWidth(100);
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(false);
-    DisenchantButton:SetCallback("OnClick", function()
+    DisenchantButton:SetCallback("OnClick", function ()
         itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
         if (GL.PackMule.disenchanter) then
@@ -347,7 +347,7 @@ function Award:draw(itemLink, callback)
         local disenchanter = selected.cols[1].value;
 
         -- No disenchanter was set yet
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = (L["Set %s as your disenchanter?"]):format(
                     GL:formatPlayerName(disenchanter, { colorize = true, }),
                     disenchanter
@@ -360,7 +360,7 @@ function Award:draw(itemLink, callback)
                     self:close();
                 end
             end,
-        };
+        });
     end);
     FirstRow:AddChild(DisenchantButton);
     GL.Interface:set(self, "Disenchant", DisenchantButton);
@@ -489,7 +489,7 @@ function Award:drawPlayersTable()
     Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 46);
     GL.Interface:set(self, "Players", Table);
 
-    Table:RegisterEvents{
+    Table:RegisterEvents({
         OnClick = function (_, _, data, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)
@@ -508,7 +508,7 @@ function Award:drawPlayersTable()
                 EditBox:SetText(GL:capitalize(selectedPlayer));
             end
         end
-    };
+    });
 
     Award:populatePlayersTable();
 end
@@ -570,7 +570,7 @@ function Award:topPrioForItem(itemID)
     end
 
     -- Return a sanitized name variant to ensure proper name matching
-    local sanitizePlayerName = function(name)
+    local sanitizePlayerName = function (name)
         name = name:gsub("%(os%)", "");
         name = strlower(GL:disambiguateName(name));
         return name;

@@ -79,7 +79,7 @@ function ShortcutKeys:draw(Parent)
     HelpIcon:SetImage("interface/friendsframe/informationicon");
     Parent:AddChild(HelpIcon);
 
-    HelpIcon:SetCallback("OnEnter", function()
+    HelpIcon:SetCallback("OnEnter", function ()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("If you own an active GDKP session then the auction window will be shown");
@@ -88,7 +88,7 @@ function ShortcutKeys:draw(Parent)
         GameTooltip:Show();
     end);
 
-    HelpIcon:SetCallback("OnLeave", function()
+    HelpIcon:SetCallback("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
@@ -110,7 +110,7 @@ function ShortcutKeys:draw(Parent)
     RollOffOrAuctionHotkey:SetList(DropDownItems, ItemOrder);
     RollOffOrAuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.rollOffOrAuction")]);
     RollOffOrAuctionHotkey:SetWidth(250);
-    RollOffOrAuctionHotkey:SetCallback("OnValueChanged", function()
+    RollOffOrAuctionHotkey:SetCallback("OnValueChanged", function ()
         GL.Settings:set("ShortcutKeys.rollOffOrAuction", RollOffOrAuctionHotkey:GetValue());
     end);
     Parent:AddChild(RollOffOrAuctionHotkey);
@@ -135,7 +135,7 @@ function ShortcutKeys:draw(Parent)
     AwardHotkey:SetList(DropDownItems, ItemOrder);
     AwardHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.award")]);
     AwardHotkey:SetWidth(250);
-    AwardHotkey:SetCallback("OnValueChanged", function()
+    AwardHotkey:SetCallback("OnValueChanged", function ()
         GL.Settings:set("ShortcutKeys.award", AwardHotkey:GetValue());
     end);
     Parent:AddChild(AwardHotkey);
@@ -160,7 +160,7 @@ function ShortcutKeys:draw(Parent)
     DisenchantHotkey:SetList(DropDownItems, ItemOrder);
     DisenchantHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.disenchant")]);
     DisenchantHotkey:SetWidth(250);
-    DisenchantHotkey:SetCallback("OnValueChanged", function()
+    DisenchantHotkey:SetCallback("OnValueChanged", function ()
         GL.Settings:set("ShortcutKeys.disenchant", DisenchantHotkey:GetValue());
     end);
     Parent:AddChild(DisenchantHotkey);
@@ -185,7 +185,7 @@ function ShortcutKeys:draw(Parent)
     RollOffHotkey:SetList(DropDownItems, ItemOrder);
     RollOffHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.rollOff")]);
     RollOffHotkey:SetWidth(250);
-    RollOffHotkey:SetCallback("OnValueChanged", function()
+    RollOffHotkey:SetCallback("OnValueChanged", function ()
         GL.Settings:set("ShortcutKeys.rollOff", RollOffHotkey:GetValue());
     end);
     Parent:AddChild(RollOffHotkey);
@@ -211,7 +211,7 @@ function ShortcutKeys:draw(Parent)
         AuctionHotkey:SetList(DropDownItems, ItemOrder);
         AuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.auction")]);
         AuctionHotkey:SetWidth(250);
-        AuctionHotkey:SetCallback("OnValueChanged", function()
+        AuctionHotkey:SetCallback("OnValueChanged", function ()
             GL.Settings:set("ShortcutKeys.auction", AuctionHotkey:GetValue());
         end);
         Parent:AddChild(AuctionHotkey);

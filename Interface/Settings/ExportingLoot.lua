@@ -124,7 +124,7 @@ function ExportingLoot:draw(Parent)
     ExportFormat:SetList(DropDownItems, ItemOrder);
     ExportFormat:SetText(DropDownItems[GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB)]);
     ExportFormat:SetWidth(250);
-    ExportFormat:SetCallback("OnValueChanged", function()
+    ExportFormat:SetCallback("OnValueChanged", function ()
         GL.Settings:set("ExportingLoot.format", ExportFormat:GetValue());
 
         -- Refresh the export window if it's open
@@ -221,7 +221,7 @@ function ExportingLoot:draw(Parent)
 
     local OpenExporter = GL.AceGUI:Create("Button");
     OpenExporter:SetText("Open Exporter");
-    OpenExporter:SetCallback("OnClick", function()
+    OpenExporter:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("export");
     end);

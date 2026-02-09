@@ -69,7 +69,7 @@ function Overview:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
@@ -78,7 +78,7 @@ function Overview:build()
         maxWidth = DEFAULT_WINDOW_WIDTH,
         maxHeight = 700,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -262,12 +262,12 @@ function Overview:build()
         local Clear = Interface:dynamicPanelButton(Window, L["Clear"]);
         Clear:SetPoint("TOPLEFT", Export, "TOPRIGHT", 2, 0);
 
-        Clear:SetScript("OnClick", function()
+        Clear:SetScript("OnClick", function ()
             -- No date is selected, delete everything!
             local warning, onConfirm;
             if (GL:empty(self.SelectedDates)) then
                 warning = L["Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!"];
-                onConfirm = function()
+                onConfirm = function ()
                     DB:set("AwardHistory", {});
                     GL.Events:fire("GL.ITEM_UNAWARDED");
 
@@ -278,7 +278,7 @@ function Overview:build()
                 warning = (L["Are you sure you want to remove all data for %s? This cannot be undone!"]):format(
                     table.concat(self.SelectedDates, "|c00FFFFFF, |r")
                 );
-                onConfirm = function()
+                onConfirm = function ()
                     local SelectedDates = GL:tableFlip(self.SelectedDates);
 
                     for key, AwardEntry in pairs(DB:get("AwardHistory")) do
@@ -296,7 +296,7 @@ function Overview:build()
             end
 
             -- Show a confirmation dialog before clearing entries
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = warning,
                 OnYes = function ()
                     onConfirm();
@@ -304,7 +304,7 @@ function Overview:build()
                     -- Let the application know that an item was unawarded (deleted)
                     GL.Events:fire("GL.ITEM_UNAWARDED");
                 end,
-            };
+            });
         end);
     end
 
@@ -327,7 +327,7 @@ function Overview:build()
         { "AwardOverviewItemUnAwardedListener", "GL.ITEM_UNAWARDED", },
         { "AwardOverviewItemEditedListener", "GL.ITEM_AWARD_EDITED", },
         { "AwardOverviewItemEditedListener", "GL.ITEM_UNAWARDED", },
-    }, function()
+    }, function ()
         GL.Ace:CancelTimer(self.RefreshTimer);
         self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
             self:refreshItems();
@@ -360,11 +360,11 @@ function Overview:buildDatesTable(Window)
     Table:EnableSelection(true);
     Table.head:Hide(); -- Remove the table header
 
-    Table:RegisterEvents{
-        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
+    Table:RegisterEvents({
+        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
-            GL.Ace:ScheduleTimer(function()
+            GL.Ace:ScheduleTimer(function ()
                 self.SelectedDates = {};
                 for _, row in pairs(Table:GetSelection() or {}) do
                     local Row = Table:GetRow(row) or {};
@@ -381,7 +381,7 @@ function Overview:buildDatesTable(Window)
                 self:refreshItems();
             end, .1);
         end
-    };
+    });
 
     return Table;
 end
@@ -596,7 +596,7 @@ function Overview:refreshItems()
                 --[[ DETAILS TOOLTIP ]]
                 -- Show player details on hover
                 local ItemsWonByRollerInTheLastFiveHours;
-                ItemRow:SetScript("OnEnter", function()
+                ItemRow:SetScript("OnEnter", function ()
                     local linesAdded = false;
                     GameTooltip:ClearLines();
                     GameTooltip:SetOwner(ItemHolder, "ANCHOR_NONE");
@@ -685,7 +685,7 @@ function Overview:refreshItems()
                         GameTooltip:Show();
                     end
                 end);
-                ItemRow:SetScript("OnLeave", function()
+                ItemRow:SetScript("OnLeave", function ()
                     GameTooltip:Hide();
                 end);
 
@@ -707,7 +707,7 @@ function Overview:refreshItems()
                     EditButton:Show();
 
                     DeleteButton:SetScript("OnClick", function (_, button)
-                        if (button ~= 'LeftButton') then
+                        if (button ~= "LeftButton") then
                             return;
                         end
 
@@ -727,7 +727,7 @@ function Overview:refreshItems()
                             BRString = (" " .. L["%s boosted roll points will be refunded!"]):format(tostring(Entry.BRCost));
                         end
 
-                        GL.Interface.Dialogs.PopupDialog:open{
+                        GL.Interface.Dialogs.PopupDialog:open({
                             question = (L["Are you sure you want to undo %s awarded to %s?%s"]):format(
                                 Entry.itemLink,
                                 Entry.awardedTo,
@@ -738,11 +738,11 @@ function Overview:refreshItems()
                                 EditButton:Hide();
                                 DeleteButton:Hide();
                             end,
-                        };
+                        });
                     end);
 
-                    EditButton:SetScript("OnClick", function(_, button)
-                        if (button ~= 'LeftButton') then
+                    EditButton:SetScript("OnClick", function (_, button)
+                        if (button ~= "LeftButton") then
                             return;
                         end
 
@@ -757,7 +757,7 @@ function Overview:refreshItems()
                         -- Show the player selector
                         local question = (L["Who should %s go to instead?"]):format(Entry.itemLink);
                         GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
-                            GL.Interface.Dialogs.PopupDialog:open{
+                            GL.Interface.Dialogs.PopupDialog:open({
                                 question = (L["Award %s to %s?"]):format(
                                     Entry.itemLink,
                                     GL:formatPlayerName(playerName, { colorize = true, })
@@ -772,12 +772,12 @@ function Overview:refreshItems()
 
                                     GL.Interface.PlayerSelector:close();
                                 end,
-                            };
+                            });
                         end);
                     end);
 
-                    DisenchantButton:SetScript("OnClick", function(_, button)
-                        if (button ~= 'LeftButton') then
+                    DisenchantButton:SetScript("OnClick", function (_, button)
+                        if (button ~= "LeftButton") then
                             return;
                         end
 
@@ -791,13 +791,13 @@ function Overview:refreshItems()
 
                         -- Show a specific dialog when boosted roll points are involved
                         if (GL:higherThanZero(Entry.BRCost)) then
-                            GL.Interface.Dialogs.PopupDialog:open{
+                            GL.Interface.Dialogs.PopupDialog:open({
                                 question = (L["Are you sure you want to disenchant %s? %s boosted roll points will be refunded!"]):format(Entry.itemLink, tostring(Entry.BRCost)),
                                 OnYes = function ()
                                     GL.AwardedLoot:deleteWinner(Entry.checksum);
                                     GL.PackMule:disenchant(Entry.itemLink, true);
                                 end,
-                            };
+                            });
 
                             return;
                         end

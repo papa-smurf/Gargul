@@ -15,7 +15,7 @@ function TMB:draw(Parent)
 
     local OpenTMB = GL.AceGUI:Create("Button");
     OpenTMB:SetText("TMB Data");
-    OpenTMB:SetCallback("OnClick", function()
+    OpenTMB:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("thatsmybis");
     end);
@@ -105,7 +105,7 @@ function TMB:draw(Parent)
     AwardOnReceiveMinimumQuality:SetWidth(250);
     AwardOnReceiveMinimumQuality:SetList(LowerThanList);
     AwardOnReceiveMinimumQuality:SetValue(GL.Settings:get("AwardingLoot.awardOnReceiveMinimumQuality"));
-    AwardOnReceiveMinimumQuality:SetCallback("OnValueChanged", function()
+    AwardOnReceiveMinimumQuality:SetCallback("OnValueChanged", function ()
         GL.Settings:set("AwardingLoot.awardOnReceiveMinimumQuality", AwardOnReceiveMinimumQuality:GetValue());
     end);
 
@@ -153,7 +153,7 @@ function TMB:draw(Parent)
     MaxTooltipEntries:SetFullWidth(true);
     MaxTooltipEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
     MaxTooltipEntries:SetSliderValues(1, 50, 1);
-    MaxTooltipEntries:SetCallback("OnValueChanged", function(Slider)
+    MaxTooltipEntries:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (GL:higherThanZero(value)) then
@@ -195,7 +195,7 @@ function TMB:draw(Parent)
     MaxLootAnnouncementEntries:SetFullWidth(true);
     MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 35));
     MaxLootAnnouncementEntries:SetSliderValues(1, 50, 1);
-    MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function(Slider)
+    MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (GL:higherThanZero(value)) then

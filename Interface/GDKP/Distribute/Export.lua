@@ -88,7 +88,7 @@ function Export:build()
     ExportFormat:SetList(DropDownItems);
     ExportFormat:SetText(DropDownItems[1]);
     ExportFormat:SetFullWidth(true);
-    ExportFormat:SetCallback("OnValueChanged", function()
+    ExportFormat:SetCallback("OnValueChanged", function ()
         GL.Settings:set("GDKP.potExportFormat", ExportFormat:GetValue());
         self:refresh();
     end);
@@ -168,8 +168,8 @@ function Export:build()
         }, "\n"));
         GameTooltip:Show();
     end;
-    HelpIcon:SetCallback("OnEnter", function() showCustomFormatHelpTooltip() end);
-    HelpIcon:SetCallback("OnLeave", function() GameTooltip:Hide(); end);
+    HelpIcon:SetCallback("OnEnter", function () showCustomFormatHelpTooltip() end);
+    HelpIcon:SetCallback("OnLeave", function () GameTooltip:Hide(); end);
 
     ---@type AceGUIMultiLineEditBox
     local ExportBox = AceGUI:Create("MultiLineEditBox");
@@ -263,7 +263,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
 
     -- Make sure that all relevant item data is cached
     for _, Details in pairs(Cuts) do
-        (function()
+        (function ()
             local player, cut = Details.player, Details.cut;
             if (not Session.Pot.DistributionDetails[player]) then
                 return;
@@ -276,7 +276,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
 
             local Mutators = {};
             for mutator, value in pairs(Session.Pot.DistributionDetails[player]) do
-                (function()
+                (function ()
                     if (not value or
                         GL:inTable({
                             Constants.GDKP.adjustMutatorIdentifier,

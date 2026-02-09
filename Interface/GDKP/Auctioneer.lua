@@ -119,7 +119,7 @@ function AuctioneerUI:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
@@ -127,7 +127,7 @@ function AuctioneerUI:build()
         minHeight = 239,
         maxWidth = 500,
         maxHeight = 700,
-    };
+    });
     Window:Hide();
 
     Window:HookScript("OnShow", function ()
@@ -287,11 +287,11 @@ function AuctioneerUI:build()
         }},
         "divider",
         {text = L["Queue"], isTitle = true, notCheckable = true },
-        {text = L["Add dropped loot to queue"], setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L["Add dropped loot to queue"], setting = "GDKP.addDropsToQueue", func = function (Entry, _, _, checked)
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
         end},
-        {text = L["Include BOEs"], setting = "GDKP.addBOEDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L["Include BOEs"], setting = "GDKP.addBOEDropsToQueue", func = function (Entry, _, _, checked)
             Settings:set("GDKP.addBOEDropsToQueue", checked);
             Entry.checked = checked;
         end},
@@ -659,14 +659,14 @@ function AuctioneerUI:build()
     --[[ MULTI AUCTION INTRODUCTION WINDOW ]]
     do
         ---@type Frame
-        local MultiAuctionWindow = Interface:createWindow{
+        local MultiAuctionWindow = Interface:createWindow({
             name = self.multiAuctionWindowName,
             height = 50,
             hideAllButtons = true,
             hideWatermark = true,
             template = false,
             Parent = Window,
-        };
+        });
         Window.MultiAuctionWindow = MultiAuctionWindow;
         MultiAuctionWindow:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 2, -4);
         MultiAuctionWindow:SetPoint("RIGHT", Window, "RIGHT", -2, 0);
@@ -723,7 +723,7 @@ function AuctioneerUI:build()
     ---@param minimum number
     ---@param increment number
     ---@return nil
-    Window.setItemByLink = function(_, itemLink, minimum, increment)
+    Window.setItemByLink = function (_, itemLink, minimum, increment)
         GL:onItemLoadDo(itemLink, function (Details)
             if (not Details) then
                 return;
@@ -762,7 +762,7 @@ function AuctioneerUI:build()
     end);
 
     --[[ CLEAR THE CURRENTLY ACTIVE ITEM ]]
-    Window.clearItem = function()
+    Window.clearItem = function ()
         self.itemLink = nil;
         MinInput:SetText("");
         IncInput:SetText("");
@@ -934,7 +934,7 @@ function AuctioneerUI:buildQueue(Window)
         end
 
         --[[ REORDER QUEUE ENTRIES ]]
-        self.reorderItems = function()
+        self.reorderItems = function ()
             for key, ItemRow in pairs(self.ItemRows or {}) do
                 if (not ItemRow or not ItemRow._itemLink or not Auction.Queue[ItemRow._identifier]) then
                     if (ItemRow and ItemRow.GetChildren) then
@@ -1022,7 +1022,7 @@ function AuctioneerUI:buildQueue(Window)
                 ItemRow:EnableMouse(true);
                 ItemRow:RegisterForDrag("LeftButton");
                 local indexWithGlow, RowWithGlow, MoveTimer, newPosition, originalPosition;
-                ItemRow:SetScript("OnDragStart", function()
+                ItemRow:SetScript("OnDragStart", function ()
                     local numberOfRows = GL:count(self.ItemRows);
                     originalPosition = Auction.Queue[ItemRow._identifier].order;
                     local itemRowHeight = ItemRow:GetHeight();
@@ -1053,7 +1053,7 @@ function AuctioneerUI:buildQueue(Window)
                         end
                     end, .1);
                 end);
-                ItemRow:SetScript("OnDragStop", function()
+                ItemRow:SetScript("OnDragStop", function ()
                     GL.Ace:CancelTimer(MoveTimer);
                     ItemRow:Hide();
 
@@ -1178,7 +1178,7 @@ function AuctioneerUI:buildBidsTable(Window)
     Table:EnableSelection(true);
     Table.head:Hide(); -- Remove the table header
 
-    Table:RegisterEvents{
+    Table:RegisterEvents({
         --[[ RECENTLY WON BY BIDDER TOOLTIP ]]
         OnEnter = function (rowFrame, _, data, _, _, realrow)
             -- Make sure something is actually highlighted, better safe than lua error
@@ -1204,7 +1204,7 @@ function AuctioneerUI:buildBidsTable(Window)
                 ItemsWonByRollerInTheLast8Hours,
             });
         end,
-    };
+    });
 
     return Table;
 end
@@ -1279,7 +1279,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
     Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button:RegisterForDrag("LeftButton");
     Button:SetScript("OnDragStart", Button.StartMoving);
-    Button:SetScript("OnDragStop", function()
+    Button:SetScript("OnDragStop", function ()
         Button:StopMovingOrSizing();
 
         -- Store the frame's last position for future play sessions

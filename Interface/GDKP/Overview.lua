@@ -64,8 +64,8 @@ function Overview:_init()
         { "GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", },
         { "GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED", },
         { "GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED", },
-    }, function()
-        GL.Ace:ScheduleTimer(function()
+    }, function ()
+        GL.Ace:ScheduleTimer(function ()
             self:updatePot();
 
             if (not self.isVisible) then return; end
@@ -78,7 +78,7 @@ function Overview:_init()
         { "GDKPOverviewGDKPActiveSessionChangedListener", "GL.GDKP_ACTIVE_SESSION_CHANGED", },
         { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED", },
         { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CREATED", }
-    }, function()
+    }, function ()
         if (not self.isVisible) then return; end
         self:refreshSessions();
         self.styleWindowAfterResize();
@@ -204,7 +204,7 @@ function Overview:build()
         Window.frame,
         "GDKP"
     );
-    Cogwheel:SetScript("OnClick", function(_, button)
+    Cogwheel:SetScript("OnClick", function (_, button)
         if (button == "LeftButton") then
             Interface:get(self, "GDKPOverview"):Hide();
 
@@ -281,7 +281,7 @@ function Overview:build()
 
     Interface:addTooltip(MultiAuctionFrame, L["Multi-auction: auction multiple items at once!"], "TOP")
 
-    MultiAuctionIcon:SetCallback("OnClick", function()
+    MultiAuctionIcon:SetCallback("OnClick", function ()
         self:close();
         Interface.GDKP.MultiAuction.Auctioneer:open();
     end);
@@ -327,13 +327,13 @@ function Overview:build()
     SecondColumn:SetFullHeight(true);
 
     local Title = AceGUI:Create("Label");
-    Title:SetFontObject(_G["GameFontNormalLarge"]);
+    Title:SetFontObject(_G.GameFontNormalLarge);
     Title:SetFullWidth(true);
     Title:SetText("\n ");
     SecondColumn:AddChild(Title);
 
     local Note = AceGUI:Create("Label");
-    Note:SetFontObject(_G["GameFontNormalSmall"]);
+    Note:SetFontObject(_G.GameFontNormalSmall);
     Note:SetFullWidth(true);
     Note:SetText("\n ");
     SecondColumn:AddChild(Note);
@@ -346,7 +346,7 @@ function Overview:build()
 
     --[[ ADD GOLD BUTTON ]]
     local AddGoldButton = Interface:createButton(ScrollFrameHolder, {
-        onClick = function()
+        onClick = function ()
             self:closeSubWindows();
             Interface.GDKP.AddGold:toggle(self.selectedSession);
         end,
@@ -373,7 +373,7 @@ function Overview:build()
 
     ----[[ LIST VIEW BUTTON ]]
     local ListViewButton = Interface:createButton(ScrollFrameHolder, {
-        onClick = function()
+        onClick = function ()
             Window:Hide();
             GL.Interface.GDKP.LedgerList:open(self.selectedSession);
         end,
@@ -399,7 +399,7 @@ function Overview:build()
                 return;
             end
 
-            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                 question = "Search by item name or player name",
                 OnYes = function (phrase)
                     if (GL:empty(phrase)) then
@@ -413,7 +413,7 @@ function Overview:build()
                     Interface:addTooltip(SearchButton, "Clear search");
                 end,
                 focus = true,
-            };
+            });
         end,
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
         updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
@@ -440,7 +440,7 @@ function Overview:build()
     EnableOrDisableSession:SetText(L["Enable"]);
     EnableOrDisableSession:SetWidth(74); ---@TODO: TOO SHORT FOR FR
     EnableOrDisableSession:SetHeight(20);
-    EnableOrDisableSession:SetCallback("OnClick", function()
+    EnableOrDisableSession:SetCallback("OnClick", function ()
         if (EnableOrDisableSession.mode == "enable") then
             GDKPSession:setActive(self.selectedSession);
         else
@@ -450,19 +450,19 @@ function Overview:build()
     Interface:set(self, "EnableDisable", EnableOrDisableSession);
 
     local CreateSession = AceGUI:Create("Button");
-    CreateSession:SetText(L["New"]); 
+    CreateSession:SetText(L["New"]);
     CreateSession:SetWidth(64); ---@TODO: TOO SHORT FOR FR
     CreateSession:SetHeight(20);
-    CreateSession:SetCallback("OnClick", function()
+    CreateSession:SetCallback("OnClick", function ()
         self:closeSubWindows();
         Interface.GDKP.CreateSession:toggle();
     end);
 
     local EditSession = AceGUI:Create("Button");
-    EditSession:SetText(L["Edit"]); 
+    EditSession:SetText(L["Edit"]);
     EditSession:SetWidth(60); ---@TODO: TOO SHORT FOR FR
     EditSession:SetHeight(20);
-    EditSession:SetCallback("OnClick", function()
+    EditSession:SetCallback("OnClick", function ()
         self:closeSubWindows();
         Interface.GDKP.EditSession:toggle(self.selectedSession);
     end);
@@ -471,7 +471,7 @@ function Overview:build()
     DeleteOrRestoreSession:SetText(L["Delete"]);
     DeleteOrRestoreSession:SetWidth(72); ---@TODO: TOO SHORT FOR FR
     DeleteOrRestoreSession:SetHeight(20);
-    DeleteOrRestoreSession:SetCallback("OnClick", function()
+    DeleteOrRestoreSession:SetCallback("OnClick", function ()
         if (DeleteOrRestoreSession.mode == "delete") then
             GDKPSession:delete(self.selectedSession);
         else
@@ -485,7 +485,7 @@ function Overview:build()
     Import:SetText(L["Import"]);
     Import:SetWidth(76);
     Import:SetHeight(20);
-    Import:SetCallback("OnClick", function()
+    Import:SetCallback("OnClick", function ()
         GL.Interface.GDKP.Import:open();
     end);
     GL.Interface:addTooltip(Import, L["Import a session from another player or account"]);
@@ -494,7 +494,7 @@ function Overview:build()
     Export:SetText(L["Export"]);
     Export:SetWidth(72); ---@TODO: TOO SHORT FOR FR
     Export:SetHeight(20);
-    Export:SetCallback("OnClick", function()
+    Export:SetCallback("OnClick", function ()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
     GL.Interface:addTooltip(Export, L["Export a session so others can view session details or even replace you as a loot master"]);
@@ -503,7 +503,7 @@ function Overview:build()
     Cuts:SetText(L["Cuts"]);
     Cuts:SetWidth(90);
     Cuts:SetHeight(20);
-    Cuts:SetCallback("OnClick", function()
+    Cuts:SetCallback("OnClick", function ()
         GL.Interface.GDKP.Distribute.Overview:open(self.selectedSession, true);
         Window.frame:Hide();
     end);
@@ -528,7 +528,7 @@ function Overview:build()
         self.styleWindowAfterResize();
     end
 
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         self.styleWindowAfterResize();
     end, .05);
 
@@ -594,13 +594,13 @@ function Overview:refreshLedger()
         LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/unlocked");
         question = L["Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?"];
     end
-    LockIcon:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    LockIcon:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = question,
             OnYes = function ()
                 GDKPSession:toggleLock(self.selectedSession);
             end,
-        };
+        });
     end);
 
     if (GL:empty(Session.Auctions)) then
@@ -707,7 +707,7 @@ function Overview:refreshLedger()
                 ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
                 ItemIcon:SetImage(iconPath);
                 ItemRow:AddChild(ItemIcon);
-                ItemIcon:SetCallback("OnEnter", function()
+                ItemIcon:SetCallback("OnEnter", function ()
                     if (concernsManualAdjustment) then
                         return;
                     end
@@ -716,7 +716,7 @@ function Overview:refreshLedger()
                     GameTooltip:SetHyperlink(Auction.itemLink);
                     GameTooltip:Show();
                 end);
-                ItemIcon:SetCallback("OnLeave", function()
+                ItemIcon:SetCallback("OnLeave", function ()
                     GameTooltip:Hide();
                 end);
                 ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
@@ -736,7 +736,7 @@ function Overview:refreshLedger()
                     ITEM LABEL
                 ]]
                 local ItemLabel = AceGUI:Create("Label");
-                ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
+                ItemLabel:SetFontObject(_G.GameFontNormalSmall);
                 ItemLabel:SetWidth(268);
 
                 -- Item was sold
@@ -785,7 +785,7 @@ function Overview:refreshLedger()
 
                 --[[ DETAILS BUTTON ]]
                 local Eye = Interface:createButton(ItemRow.frame, {
-                    onClick = function()
+                    onClick = function ()
                         Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                     end,
                     tooltip = L["Details"],
@@ -799,7 +799,7 @@ function Overview:refreshLedger()
                 local Restore, Delete;
                 if (not auctionWasDeleted) then
                     Delete = Interface:createButton(ItemRow.frame, {
-                        onClick = function()
+                        onClick = function ()
                             -- Shift button was held, skip reason
                             if (IsShiftKeyDown()) then
                                 GDKPAuction:delete(Session.ID, Auction.ID, "-");
@@ -827,7 +827,7 @@ function Overview:refreshLedger()
                 --[[ RESTORE BUTTON ]]
                 if (auctionWasDeleted) then
                     Restore = Interface:createButton(ItemRow.frame, {
-                        onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
+                        onClick = function () GDKPAuction:restore(Session.ID, Auction.ID); end,
                         tooltip = L["Restore"],
                         disabledTooltip = L["\nYou need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions"],
                         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
@@ -841,7 +841,7 @@ function Overview:refreshLedger()
 
                 --[[ EDIT BUTTON ]]
                 local Edit = Interface:createButton(ItemRow.frame, {
-                    onClick = function()
+                    onClick = function ()
                         self:closeSubWindows();
                         Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                     end,
@@ -941,7 +941,7 @@ function Overview:showTutorial()
             ITEM LABEL
         ]]
         local ItemLabel = AceGUI:Create("Label");
-        ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
+        ItemLabel:SetFontObject(_G.GameFontNormalSmall);
         ItemLabel:SetWidth(268);
         ItemLabel:SetText(step);
         ItemRow:AddChild(ItemLabel);

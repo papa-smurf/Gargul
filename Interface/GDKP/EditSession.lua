@@ -89,7 +89,7 @@ function EditSession:build()
     local Save = AceGUI:Create("Button");
     Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
-    Save:SetCallback("OnClick", function()
+    Save:SetCallback("OnClick", function ()
         local title = strtrim(Title:GetText());
         if (GL:empty(title)) then
             GL:warning(L["Invalid data supplied"]);
@@ -122,7 +122,7 @@ function EditSession:build()
     local Cancel = AceGUI:Create("Button");
     Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
-    Cancel:SetCallback("OnClick", function()
+    Cancel:SetCallback("OnClick", function ()
         self:close();
     end);
     Window:AddChild(Cancel);

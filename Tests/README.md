@@ -6,14 +6,14 @@ This directory contains automated tests for Gargul.
 
 ### Standalone Unit Tests
 ```lua
-/run GargulTests:runAll()      -- Run all unit tests
-/run Gargul:xda()               -- View test results
+/run Gargul.Tests:runAll()      -- Run all unit tests
+/run Gargul:xda()                -- View test results
 ```
 
 ### MultiAuction E2E Test (Fully Automated)
 ```lua
-/run GargulMultiAuctionE2E:start()   -- Start E2E test
-/run GargulMultiAuctionE2E:stop()    -- Stop and cleanup
+/run Gargul.Tests.MultiAuctionE2E:start()   -- Start E2E test
+/run Gargul.Tests.MultiAuctionE2E:stop()    -- Stop and cleanup
 ```
 
 ## Prerequisites
@@ -28,13 +28,13 @@ Quick, synchronous unit tests with visual feedback:
 
 **Run all tests:**
 ```lua
-/run GargulTests:runAll()
+/run Gargul.Tests:runAll()
 /run Gargul:xda()
 ```
 
 **Run specific category:**
 ```lua
-/run GargulTests:run("Session Creation")
+/run Gargul.Tests:run("Session Creation")
 /run Gargul:xda()
 ```
 
@@ -58,12 +58,12 @@ Complete GDKP MultiAuction workflow with 1-second delays between steps for visua
 
 **Run the test:**
 ```lua
-/run GargulMultiAuctionE2E:start()
+/run Gargul.Tests.MultiAuctionE2E:start()
 ```
 
 **Stop/cleanup:**
 ```lua
-/run GargulMultiAuctionE2E:stop()
+/run Gargul.Tests.MultiAuctionE2E:stop()
 ```
 
 **Test Flow (Fully Automated):**
@@ -180,9 +180,9 @@ Then call it from the previous step's `scheduleNext()`.
 - Check for lua errors: `/console scriptErrors 1`
 
 ### E2E test stuck
-- Use `/run GargulMultiAuctionE2E:stop()` to cleanup
-- Check which step it's on: `/run print(GargulMultiAuctionE2E.currentStep)`
-- Check if running: `/run print(GargulMultiAuctionE2E.isRunning)`
+- Use `/run Gargul.Tests.MultiAuctionE2E:stop()` to cleanup
+- Check which step it's on: `/run print(Gargul.Tests.MultiAuctionE2E.currentStep)`
+- Check if running: `/run print(Gargul.Tests.MultiAuctionE2E.isRunning)`
 
 ### Widget access errors
 - Some widgets may not be accessible via Interface:get()

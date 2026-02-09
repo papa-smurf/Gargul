@@ -129,7 +129,7 @@ end
 ---
 ---@return nil
 function GL:xd(mixed)
-    local header = ("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S'));
+    local header = ("\n|c00967FD2%s|r ================"):format(date("%H:%M:%S"));
 
     print(header);
     DevTools_Dump(mixed);
@@ -171,12 +171,12 @@ function GL:popupMessage(text)
 
     if (not Window) then
         ---@type Frame
-        Window = GL.Interface:createWindow{
+        Window = GL.Interface:createWindow({
             name = frameName,
             hideMinimizeButton = true,
             hideResizeButton = true,
             hideWatermark = true,
-        };
+        });
 
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(1.25, "OUTLINE");
@@ -222,7 +222,7 @@ function GL:frameMessage(message)
     Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Fill");
     Window:SetStatusTable({ width = 600, height = 450, });
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         AceGUI:Release(Window);
     end);
 

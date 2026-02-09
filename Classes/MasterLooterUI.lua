@@ -44,7 +44,7 @@ local AwardReminderDialog = Dialog.new("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS")
         },
     })
     :appendFrame(
-        (function()
+        (function ()
             local wrapperName = "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX_WRAPPER";
             local Wrapper = _G[wrapperName] or CreateFrame("Frame", wrapperName);
 
@@ -61,7 +61,7 @@ local AwardReminderDialog = Dialog.new("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS")
             return Wrapper;
         end)()
     )
-    :setOnShow(function(Dialog, DialogFrame)
+    :setOnShow(function (Dialog, DialogFrame)
         GL.Interface:get(MasterLooterUI, "Button.Start"):SetDisabled(true);
 
         -- Align checkbox wrapper to item
@@ -77,7 +77,7 @@ local AwardReminderDialog = Dialog.new("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS")
         Dialog.AppendedFrame.Checkbox:ClearAllPoints();
         Dialog.AppendedFrame.Checkbox:SetPoint("BOTTOMLEFT", StaticPopup1.ButtonContainer, "TOPLEFT");
     end)
-    :setOnHide(function()
+    :setOnHide(function ()
         GL.Interface:get(MasterLooterUI, "Button.Start"):SetDisabled(false);
     end)
 
@@ -138,7 +138,7 @@ function MasterLooterUI:draw(itemLink)
     Window:SetHeight(350);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -151,8 +151,8 @@ function MasterLooterUI:draw(itemLink)
         Window.frame,
         "MasterLooting"
     );
-    SettingsButton:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
+    SettingsButton:SetScript("OnClick", function (_, button)
+        if (button == "LeftButton") then
             self:close();
 
             GL.Settings:draw("MasterLooting", function ()
@@ -199,7 +199,7 @@ function MasterLooterUI:draw(itemLink)
             FirstRow:AddChild(ItemBox);
 
             -- Show a gametooltip if the icon shown belongs to an item
-            ItemIcon:SetCallback("OnEnter", function()
+            ItemIcon:SetCallback("OnEnter", function ()
                 if (not MasterLooterUI.ItemBoxHoldsValidItem) then
                     return;
                 end
@@ -210,7 +210,7 @@ function MasterLooterUI:draw(itemLink)
                 GameTooltip:Show();
             end)
 
-            ItemIcon:SetCallback("OnLeave", function()
+            ItemIcon:SetCallback("OnLeave", function ()
                 GameTooltip:Hide();
             end)
 
@@ -243,7 +243,7 @@ function MasterLooterUI:draw(itemLink)
             StartButton:SetWidth(60); ---@TODO: TOO SHORT FOR FR
             StartButton:SetHeight(20);
             StartButton:SetDisabled(true);
-            StartButton:SetCallback("OnClick", function()
+            StartButton:SetCallback("OnClick", function ()
                 if (GL.RollOff:announceStart(
                     GL.Interface:get(self, "EditBox.Item"):GetText(),
                     GL.Interface:get(self, "EditBox.Duration"):GetText(),
@@ -270,7 +270,7 @@ function MasterLooterUI:draw(itemLink)
             StopButton:SetWidth(60);
             StopButton:SetHeight(20);
             StopButton:SetDisabled(true);
-            StopButton:SetCallback("OnClick", function()
+            StopButton:SetCallback("OnClick", function ()
                 GL.RollOff:announceStop();
             end);
             FirstRow:AddChild(StopButton);
@@ -290,7 +290,7 @@ function MasterLooterUI:draw(itemLink)
             PlusOneButton:SetText(L["+1"]);
             PlusOneButton:SetWidth(48);
             PlusOneButton:SetHeight(20);
-            PlusOneButton:SetCallback("OnClick", function()
+            PlusOneButton:SetCallback("OnClick", function ()
                 GL.Commands:call("+1");
             end);
             FirstRow:AddChild(PlusOneButton);
@@ -396,7 +396,7 @@ function MasterLooterUI:draw(itemLink)
             ClearButton:SetWidth(80);
             ClearButton:SetHeight(20);
             ClearButton:SetDisabled(false);
-            ClearButton:SetCallback("OnClick", function()
+            ClearButton:SetCallback("OnClick", function ()
                 MasterLooterUI:reset();
                 GL.RollOff:reset();
                 GL.RollOff.CurrentRollOff.Rolls = {};
@@ -413,7 +413,7 @@ function MasterLooterUI:draw(itemLink)
             AwardButton:SetWidth(90); ---@TODO: TOO SHORT FOR FR
             AwardButton:SetHeight(20);
             AwardButton:SetDisabled(true);
-            AwardButton:SetCallback("OnClick", function()
+            AwardButton:SetCallback("OnClick", function ()
                 local PlayersTable = GL.Interface:get(self, "Table.Players");
                 local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
@@ -441,7 +441,7 @@ function MasterLooterUI:draw(itemLink)
                     selectedPlayer = strsub(selectedPlayer, 1, openingBracketPosition - 1);
                 end
 
-                local RollBracket = (function()
+                local RollBracket = (function ()
                     -- Boosted rolls don't have a defined bracket (roll ranges are dynamic!)
                     if (selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR")) then
                         return {
@@ -511,17 +511,17 @@ function MasterLooterUI:draw(itemLink)
             AwardHistoryButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/award-disabled");
             AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
 
-            AwardHistoryButton:SetScript("OnEnter", function()
+            AwardHistoryButton:SetScript("OnEnter", function ()
                 GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
                 GameTooltip:SetText(L["Award history"]);
                 GameTooltip:Show();
             end);
 
-            AwardHistoryButton:SetScript("OnLeave", function()
+            AwardHistoryButton:SetScript("OnLeave", function ()
                 GameTooltip:Hide();
             end);
 
-            AwardHistoryButton:SetScript("OnClick", function()
+            AwardHistoryButton:SetScript("OnClick", function ()
                 GL.Interface.Award.Overview:open();
             end);
 
@@ -533,7 +533,7 @@ function MasterLooterUI:draw(itemLink)
             DisenchantButton:SetWidth(100);
             DisenchantButton:SetHeight(20);
             DisenchantButton:SetDisabled(true);
-            DisenchantButton:SetCallback("OnClick", function()
+            DisenchantButton:SetCallback("OnClick", function ()
                 local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
                 GL.PackMule:disenchant(itemLink, true);
@@ -541,7 +541,7 @@ function MasterLooterUI:draw(itemLink)
             end);
             ThirdRow:AddChild(DisenchantButton);
             GL.Interface:set(self, "Disenchant", DisenchantButton);
-            
+
         --[[
             FOURTH ROW (GROUP MEMBERS)
         ]]
@@ -664,7 +664,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button:RegisterForDrag("LeftButton");
     Button:SetScript("OnDragStart", Button.StartMoving);
-    Button:SetScript("OnDragStop", function()
+    Button:SetScript("OnDragStop", function ()
         Button:StopMovingOrSizing();
 
         -- Store the frame's last position for future play sessions
@@ -699,13 +699,13 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
         end
     end);
 
-    Button:SetScript("OnEnter", function()
+    Button:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(Button, "ANCHOR_TOP");
         GameTooltip:SetText(L["Open master looter window"]);
         GameTooltip:Show();
     end);
 
-    Button:SetScript("OnLeave", function()
+    Button:SetScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
@@ -729,7 +729,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
 
     GL.Interface:addTooltip(PlayStopButton, ("%s / %s"):format(L["Start"], L["Stop"]), "TOP");
 
-    PlayStopButton:SetScript("OnClick", function()
+    PlayStopButton:SetScript("OnClick", function ()
         local StartButton = GL.Interface:get(self, "Button.Start");
         local StopButton = GL.Interface:get(self, "Button.Stop");
 
@@ -758,17 +758,17 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     DisenchantButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/disenchant-disabled");
     DisenchantButton:SetHighlightTexture(DisenchantButtonHighlight);
 
-    DisenchantButton:SetScript("OnEnter", function()
+    DisenchantButton:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(DisenchantButton, "ANCHOR_TOP");
         GameTooltip:SetText(L["Disenchant"]);
         GameTooltip:Show();
     end);
 
-    DisenchantButton:SetScript("OnLeave", function()
+    DisenchantButton:SetScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
-    DisenchantButton:SetScript("OnClick", function()
+    DisenchantButton:SetScript("OnClick", function ()
         local MLUIDisenchantButton = GL.Interface:get(self, "Button.Disenchant");
 
         if (MLUIDisenchantButton) then
@@ -779,7 +779,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
         end
     end);
 
-    local refreshWidget = function()
+    local refreshWidget = function ()
         RollCountText:SetText((L["rolls: %s"]):format(#GL.RollOff.CurrentRollOff.Rolls));
 
         if (GL.RollOff.inProgress) then
@@ -812,8 +812,8 @@ function MasterLooterUI:drawPlayersTable(parent)
     Table:SetWidth(340);
     Table:EnableSelection(true);
 
-    Table:RegisterEvents{
-        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
+    Table:RegisterEvents({
+        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             if not (row or realrow) then return true end -- Disable sort
         end,
         -- Show a tooltip that contains the items that the roller already won so far
@@ -897,7 +897,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         OnLeave = function ()
             GameTooltip:Hide();
         end,
-    };
+    });
 
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
     GL.Interface:set(self, "Players", Table);
@@ -1050,16 +1050,16 @@ function MasterLooterUI:passItemLink(itemLink)
     ) then
         AwardReminderDialog
             :setItemLink(currentItemLink)
-            :replace{
+            :replace({
                 item = currentItemLink,
-            }
-            :show{
+            })
+            :show({
                 onAccept = function ()
                     GL.RollOff.CurrentRollOff.Rolls = {};
                     MasterLooterUI:reset();
                     setItem();
                 end,
-            };
+            });
     else
         setItem();
     end

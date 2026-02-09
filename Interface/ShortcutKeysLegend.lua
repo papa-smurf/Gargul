@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -35,10 +35,10 @@ function ShortcutKeysLegend:draw()
     Window:SetLayout("Flow");
     Window:SetWidth(240);
     Window:SetHeight(30);
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
-    Window.frame:SetScript("OnMouseDown", function(_, button)
+    Window.frame:SetScript("OnMouseDown", function (_, button)
         if (button == "RightButton") then
             GL.Settings:set("ShortcutKeys.showLegend", false);
             self:close();
@@ -58,7 +58,7 @@ function ShortcutKeysLegend:draw()
     ]]
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
-    DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
+    DescriptionLabel:SetFontObject(_G.GameFontNormalSmall);
     DescriptionLabel:SetText((L["\nGargul Item Hotkeys\n\nRoll out: |c00A79EFF%s|r\nAward: |c00A79EFF%s|r\nDisenchant: |c00A79EFF%s|r\n\n\n-- Right-click to disable this window --\n"]):format(
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),

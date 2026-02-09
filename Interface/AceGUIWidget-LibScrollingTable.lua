@@ -40,7 +40,6 @@ local pairs = pairs
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
-
 --[[-----------------------------------------------------------------------------
 Support functions
 -------------------------------------------------------------------------------]]
@@ -84,43 +83,42 @@ Methods
 -------------------------------------------------------------------------------]]
 
 local methods = {
-    ["OnAcquire"] = function(self)
+    ["OnAcquire"] = function (self)
         Resize(self)
     end,
 
-    ["Show"] = function(self)
+    ["Show"] = function (self)
         self.st:Show()
     end,
 
-    ["Hide"] = function(self)
+    ["Hide"] = function (self)
         self.st:Hide()
     end,
 
     -- ["OnRelease"] = nil,
 
-    ["GetScrollingTable"] = function(self)
+    ["GetScrollingTable"] = function (self)
         return self.st
     end,
 
-    ["GetDefaultEvent"] = function(self, event)
+    ["GetDefaultEvent"] = function (self, event)
         return self.st.DefaultEvents[event]
     end,
 
-    ["GetWidth"] = function(self)
+    ["GetWidth"] = function (self)
         return self.frame.width
     end,
 
-    ["SetBackdropColor"] = function(self, ...)
+    ["SetBackdropColor"] = function (self, ...)
         self.st.frame:SetBackdropColor(...)
     end,
 
-
     -- AFAIK needed for input type of AceConfigDialog
-    ["SetDisabled"] = function(self)
+    ["SetDisabled"] = function (self)
     end,
-    ["SetLabel"] = function(self)
+    ["SetLabel"] = function (self)
     end,
-    ["SetText"] = function(self)
+    ["SetText"] = function (self)
     end,
 }
 
@@ -145,17 +143,17 @@ local function Constructor()
 
     for _, methodName in ipairs(STMethodsToExposeDirectly) do
         ---@diagnostic disable-next-line: assign-type-mismatch
-        widget[methodName] = function(self, ...) return self.st[methodName](self.st, ...) end
+        widget[methodName] = function (self, ...) return self.st[methodName](self.st, ...) end
     end
 
     -- Methods that we do not want to be touched directly as they require resize
     for _, methodName in ipairs(STMethodsToExposeWithResize) do
         ---@diagnostic disable-next-line: assign-type-mismatch
-        widget[methodName] = function(self, ...)
+        widget[methodName] = function (self, ...)
             -- local newMethodName = "ace3_" .. methodName
             -- self.st[newMethodName] = self.st[methodName]
             -- self.st[newMethodName](self.st, ...)
-            -- self.st[methodName] = (function()
+            -- self.st[methodName] = (function ()
             --     error("Do not call " .. methodName .. " directly when using Ace3 wrapper.")
             -- end)
             self.st[methodName](self.st, ...)

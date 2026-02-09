@@ -167,7 +167,7 @@ function TMB:filterNonRaiders(Entries)
 end
 
 --- Fetch TMB info for a specific item and player
---- 
+---
 ---@param itemIdentifier number|string
 ---@param player string
 ---@return table
@@ -1273,7 +1273,7 @@ function TMB:broadcast(sendEmptyPayload)
     end
 
     if (sendEmptyPayload) then
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastTMBData,
             content = {
                 Items = {
@@ -1290,7 +1290,7 @@ function TMB:broadcast(sendEmptyPayload)
                 },
             },
             channel = "GROUP",
-        }:send();
+        }):send();
 
         return;
     end
@@ -1356,12 +1356,12 @@ function TMB:broadcastToWhitelist()
         Events:fire("GL.TMB_BROADCAST_STARTED");
 
         for _, player in pairs(WhitelistedPlayersInGroup) do
-            GL.CommMessage.new{
+            GL.CommMessage.new({
                 action = CommActions.broadcastTMBData,
                 content = GL.DB.TMB,
                 channel = "WHISPER",
                 recipient = player,
-            }:send(function ()
+            }):send(function ()
                 broadcastsFinished = broadcastsFinished + 1;
 
                 if (broadcastsFinished >= numberOfPlayers) then
@@ -1405,11 +1405,11 @@ function TMB:broadcastToGroup()
             Label:SetText(L["Broadcasting..."]);
         end
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastTMBData,
             content = GL.DB.TMB,
             channel = "GROUP",
-        }:send(function ()
+        }):send(function ()
             GL:success(L["Broadcast finished!"]);
             Events:fire("GL.TMB_BROADCAST_ENDED");
             self.broadcastInProgress = false;
@@ -1496,7 +1496,7 @@ function TMB:requestData()
 
     self.requestingData = true;
 
-    local playerToRequestFrom = (function()
+    local playerToRequestFrom = (function ()
         -- We are the ML, we need to import the data ourselves
         if (GL.User.isMasterLooter) then
             return;
@@ -1535,14 +1535,14 @@ function TMB:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.requestTMBData,
         content = {
             currentHash = GL.DB:get("TMB.MetaData.hash", nil),
         },
         channel = "WHISPER",
         recipient = playerToRequestFrom,
-    }:send();
+    }):send();
 
     self.requestingData = false;
 end
@@ -1609,12 +1609,12 @@ function TMB:replyToDataRequest(CommMessage)
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastTMBData,
         content = GL.DB.TMB,
         channel = "WHISPER",
         recipient = CommMessage.senderFqn,
-    }:send(function ()
+    }):send(function ()
         -- Make sure to broadcast the loot priorities as well
         GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);
     end);
@@ -1628,7 +1628,7 @@ function TMB:sortEntries(Entries, key)
     Entries = not GL:empty(Entries) and Entries or {};
     Entries = GL:tableValues(Entries);
 
-    table.sort(Entries, function(a, b)
+    table.sort(Entries, function (a, b)
         if (a[key] and b[key]) then
             if (self:wasImportedFromDFT() or self:wasImportedFromRRobin()) then
                 return a[key] > b[key];

@@ -55,7 +55,7 @@ function Broadcast:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 244,
         height = 490,
@@ -64,7 +64,7 @@ function Broadcast:build()
         maxWidth = 1600,
         maxHeight = 900,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -81,7 +81,7 @@ function Broadcast:build()
     ChannelLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     ---@type Frame
-    local Channel = Interface:createDropdown{
+    local Channel = Interface:createDropdown({
         Parent = Window,
         Options = {
             [CHANNEL_GROUP] = L["Group"],
@@ -93,7 +93,7 @@ function Broadcast:build()
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.channel", value);
         end
-    };
+    });
     Channel:SetPoint("TOP", ChannelLabel, "BOTTOM", 0, -6);
     Channel:SetPoint("LEFT", Window, "LEFT");
 
@@ -120,7 +120,7 @@ function Broadcast:build()
     MinimumQualityLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     ---@type Frame
-    local MinimumQuality = Interface:createDropdown{
+    local MinimumQuality = Interface:createDropdown({
         Parent = Window,
         Options = {
             [3] = ("|c000070DD%s|r"):format(L["Rare"]),
@@ -130,7 +130,7 @@ function Broadcast:build()
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.minimumQuality", value);
         end
-    };
+    });
     MinimumQuality:SetPoint("TOP", MinimumQualityLabel, "BOTTOM", 0, -6);
     MinimumQuality:SetPoint("LEFT", Window, "LEFT");
 
@@ -141,7 +141,7 @@ function Broadcast:build()
     MaximumTradeTimeLeftLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     ---@type Frame
-    local MaximumTradeTimeLeft = Interface:createSlider{
+    local MaximumTradeTimeLeft = Interface:createSlider({
         Parent = Window,
         min = 0,
         max = 120,
@@ -150,7 +150,7 @@ function Broadcast:build()
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.maximumTradeTimeLeft", value);
         end
-    };
+    });
     MaximumTradeTimeLeft:SetPoint("TOPLEFT", MaximumTradeTimeLeftLabel, "BOTTOMLEFT", 0, -6);
 
     --[[ NUMBER OF ITEMS ]]
@@ -160,7 +160,7 @@ function Broadcast:build()
     NumberOfItemsLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     ---@type Frame
-    local NumberOfItems = Interface:createSlider{
+    local NumberOfItems = Interface:createSlider({
         Parent = Window,
         min = 1,
         max = 50,
@@ -169,58 +169,58 @@ function Broadcast:build()
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.numberOfItems", value);
         end
-    };
+    });
     NumberOfItems:SetPoint("TOPLEFT", NumberOfItemsLabel, "BOTTOMLEFT", 0, -6);
 
     --[[ INCLUDE TIME LEFT ]]
     ---@type CheckButton
-    local IncludeTimeLeft = Interface:createCheckbox{
+    local IncludeTimeLeft = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeTimeLeft"),
         label = L["Include time left"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeTimeLeft", value)
         end,
-    };
+    });
     IncludeTimeLeft:SetPoint("TOP", NumberOfItems, "BOTTOM", 0, -30);
     IncludeTimeLeft:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     --[[ INCLUDE AWARDED ITEMS ]]
     ---@type CheckButton
-    local IncludeAwardedItems = Interface:createCheckbox{
+    local IncludeAwardedItems = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeAwardedItems"),
         label = L["Include awarded items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeAwardedItems", value)
         end,
-    };
+    });
     IncludeAwardedItems:SetPoint("TOP", IncludeTimeLeft, "BOTTOM", 0, -6);
     IncludeAwardedItems:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     --[[ INCLUDE DISENCHANTED ITEMS ]]
     ---@type CheckButton
-    local IncludeDisenchantedItems = Interface:createCheckbox{
+    local IncludeDisenchantedItems = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeDisenchantedItems"),
         label = L["Include disenchanted items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeDisenchantedItems", value)
         end,
-    };
+    });
     IncludeDisenchantedItems:SetPoint("TOP", IncludeAwardedItems, "BOTTOM", 0, -6);
     IncludeDisenchantedItems:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     --[[ INCLUDE HIDDEN ITEMS ]]
     ---@type CheckButton
-    local IncludeHiddenItems = Interface:createCheckbox{
+    local IncludeHiddenItems = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeHiddenItems"),
         label = L["Include hidden items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeHiddenItems", value)
         end,
-    };
+    });
     IncludeHiddenItems:SetPoint("TOP", IncludeDisenchantedItems, "BOTTOM", 0, -6);
     IncludeHiddenItems:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -313,7 +313,7 @@ function Broadcast:getTradeTimeDetails(includeAwarded, includeDisenchanted, incl
     for _, Details in pairs(State or {}) do
         local secondsRemaining = (now - (Details.measuredAt + Details.secondsRemaining)) * -1;
 
-        (function()
+        (function ()
             -- This item is "too fresh", don't broadcast
             if (maximumTradeTime) then
                 if (secondsRemaining > maximumTradeTime) then

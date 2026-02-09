@@ -50,12 +50,12 @@ function BagInspector:inspect(items)
     -- Send the inspection request to the correct channel
     local CommMessage = {};
     GL:success(L["Starting inspection..."]);
-    CommMessage = GL.CommMessage.new{
+    CommMessage = GL.CommMessage.new({
         action = CommActions.inspectBags,
         content = items,
         channel = "GROUP",
         acceptsResponse = true,
-    }:send();
+    }):send();
 
     -- After a period of X seconds inspect the results
     GL.Ace:ScheduleTimer(function ()
@@ -130,7 +130,7 @@ function BagInspector:processInspectionResults(CommMessage)
     for itemID in pairs(ItemIDs) do
         local item = Item:CreateFromItemID(itemID);
 
-        item:ContinueOnItemLoad(function()
+        item:ContinueOnItemLoad(function ()
             itemsLoaded = itemsLoaded + 1;
             tinsert(BagInspector.InspectionReport.Items, {
                 id = itemID,
@@ -155,7 +155,7 @@ function BagInspector:displayInspectionResults()
 
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
-    ResultFrame:SetCallback("OnClose", function(widget)
+    ResultFrame:SetCallback("OnClose", function (widget)
         GL.BagInspector.InspectionReport = {
             Items = {},
             Reports = {},
@@ -211,13 +211,13 @@ function BagInspector:displayInspectionResults()
             ItemIcon:SetImageSize(30, 30);
 
             -- Show a gametooltip if the icon shown belongs to an item
-            ItemIcon:SetCallback("OnEnter", function()
+            ItemIcon:SetCallback("OnEnter", function ()
                 GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
                 GameTooltip:SetHyperlink(Item.link);
                 GameTooltip:Show();
             end)
 
-            ItemIcon:SetCallback("OnLeave", function()
+            ItemIcon:SetCallback("OnLeave", function ()
                 GameTooltip:Hide();
             end)
         end

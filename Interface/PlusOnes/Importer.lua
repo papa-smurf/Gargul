@@ -37,7 +37,7 @@ function Importer:draw()
     Window:SetHeight(530);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -45,12 +45,12 @@ function Importer:draw()
     Window:SetPoint(GL.Interface:getPosition("PlusOnesImport"));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_PLUSONES_IMPORTER_WINDOW"] = Window.frame;
+    _G.GARGUL_PLUSONES_IMPORTER_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_PLUSONES_IMPORTER_WINDOW");
 
     -- Explanation
     local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFontObject(_G.GameFontNormal);
     Description:SetFullWidth(true);
     Description:SetText(L["\nHere you can import plus one data from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are ignored.\n\nHere is an example line:\n\nFoobar,240\n"]);
     Window:AddChild(Description);
@@ -65,7 +65,7 @@ function Importer:draw()
     PlusOneDataBox:SetMaxLetters(999999999);
     Window:AddChild(PlusOneDataBox);
 
-    PlusOneDataBox:SetCallback("OnTextChanged", function(_, _, text)
+    PlusOneDataBox:SetCallback("OnTextChanged", function (_, _, text)
         self.plusOnesBoxContent = text;
     end)
 
@@ -77,7 +77,7 @@ function Importer:draw()
     Window:AddChild(StatusMessageFrame);
 
     local StatusMessageLabel = AceGUI:Create("Label");
-    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
+    StatusMessageLabel:SetFontObject(_G.GameFontNormal);
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
     StatusMessageFrame:AddChild(StatusMessageLabel);
@@ -87,7 +87,7 @@ function Importer:draw()
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(100);
-    ImportButton:SetCallback("OnClick", function()
+    ImportButton:SetCallback("OnClick", function ()
         GL.Interface.Dialogs.PopupDialog:open({
             question = L["This will clear all your +1 data. Continue?"],
             OnYes = function ()

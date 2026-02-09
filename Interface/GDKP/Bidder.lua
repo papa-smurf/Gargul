@@ -84,7 +84,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
     Window:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:RegisterForDrag("LeftButton");
     Window:SetScript("OnDragStart", Window.StartMoving);
-    Window:SetScript("OnDragStop", function()
+    Window:SetScript("OnDragStop", function ()
         Window:StopMovingOrSizing();
         GL.Interface:storePosition(Window, "Bidder");
     end);
@@ -113,16 +113,16 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
 
     CountDownBarDragger:EnableMouse(true);
     CountDownBarDragger:RegisterForDrag("LeftButton");
-    CountDownBarDragger:SetScript("OnDragStart", function()
+    CountDownBarDragger:SetScript("OnDragStart", function ()
         Window:StartMoving();
     end);
-    CountDownBarDragger:SetScript("OnDragStop", function()
+    CountDownBarDragger:SetScript("OnDragStop", function ()
         Window:StopMovingOrSizing();
         GL.Interface:storePosition(Window, "Bidder");
     end);
 
     -- Close the roll window on rightclick
-    CountDownBarDragger:SetScript("OnMouseDown", function(_, button)
+    CountDownBarDragger:SetScript("OnMouseDown", function (_, button)
         if (button == "RightButton") then
             self:hide();
         end
@@ -139,7 +139,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
         itemTooltipIsShowing = true;
     end;
 
-    CountDownBarDragger:SetScript("OnEnter", function()
+    CountDownBarDragger:SetScript("OnEnter", function ()
         lastShiftStatus = IsShiftKeyDown();
 
         GameTooltip:SetOwner(CountDownBarDragger, "ANCHOR_TOP");
@@ -148,7 +148,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
         itemTooltipIsShowing = true;
     end);
 
-    CountDownBarDragger:SetScript("OnLeave", function()
+    CountDownBarDragger:SetScript("OnLeave", function ()
         GameTooltip:Hide();
         itemTooltipIsShowing = false;
     end);
@@ -190,7 +190,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
     BidInput:SetPoint("TOPLEFT", NewBid, "TOPRIGHT", 12, 4);
     BidInput:SetAutoFocus(false);
     BidInput:SetCursorPosition(0);
-    BidInput:SetScript("OnEnterPressed", function()
+    BidInput:SetScript("OnEnterPressed", function ()
         BidButtonClick();
     end);
 
@@ -230,7 +230,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
     AutoBidButton:SetNormalFontObject("GameFontNormal");
     AutoBidButton:SetHighlightFontObject("GameFontNormal");
     AutoBidButton:SetScript("OnClick", function ()
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
             question = (L["What's your maximum bid? (Minimum %s|c00FFF569g)"]):format(GDKPAuction:lowestValidBid()),
             inputValue = BidInput:GetText(),
             OnYes = function (max)
@@ -244,7 +244,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
                 end
             end,
             focus = true,
-        };
+        });
     end);
     self.AutoBidButton = AutoBidButton;
 

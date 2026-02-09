@@ -70,7 +70,7 @@ function AddGold:build()
     local Save = AceGUI:Create("Button");
     Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
-    Save:SetCallback("OnClick", function()
+    Save:SetCallback("OnClick", function ()
         local gold = tonumber(strtrim(Gold:GetText())) or 0;
         if (not gold or gold == 0) then
             GL:warning(L["Gold needs to be lower/higher than 0"]);
@@ -92,7 +92,7 @@ function AddGold:build()
     local Cancel = AceGUI:Create("Button");
     Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
-    Cancel:SetCallback("OnClick", function()
+    Cancel:SetCallback("OnClick", function ()
         self:close();
     end);
     Window:AddChild(Cancel);

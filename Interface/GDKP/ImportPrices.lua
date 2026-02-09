@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -53,8 +53,8 @@ function ImportPrices:build()
     local Confirm = AceGUI:Create("Button");
     Confirm:SetText(L["Import"]);
     Confirm:SetFullWidth(true);
-    Confirm:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    Confirm:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here"],
             OnYes = function ()
                 GDKP:resetPerItemSettings();
@@ -64,7 +64,7 @@ function ImportPrices:build()
                 GDKP:importPerItemSettings(ImportPricesBox:GetText());
             end,
             withCancel = true,
-        };
+        });
     end);
     Window:AddChild(Confirm);
 

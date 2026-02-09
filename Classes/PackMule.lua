@@ -201,7 +201,7 @@ function PackMule:processGroupLootItems(rollID)
     end
 
     -- See if there's a PackMule target, if so hand it out
-    self:getTargetForItem(itemLink, function(target)
+    self:getTargetForItem(itemLink, function (target)
         if (not target) then
             return;
         end
@@ -259,7 +259,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     GL.User.isInRaid = true;
     GL.User.isInParty = false;
 
-    self:getTargetForItem(itemID, function(masterTarget)
+    self:getTargetForItem(itemID, function (masterTarget)
         local itemIDisIgnoredForMaster = GL:empty(masterTarget);
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
@@ -270,7 +270,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
         GL.User.isInRaid = false;
         GL.User.isInParty = true;
 
-        self:getTargetForItem(itemID, function(groupTarget)
+        self:getTargetForItem(itemID, function (groupTarget)
             local itemIDisIgnoredForGroup = GL:empty(groupTarget);
 
             -- Reset everything
@@ -286,7 +286,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         self.getValidRules = OriginalGetValidRulesFunction;
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
@@ -322,7 +322,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     GL.User.isInRaid = true;
     GL.User.isInParty = false;
 
-    self:getTargetForItem(itemID, function(masterTarget)
+    self:getTargetForItem(itemID, function (masterTarget)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
@@ -332,7 +332,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
         GL.User.isInRaid = false;
         GL.User.isInParty = true;
 
-        self:getTargetForItem(itemID, function(groupTarget)
+        self:getTargetForItem(itemID, function (groupTarget)
             -- Reset everything
             GL.GetLootMethod = oldGetLootMethod;
             GL.User.isMasterLooter = oldIsMasterLooter;
@@ -345,7 +345,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
@@ -393,7 +393,7 @@ function PackMule:lootReady()
     end
 
     for itemIndex = GetNumLootItems(), 1, -1 do
-        (function()
+        (function ()
             local _, _, _, _, _, locked = GetLootSlotInfo(itemIndex);
 
             -- Locked means that you aren't able to loot it (tinted red)
@@ -414,7 +414,7 @@ function PackMule:lootReady()
             end
 
             -- Check if there is a preferred target for this item and if so: hand it out!
-            self:getTargetForItem(itemID, function(target)
+            self:getTargetForItem(itemID, function (target)
                 if (not target) then
                     self.processing = false;
                     return;
@@ -873,7 +873,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
         -- Show the player selector
         GL.Interface.PlayerSelector:draw(L["Who is your disenchanter?"], PlayerNames, function (playerName)
-            GL.Interface.Dialogs.PopupDialog:open{
+            GL.Interface.Dialogs.PopupDialog:open({
                 question = (L["Set %s as your disenchanter?"]):format(GL:formatPlayerName(playerName, { colorize = true, })),
                 OnYes = function ()
                     self:setDisenchanter(playerName);
@@ -881,7 +881,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
                     GL.Interface.PlayerSelector:close();
                 end,
-            };
+            });
         end);
 
         return;
@@ -890,11 +890,11 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     if (byPassConfirmationDialog) then
         self:assignLootToPlayer(itemID, self.disenchanter);
         GL.Interface.PlayerSelector:close();
-        GL.AwardedLoot:addWinner{
+        GL.AwardedLoot:addWinner({
             winner = GL.Exporter.disenchantedItemIdentifier,
             itemLink = itemLink,
             announce = false,
-        };
+        });
         self:announceDisenchantment(itemLink);
         callback(true);
 
@@ -902,7 +902,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     end
 
     -- Make sure the initiator confirms his choice
-    GL.Interface.Dialogs.PopupDialog:open{
+    GL.Interface.Dialogs.PopupDialog:open({
         question = (L["Send %s to %s? Type /gl cd to remove this disenchanter!"]):format(
             itemLink,
             GL:formatPlayerName(self.disenchanter, { colorize = true, })
@@ -910,15 +910,15 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         OnYes = function ()
             self:assignLootToPlayer(itemID, self.disenchanter);
             GL.Interface.PlayerSelector:close();
-            GL.AwardedLoot:addWinner{
+            GL.AwardedLoot:addWinner({
                 winner = GL.Exporter.disenchantedItemIdentifier,
                 itemLink = itemLink,
                 announce = false,
-            };
+            });
             self:announceDisenchantment(itemLink);
             callback(true);
         end,
-    };
+    });
 end
 
 --- Clear the disenchanter

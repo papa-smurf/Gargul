@@ -23,7 +23,7 @@ local AutoRollRules = {
     _rulesListRef = nil,
 
     ---@return nil
-    onClose = function()
+    onClose = function ()
         GL.Interface.Settings.AutoRollRules._linkTargetEditBox = nil;
         GL.Interface.Settings.AutoRollRules._profileDropdown = nil;
         GL.Interface.Settings.AutoRollRules._profileBarFrame = nil;
@@ -177,7 +177,7 @@ function AutoRollRules:drawProfileBar(Parent)
 
     local xOffset = 0;
     local createBtn = createIconButton("CreateProfile", "create.tga", L["Create profile"], function ()
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
             question = L["Profile name"],
             inputValue = "",
             OnYes = function (name)
@@ -195,7 +195,7 @@ function AutoRollRules:drawProfileBar(Parent)
                 LibDD:UIDropDownMenu_Refresh(DropDown);
                 LibDD:UIDropDownMenu_SetText(DropDown, strtrim(name));
             end,
-        };
+        });
     end);
     createBtn:SetPoint("LEFT", buttonsFrame, "LEFT", xOffset, 0);
     xOffset = xOffset + btnSize + btnSpacing;
@@ -205,7 +205,7 @@ function AutoRollRules:drawProfileBar(Parent)
         if (not active) then
             return;
         end
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
             question = L["Copy profile"],
             inputValue = active.name .. " " .. L["(copy)"],
             OnYes = function (name)
@@ -223,7 +223,7 @@ function AutoRollRules:drawProfileBar(Parent)
                 LibDD:UIDropDownMenu_Refresh(DropDown);
                 LibDD:UIDropDownMenu_SetText(DropDown, strtrim(name));
             end,
-        };
+        });
     end);
     copyBtn:SetPoint("LEFT", buttonsFrame, "LEFT", xOffset, 0);
     xOffset = xOffset + btnSize + btnSpacing;
@@ -234,7 +234,7 @@ function AutoRollRules:drawProfileBar(Parent)
         if (not activeID or not active) then
             return;
         end
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
             question = L["Rename profile"],
             inputValue = active.name,
             OnYes = function (name)
@@ -250,7 +250,7 @@ function AutoRollRules:drawProfileBar(Parent)
                 LibDD:UIDropDownMenu_Refresh(DropDown);
                 LibDD:UIDropDownMenu_SetText(DropDown, newName);
             end,
-        };
+        });
     end);
     renameBtn:SetPoint("LEFT", buttonsFrame, "LEFT", xOffset, 0);
     xOffset = xOffset + btnSize + btnSpacing;
@@ -261,7 +261,7 @@ function AutoRollRules:drawProfileBar(Parent)
         if (not activeID or not active or GL:iEquals(active.name, L["Default"])) then
             return;
         end
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = (L["Delete profile \"%s\"?"]):format(active.name),
             OnYes = function ()
                 Profiles:deleteProfile(GL.Profiles.NAMESPACE_AUTOROLL, activeID);
@@ -269,7 +269,7 @@ function AutoRollRules:drawProfileBar(Parent)
                 self:refreshRulesList(self._rulesListRef);
                 LibDD:UIDropDownMenu_Refresh(DropDown);
             end,
-        };
+        });
     end);
     deleteBtn:SetPoint("LEFT", buttonsFrame, "LEFT", xOffset, 0);
     self._profileDeleteBtn = deleteBtn;
@@ -413,13 +413,13 @@ function AutoRollRules:draw(Parent)
     clearAllBtn:SetText(L["Clear all"]);
     clearAllBtn:SetWidth(90);
     clearAllBtn:SetCallback("OnClick", function ()
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Remove all rules from this profile?"],
             OnYes = function ()
                 GL.Profiles:setProfileData(GL.Profiles.NAMESPACE_AUTOROLL, {});
                 self:refreshRulesList(self._rulesListRef);
             end,
-        };
+        });
     end);
     RulesHeaderRow:AddChild(clearAllBtn);
     GL.Interface:addTooltip(clearAllBtn, L["Remove all rules from this profile"]);

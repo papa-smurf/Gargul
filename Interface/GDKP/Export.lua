@@ -100,7 +100,7 @@ function Export:build()
     ExportFormat:SetList(DropDownItems);
     ExportFormat:SetText(DropDownItems[GL.Settings:get("GDKP.exportFormat", 1)]);
     ExportFormat:SetFullWidth(true);
-    ExportFormat:SetCallback("OnValueChanged", function()
+    ExportFormat:SetCallback("OnValueChanged", function ()
         GL.Settings:set("GDKP.exportFormat", ExportFormat:GetValue());
         self:refresh();
     end);
@@ -194,8 +194,8 @@ function Export:build()
         }, "\n"));
         GameTooltip:Show();
     end;
-    HelpIcon:SetCallback("OnEnter", function() showCustomFormatHelpTooltip() end);
-    HelpIcon:SetCallback("OnLeave", function() GameTooltip:Hide(); end);
+    HelpIcon:SetCallback("OnEnter", function () showCustomFormatHelpTooltip() end);
+    HelpIcon:SetCallback("OnLeave", function () GameTooltip:Hide(); end);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");
@@ -209,7 +209,7 @@ function Export:build()
     Checkbox:SetLabel(L["Include disenchanted items"]);
     Checkbox:SetFullWidth(true);
     Checkbox.text:SetTextColor(1, .95686, .40784);
-    Checkbox:SetCallback("OnValueChanged", function()
+    Checkbox:SetCallback("OnValueChanged", function ()
         Settings:set("GDKP.ExportAuctions.includeDisenchantedItems", Checkbox:GetValue());
         self:refresh();
     end);
@@ -385,7 +385,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
             if (not GL:empty(ItemDetails)) then
                 local Values = {
                     ["@ID"] = Auction.itemID,
-                    ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
+                    ["@LINK"] = ItemDetails.link:gsub("\124","\124\124"),
                     ["@ITEM"] = C_Item.GetItemNameByID and C_Item.GetItemNameByID(ItemDetails.link) or ItemDetails.name,
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
@@ -395,14 +395,14 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
                     ["@WINNER"] = Auction.Winner.name,
                     ["@REALM"] = Auction.Winner.realm,
                     ["@NORMALIZED"] = GL:formatPlayerName(Auction.Winner.name, { realm = Auction.Winner.realm, }),
-                    ["@YEAR"] = date('%Y', Auction.createdAt),
-                    ["@YY"] = date('%y', Auction.createdAt),
-                    ["@MONTH"] = date('%m', Auction.createdAt),
-                    ["@DAY"] = date('%d', Auction.createdAt),
-                    ["@HOUR"] = date('%H', Auction.createdAt),
-                    ["@MINUTE"] = date('%M', Auction.createdAt),
+                    ["@YEAR"] = date("%Y", Auction.createdAt),
+                    ["@YY"] = date("%y", Auction.createdAt),
+                    ["@MONTH"] = date("%m", Auction.createdAt),
+                    ["@DAY"] = date("%d", Auction.createdAt),
+                    ["@HOUR"] = date("%H", Auction.createdAt),
+                    ["@MINUTE"] = date("%M", Auction.createdAt),
                     ["@DATE"] = date(L["%Y-%m-%d"], Auction.createdAt),
-                    ["@TIME"] = date('%H:%M', Auction.createdAt),
+                    ["@TIME"] = date("%H:%M", Auction.createdAt),
                     ["@TITLE"] = Session.title,
                     ["@START"] = startedAt,
                     ["@ICON"] = iconLink or "",

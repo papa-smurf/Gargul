@@ -122,14 +122,14 @@ function Interface:dynamicPanelButton(Parent, text, template)
     Text:SetJustifyV("MIDDLE")
 
     Text._SetFont = Text.SetFont;
-    Text.SetFont = function(_, rem, flags)
+    Text.SetFont = function (_, rem, flags)
         Text:_SetFont(GL.FONT, GL:rem(rem), flags or "");
     end
 
     Text:SetFont();
 
     -- Make sure the button changes in size whenever we change its contents
-    Button.SetText = function(_, ...)
+    Button.SetText = function (_, ...)
         local scale = Button:GetScale();
 
         if (scale < 1) then
@@ -166,11 +166,11 @@ function Interface:numericInputBox(Parent, name, placeholder, decimals)
         local output  = "";
 
         if (not decimals or decimals == 0) then
-            string.gsub(text,'%d[%d]*',function(e)
+            string.gsub(text,"%d[%d]*",function (e)
                 output = output .. e;
             end);
         else
-            string.gsub(text,'%d[%d.]*',function(e)
+            string.gsub(text,"%d[%d.]*",function (e)
                 output = output .. e;
             end);
 
@@ -209,7 +209,7 @@ function Interface:inputBox(Parent, name, placeholder)
     Input:SetAutoFocus(false);
 
     Input._SetFont = Input.SetFont;
-    Input.SetFont = function(_, rem, flags)
+    Input.SetFont = function (_, rem, flags)
         Input:_SetFont(GL.FONT, GL:rem(rem), flags or "");
     end
     Input:SetFont();
@@ -221,13 +221,13 @@ function Interface:inputBox(Parent, name, placeholder)
 
         -- Make sure an empty value is returned when the placeholder value is still active
         Input._GetText = Input.GetText;
-        Input.GetText = function()
+        Input.GetText = function ()
             local text = Input:IsNumeric() and Input:GetNumber() or Input:_GetText();
 
             return text ~= Input._placeholder and text or "";
         end
 
-        Input.updatePlaceholder = function(placeholder)
+        Input.updatePlaceholder = function (placeholder)
             -- This ensures that the old placeholder is removed before setting a new one
             if (GL:empty(Input:GetText())) then
                 Input:SetText("");
@@ -265,7 +265,7 @@ function Interface:inputBox(Parent, name, placeholder)
         end);
     else
         Input._GetText = Input.GetText;
-        Input.GetText = function()
+        Input.GetText = function ()
             return Input:IsNumeric() and Input:GetNumber() or Input:_GetText();
         end
     end
@@ -347,7 +347,7 @@ function Interface:textArea(Parent, name, width, height)
     TextArea:SetWidth(ScrollFrame:GetWidth());
     TextArea:SetPoint("LEFT", ScrollFrame, "LEFT", 50, 0);
 
-    TextArea:SetScript("OnEscapePressed", function(self)
+    TextArea:SetScript("OnEscapePressed", function (self)
         self:ClearFocus();
     end)
 
@@ -390,11 +390,11 @@ function Interface:createFontString(Parent, text, template, name, layer)
     FontString:SetJustifyH("LEFT");
 
     FontString._SetFont = FontString.SetFont;
-    FontString.SetFont = function(_, rem, flags)
+    FontString.SetFont = function (_, rem, flags)
         FontString:_SetFont(GL.FONT, GL:rem(rem), flags or "");
     end
 
-    FontString.SetColor = function(_, color)
+    FontString.SetColor = function (_, color)
         color = self.Colors[color] or color;
         FontString:SetText(("|c00%s%s|r"):format(color, FontString:GetText() or ""));
 
@@ -459,11 +459,11 @@ function Interface:addMoveButton(Element)
         self:addTooltip(Move, L["Move"], "CURSOR");
         Move:EnableMouse(true);
         Move:RegisterForDrag("LeftButton");
-        Move:SetScript("OnDragStart", function()
+        Move:SetScript("OnDragStart", function ()
             Element:StartMoving();
             Move:SetButtonState("PUSHED");
         end);
-        Move:SetScript("OnDragStop", function()
+        Move:SetScript("OnDragStop", function ()
             Element:StopMovingOrSizing();
             self:storePosition(Element);
             Move:SetButtonState("NORMAL");
@@ -662,10 +662,10 @@ function Interface:addResizer(Element)
     Resize.PushedTexture = PushedTexture;
     Resize:SetPushedTexture(PushedTexture);
 
-    Resize:SetScript("OnMouseDown", function()
+    Resize:SetScript("OnMouseDown", function ()
         Element:StartSizing("BOTTOMRIGHT");
     end);
-    Resize:SetScript("OnMouseUp", function()
+    Resize:SetScript("OnMouseUp", function ()
         Element:StopMovingOrSizing("BOTTOMRIGHT");
     end);
 
@@ -950,7 +950,7 @@ function Interface:createSlider(Parent, name, min, max, step, value, callback, w
     local Slider = CreateFrame("Slider", name, Parent, "BackdropTemplate");
     Slider:SetSize(width, height);
     Slider:SetHitRectInsets(0, 0, -10, 0);
-    Slider:SetOrientation('HORIZONTAL');
+    Slider:SetOrientation("HORIZONTAL");
     Slider:SetMinMaxValues(min, max);
     Slider:SetObeyStepOnDrag(true);
     Slider:SetValue(1);
@@ -979,7 +979,7 @@ function Interface:createSlider(Parent, name, min, max, step, value, callback, w
     Input:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80);
 
     Input._SetFont = Input.SetFont;
-    Input.SetFont = function(_, rem, flags)
+    Input.SetFont = function (_, rem, flags)
         Input:_SetFont(GL.FONT, GL:rem(rem), flags or "");
     end
 
@@ -1183,11 +1183,11 @@ function Interface:createDropdown(Parent, name, value, Options, sorter, callback
         Dropdown.Options = Options;
     end
 
-    Dropdown.SetWidth = function(_, width)
+    Dropdown.SetWidth = function (_, width)
         UIDropDownMenu_SetWidth(Dropdown, width);
     end
 
-    Dropdown.SetText = function(_, text)
+    Dropdown.SetText = function (_, text)
         UIDropDownMenu_SetText(Dropdown, text);
     end
 
@@ -1220,22 +1220,22 @@ function Interface:openScaler(Parent)
     local sliderName = self.scalerName .. ".Slider";
 
     local min, max, step = .5, 2, .05;
-    local valueToStep = function(value)
+    local valueToStep = function (value)
         return floor((value - min) / step + 0.5) * step + min;
     end
 
     if (not Scaler) then
         ---@type Frame
-        Scaler = self:createWindow{
+        Scaler = self:createWindow({
             name = self.scalerName,
             hideMinimizeButton = true,
             hideResizeButton = true,
             width = 240,
             height = 90,
-        };
+        });
         Scaler:Hide();
 
-        local Slider = self:createSlider{
+        local Slider = self:createSlider({
             name = sliderName,
             Parent = Scaler,
             min = min,
@@ -1247,7 +1247,7 @@ function Interface:openScaler(Parent)
                 Scaler.Slider.Input:SetText(currentStep);
                 Parent:SetScale(value);
             end,
-        };
+        });
         Slider:SetPoint("CENTER", Scaler, "CENTER");
         Slider:SetPoint("TOP", Scaler, "TOP", 0, -30);
         Scaler.Slider = Slider;
@@ -1269,7 +1269,7 @@ function Interface:openScaler(Parent)
     Scaler.Slider.Input:SetText(currentStep);
 
     -- Guarantee that the scaler window is on the foreground
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         Scaler:SetFrameLevel(Parent:GetFrameLevel() + 100);
         Scaler:Show();
     end, .1);
@@ -1408,7 +1408,7 @@ function Interface:addItemTooltipToCursor(Owner, itemLink)
         Target:EnableMouse(true);
     end
 
-    Target:HookScript("OnEnter", function()
+    Target:HookScript("OnEnter", function ()
         if (Target.GetEffectiveAlpha and Target:GetEffectiveAlpha() == 0) then
             return;
         end
@@ -1418,7 +1418,7 @@ function Interface:addItemTooltipToCursor(Owner, itemLink)
         GameTooltip:Show();
     end);
 
-    Target:HookScript("OnLeave", function()
+    Target:HookScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 end
@@ -1457,7 +1457,7 @@ function Interface:addTooltip(Owner, Lines, anchor)
         Target:EnableMouse(true);
     end
 
-    Target:HookScript("OnEnter", function()
+    Target:HookScript("OnEnter", function ()
         if (Target.GetEffectiveAlpha
             and Target:GetEffectiveAlpha() == 0
         ) then
@@ -1494,7 +1494,7 @@ function Interface:addTooltip(Owner, Lines, anchor)
         GameTooltip:Show();
     end);
 
-    Target:HookScript("OnLeave", function()
+    Target:HookScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 end
@@ -1538,7 +1538,7 @@ function Interface:AceGUIDefaults(Scope, Item, identifier, width, height)
         self:makeCloseableWithEscape(Item, identifier);
 
         if (Scope.close and type(Scope.close) == "function") then
-            Item:SetCallback("OnClose", function()
+            Item:SetCallback("OnClose", function ()
                 self:storePosition(Item, identifier);
                 self:storeDimensions(Item, identifier);
 
@@ -1915,7 +1915,7 @@ function Interface:createButton(Parent, Details)
     end
 
     Details = Details or {};
-    local onClick = Details.onClick or function() end;
+    local onClick = Details.onClick or function () end;
     local alwaysFireOnClick = Details.alwaysFireOnClick or false;
     local tooltip = Details.tooltip or "";
     local disabledTooltip = Details.disabledTooltip or "";
@@ -2008,7 +2008,7 @@ function Interface:createButton(Parent, Details)
     end
 
     -- Show the tooltip on hover
-    Button:SetScript("OnEnter", function()
+    Button:SetScript("OnEnter", function ()
         local textToShow = tooltip;
 
         if (not Button:IsEnabled()) then
@@ -2022,17 +2022,17 @@ function Interface:createButton(Parent, Details)
         end
     end);
 
-    Button:SetScript("OnLeave", function()
+    Button:SetScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
     if (type(onClick) == "function") then
-        Button:SetScript("OnClick", function(_, button)
+        Button:SetScript("OnClick", function (_, button)
             if (not Button:IsEnabled() and not alwaysFireOnClick) then
                 return;
             end
 
-            if (button == 'LeftButton') then
+            if (button == "LeftButton") then
                 onClick();
             end
         end);

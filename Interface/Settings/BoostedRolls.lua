@@ -69,7 +69,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsSystem:SetList(DropDownItems);
     BoostedRollsSystem:SetText(DropDownItems[GL.Settings:get("BoostedRolls.system", Constants.BoostedRollSystems.INCREASED_BOTH)]);
     BoostedRollsSystem:SetWidth(400);
-    BoostedRollsSystem:SetCallback("OnValueChanged", function()
+    BoostedRollsSystem:SetCallback("OnValueChanged", function ()
         GL.Settings:set("BoostedRolls.system", BoostedRollsSystem:GetValue());
     end);
     Parent:AddChild(BoostedRollsSystem);
@@ -240,7 +240,7 @@ function BoostedRolls:draw(Parent)
 
     local OpenDataButton = GL.AceGUI:Create("Button");
     OpenDataButton:SetText("Open Boosted Rolls Data");
-    OpenDataButton:SetCallback("OnClick", function()
+    OpenDataButton:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("points");
     end);

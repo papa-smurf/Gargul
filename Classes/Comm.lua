@@ -210,7 +210,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
 
     local throttleResetTimer;
     -- Stop throttling: reset the burst and max cps values
-    local stopThrottling = function()
+    local stopThrottling = function ()
         _G.ChatThrottleLib.BURST = self.defaultBurstValue;
         _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
     end;
@@ -279,21 +279,21 @@ function Comm:listen(payload, distribution, playerName)
 
     -- If the payload is a string then it MUST be a message received confirmation
     if (type(payload) == "string") then
-        local correspondenceId = payload;
+        local correspondenceID = payload;
 
-        -- The correspondenceId doesn't exist or was already confirmed
-        if (not GL.CommMessage.Box[correspondenceId]
-            or GL.CommMessage.Box[correspondenceId].confirmed
+        -- The correspondenceID doesn't exist or was already confirmed
+        if (not GL.CommMessage.Box[correspondenceID]
+            or GL.CommMessage.Box[correspondenceID].confirmed
         ) then
             return;
         end
 
         -- Mark the message as received and cancel any potential timers
-        GL.CommMessage.Box[correspondenceId].confirmed = true;
-        GL:cancelTimer(("MARK_COMM_%s_AS_UNRECEIVED"):format(correspondenceId));
+        GL.CommMessage.Box[correspondenceID].confirmed = true;
+        GL:cancelTimer(("MARK_COMM_%s_AS_UNRECEIVED"):format(correspondenceID));
 
-        return GL.CommMessage.Box[correspondenceId].onConfirm
-            and GL.CommMessage.Box[correspondenceId].onConfirm(true);
+        return GL.CommMessage.Box[correspondenceID].onConfirm
+            and GL.CommMessage.Box[correspondenceID].onConfirm(true);
     end
 
     if (type(payload) ~= "table"
@@ -327,11 +327,11 @@ function Comm:listen(payload, distribution, playerName)
         -- The person sending us the message has an old version that's not compatible with ours, let him know!
         if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
             -- This empty message will trigger an out-of-date error on the recipient's side
-            GL.CommMessage.new{
+            GL.CommMessage.new({
                 action = Actions.response,
                 channel = Comm:whisperOrGroup(playerName),
                 recipient = playerName,
-            }:send();
+            }):send();
             return;
         end
     end
@@ -376,7 +376,7 @@ function Comm:listen(payload, distribution, playerName)
         return false;
     end
 
-    if (not payload.correspondenceId
+    if (not payload.correspondenceID
         and payload.action == Actions.response
     ) then
         return false;
@@ -406,7 +406,7 @@ function Comm:dispatch(CommMessage, stringLength)
         if (GL.User:isDev()) then
             local ActionsByID = GL:tableFlip(Actions);
             if (action == Actions.response) then
-                local actionID = CommMessage.Box[CommMessage.correspondenceId] and CommMessage.Box[CommMessage.correspondenceId].action or Actions.respond;
+                local actionID = CommMessage.Box[CommMessage.correspondenceID] and CommMessage.Box[CommMessage.correspondenceID].action or Actions.respond;
                 GL:xd(("Response: %s | B: %s"):format(tostring(ActionsByID[actionID] or actionID), stringLength or 0));
             else
                 GL:xd(("Received: %s | B: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0));

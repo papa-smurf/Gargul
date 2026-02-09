@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -59,14 +59,14 @@ function FillFromInventory:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 260,
         minWidth = 260,
         height = 275,
         minHeight = 275,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -83,7 +83,7 @@ function FillFromInventory:build()
     MinimumQualityLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
     ---@type Frame
-    local MinimumQuality = Interface:createDropdown{
+    local MinimumQuality = Interface:createDropdown({
         Parent = Window,
         Options = {
             [0] = ("|c00%s%s|r"):format(Interface.Colors.POOR, L["Poor"]),
@@ -96,7 +96,7 @@ function FillFromInventory:build()
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.minimumFillQuality", value);
         end
-    };
+    });
     MinimumQuality:SetPoint("TOP", MinimumQualityLabel, "BOTTOM", 0, -6);
     MinimumQuality:SetPoint("LEFT", Window, "LEFT");
 
@@ -114,38 +114,38 @@ function FillFromInventory:build()
 
     --[[ INCLUDE BOES ]]
     ---@type CheckButton
-    local IncludeBOE = Interface:createCheckbox{
+    local IncludeBOE = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeBOEs"),
         label = L["Include BOEs"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeBOEs", value);
         end,
-    };
+    });
     IncludeBOE:SetPoint("TOPLEFT", ItemLevel, "BOTTOMLEFT", 0, -10);
 
     --[[ INCLUDE ALREADY AWARDED ]]
     ---@type CheckButton
-    local IncludeAwarded = Interface:createCheckbox{
+    local IncludeAwarded = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeAwarded"),
         label = L["Include previously awarded items"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeAwarded", value);
         end,
-    };
+    });
     IncludeAwarded:SetPoint("TOPLEFT", IncludeBOE, "BOTTOMLEFT", 0, -6);
 
     --[[ INCLUDE REAGENTS ]]
     ---@type CheckButton
-    local IncludeMaterials = Interface:createCheckbox{
+    local IncludeMaterials = Interface:createCheckbox({
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeMaterials"),
         label = L["Include materials (like Abyss Crystals)"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeMaterials", value);
         end,
-    };
+    });
     IncludeMaterials:SetPoint("TOPLEFT", IncludeAwarded, "BOTTOMLEFT", 0, -6);
 
     local FillButton = Interface:dynamicPanelButton(Window, L["Fill"]);

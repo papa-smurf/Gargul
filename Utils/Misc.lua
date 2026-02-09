@@ -422,20 +422,20 @@ function GL.LibStImageButtonCellUpdate (rowFrame, frame, data, cols, row, realro
         frame:SetNormalTexture(path);
         frame:SetHighlightTexture(path);
         frame:Show();
-        frame:SetScript("OnEnter", function()
+        frame:SetScript("OnEnter", function ()
             GameTooltip:SetOwner(frame, "ANCHOR_TOP")
             GameTooltip:AddDoubleLine(tooltip);
             GameTooltip:Show();
         end)
 
-        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
+        frame:SetScript("OnLeave", function () GameTooltip:Hide() end);
     else
         frame:Hide();
     end
 
     local callback = data[realrow].cols[column]._OnClick;
     if (type(callback) == "function") then
-        frame:SetScript("OnClick", function(self, event, ...)
+        frame:SetScript("OnClick", function (self, event, ...)
             if (type(event) ~= "string"
                 or not GL:inTable({ "LeftButton", "RightButton", "MiddleButton", "Button4", "Button5", }, event)
             ) then
@@ -458,7 +458,7 @@ function GL.LibStButtonCellUpdate (rowFrame, frame, data, cols, row, realrow, co
 
     local callback = data[realrow].cols[column]._OnClick;
     if (type(callback) == "function") then
-        Button:SetScript("OnClick", function(self, event, ...)
+        Button:SetScript("OnClick", function (self, event, ...)
             if (type(event) ~= "string"
                     or not GL:inTable({ "LeftButton", "RightButton", "MiddleButton", "Button4", "Button5", }, event)
             ) then
@@ -500,7 +500,7 @@ function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, col
 
     local callback = data[realrow].cols[column]._OnTextChanged;
     if (type(callback) == "function") then
-        BidInput:SetScript("OnTextChanged", function()
+        BidInput:SetScript("OnTextChanged", function ()
             callback(BidInput);
         end);
     end
@@ -513,7 +513,7 @@ function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, col
             BidInput:Hide();
             BidInput:SetParent(nil);
             BidInput:ClearAllPoints()
-            BidInput.OnEvent = function() end;
+            BidInput.OnEvent = function () end;
         end
 
         _G[inputName] = nil;
@@ -652,7 +652,7 @@ end
 ---
 ---@param ItemFrame Frame
 function GL:stopHighlight(ItemFrame)
-    pcall(function() LCG.PixelGlow_Stop(ItemFrame); end);
+    pcall(function () LCG.PixelGlow_Stop(ItemFrame); end);
 end
 
 --- Hook into tooltip events for items
@@ -670,7 +670,7 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
         end);
     end
 
-    GameTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+    GameTooltip:HookScript("OnTooltipSetItem", function (Tooltip)
         return Callback(Tooltip);
     end);
 
@@ -678,7 +678,7 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
     LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
 
     if (includeItemRefTooltip) then
-        ItemRefTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+        ItemRefTooltip:HookScript("OnTooltipSetItem", function (Tooltip)
             return Callback(Tooltip);
         end);
     end

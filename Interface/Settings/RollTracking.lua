@@ -60,7 +60,7 @@ function RollTracking:draw(Parent, Window)
     SortByPlusOne:SetList(DropdownItems);
     SortByPlusOne:SetText(DropdownItems[GL.Settings:get("RollTracking.sortByPlusOne", 2)]);
     SortByPlusOne:SetWidth(150);
-    SortByPlusOne:SetCallback("OnValueChanged", function()
+    SortByPlusOne:SetCallback("OnValueChanged", function ()
         GL.Settings:set("RollTracking.sortByPlusOne", SortByPlusOne:GetValue());
     end);
     Parent:AddChild(SortByPlusOne);
@@ -77,7 +77,7 @@ function RollTracking:draw(Parent, Window)
     NumberOfSecondsToCountdown:SetFullWidth(true);
     NumberOfSecondsToCountdown:SetValue(GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
     NumberOfSecondsToCountdown:SetSliderValues(1, 20, 1);
-    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 1) then
@@ -87,7 +87,7 @@ function RollTracking:draw(Parent, Window)
     Parent:AddChild(NumberOfSecondsToCountdown);
 
     local StatusMessageLabel;
-    self.onClose = function()
+    self.onClose = function ()
         local TempNewRollSettings = GL.Settings:get("RollTracking.Brackets");
 
         for i = 1, 10 do
@@ -160,7 +160,7 @@ function RollTracking:draw(Parent, Window)
     Parent:AddChild(HorizontalSpacer);
 
     StatusMessageLabel = GL.AceGUI:Create("Label");
-    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
+    StatusMessageLabel:SetFontObject(_G.GameFontNormal);
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
     StatusMessageFrame:AddChild(StatusMessageLabel);
@@ -264,7 +264,7 @@ function RollTracking:draw(Parent, Window)
 
     local ResetButton = GL.AceGUI:Create("Button");
     ResetButton:SetText("Undo");
-    ResetButton:SetCallback("OnClick", function()
+    ResetButton:SetCallback("OnClick", function ()
         self.onClose = nil;
         GL.Interface.Settings.Overview:close();
         GL.Settings:draw("RollTracking");

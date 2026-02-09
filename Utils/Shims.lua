@@ -49,7 +49,7 @@ GL.ReloadUI = C_UI and C_UI.Reload or ReloadUI;
 ---@param threshold? string
 ---
 ---@test /script _G.Gargul.SetLootMethod("master", _G.Gargul.User.name, "common");
-GL.SetLootMethod = function(method, player, threshold)
+GL.SetLootMethod = function (method, player, threshold)
     if (not GL.User.isInGroup) then
         return print(ERR_NOT_IN_GROUP);
     end
@@ -87,7 +87,7 @@ GL.SetLootMethod = function(method, player, threshold)
             GL.Events:register(eventID, "PARTY_LOOT_METHOD_CHANGED", function ()
                 GL.Events:unregister(eventID);
 
-                GL:after(.5, delayedSetThresholdTimer, function()
+                GL:after(.5, delayedSetThresholdTimer, function ()
                     GL.SetLootThreshold(threshold);
                 end);
             end);
@@ -115,7 +115,7 @@ end;
 ---@param retry? boolean
 ---
 ---@test /script _G.Gargul.SetLootThreshold("legendary");
-GL.SetLootThreshold = function(threshold, retry)
+GL.SetLootThreshold = function (threshold, retry)
     local eventID = "SetLootThresholdLootMethodChangedListener";
     GL.Events:unregister(eventID);
 

@@ -107,7 +107,7 @@ function GDKPMutators:draw(Parent)
             HelpIcon.frame:SetPoint("TOPLEFT", AutoApplyTo.frame, "TOPLEFT", 0, 0);
             HelpIcon.frame:Show();
 
-            HelpIcon:SetCallback("OnEnter", function()
+            HelpIcon:SetCallback("OnEnter", function ()
                 GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
                 GameTooltip:AddLine(" ");
                 GameTooltip:AddLine("You can automatically apply this mutator to raiders using\none or multiple (comma-separated) keywords in the 'Apply to' fields below:");
@@ -124,7 +124,7 @@ function GDKPMutators:draw(Parent)
                 GameTooltip:Show();
             end);
 
-            HelpIcon:SetCallback("OnLeave", function()
+            HelpIcon:SetCallback("OnLeave", function ()
                 GameTooltip:Hide();
             end);
         end

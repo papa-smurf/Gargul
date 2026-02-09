@@ -137,35 +137,35 @@ function DroppedLootLedger:startTracking()
     self.tracking = true;
 
     -- Just in case the event listeners already exist we remove them
-    Events:unregister{
+    Events:unregister({
         "DroppedLootLedgerChatMSGLootListener",
         "DroppedLootLedgerLootReadyListener",
         "DroppedLootLedgerCombatLogEventUnfilteredListener",
-    };
+    });
 
     -- Item received message detected in chat
-    Events:register("DroppedLootLedgerChatMSGLootListener", "CHAT_MSG_LOOT", function(_, message)
+    Events:register("DroppedLootLedgerChatMSGLootListener", "CHAT_MSG_LOOT", function (_, message)
         self:processReceivedItem(message);
     end);
 
     -- Loot window opened
-    --Events:register("DroppedLootLedgerLootReadyListener", "LOOT_OPENED", function()
+    --Events:register("DroppedLootLedgerLootReadyListener", "LOOT_OPENED", function ()
     --    self:lootOpened();
     --end);
 
     -- Check if a unit was killed
-    --Events:register("DroppedLootLedgerCombatLogEventUnfilteredListener", "COMBAT_LOG_EVENT_UNFILTERED", function()
+    --Events:register("DroppedLootLedgerCombatLogEventUnfilteredListener", "COMBAT_LOG_EVENT_UNFILTERED", function ()
     --    self:processCombatLog(CombatLogGetCurrentEventInfo());
     --end);
 end
 
 ---@return nil
 function DroppedLootLedger:stopTracking()
-    Events:unregister{
+    Events:unregister({
         "DroppedLootLedgerChatMSGLootListener",
         "DroppedLootLedgerLootReadyListener",
         "DroppedLootLedgerCombatLogEventUnfilteredListener",
-    };
+    });
 
     self.tracking = false;
 end
@@ -190,7 +190,7 @@ function DroppedLootLedger:lootOpened()
     local sourceGUID;
     local Drops = {};
     for lootIndex = 1, GetNumLootItems() do
-        local result = (function()
+        local result = (function ()
             -- Make sure we don't override sourceGUID with false/nil if it was already set!
             sourceGUID = sourceGUID or GetLootSourceInfo(lootIndex);
 
@@ -245,11 +245,11 @@ function DroppedLootLedger:broadcastDrops(sourceGUID, Drops)
         return;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastDrops,
         content = Drops,
         channel = "GROUP",
-    }:send();
+    }):send();
 end
 
 ---@param CommMessage table

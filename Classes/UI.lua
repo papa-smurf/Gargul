@@ -39,15 +39,15 @@ function UI:createSettingsButton(ParentFrame, settingsSection, width, height, om
     CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     Cogwheel.texture = CogwheelTexture;
 
-    Cogwheel:SetScript('OnEnter', function()
+    Cogwheel:SetScript("OnEnter", function ()
         CogwheelTexture:SetTexture("interface/cursor/interact");
     end);
-    Cogwheel:SetScript('OnLeave', function()
+    Cogwheel:SetScript("OnLeave", function ()
         CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     end);
 
-    Cogwheel:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
+    Cogwheel:SetScript("OnClick", function (_, button)
+        if (button == "LeftButton") then
             GL.Settings:draw(settingsSection);
         end
     end);
@@ -68,7 +68,7 @@ function UI:createShareButton(Parent, Details)
     end
 
     Details = Details or {};
-    local onClick = Details.onClick or function() end;
+    local onClick = Details.onClick or function () end;
     local alwaysFireOnClick = Details.alwaysFireOnClick or false;
     local tooltipText = Details.tooltipText or "";
     local disabledTooltipText = Details.disabledTooltipText or "";
@@ -120,7 +120,7 @@ function UI:createShareButton(Parent, Details)
     ShareButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/share-disabled");
 
     -- Show the tooltip on hover
-    ShareButton:SetScript("OnEnter", function()
+    ShareButton:SetScript("OnEnter", function ()
         local textToShow = tooltipText;
 
         if (not ShareButton:IsEnabled()) then
@@ -134,17 +134,17 @@ function UI:createShareButton(Parent, Details)
         end
     end);
 
-    ShareButton:SetScript("OnLeave", function()
+    ShareButton:SetScript("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
     if (type(onClick) == "function") then
-        ShareButton:SetScript("OnClick", function(_, button)
+        ShareButton:SetScript("OnClick", function (_, button)
             if (ShareButton:IsEnabled() or alwaysFireOnClick) then
                 return;
             end
 
-            if (button == 'LeftButton') then
+            if (button == "LeftButton") then
                 onClick();
             end
         end);
@@ -171,7 +171,7 @@ end
 function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
     local CheckBox = CreateFrame("CheckButton", "GargulSetting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
 
-    CheckBox:SetScript("OnClick", function(self)
+    CheckBox:SetScript("OnClick", function (self)
         local checked = self:GetChecked()
 
         onClick(self, checked and true or false)

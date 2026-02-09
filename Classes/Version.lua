@@ -125,12 +125,12 @@ function Version:checkForUpdate(byReadyCheck)
     self.checkingForUpdate = true;
 
     if (GL.User.isInGroup) then
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.checkForUpdate,
             content = self.latest ~= self.current and self.latest or nil,
             channel = "GROUP",
             acceptsResponse = true,
-        }:send();
+        }):send();
     end
 
     -- We're not in a guild, no need to check
@@ -148,11 +148,11 @@ function Version:checkForUpdate(byReadyCheck)
             return;
         end
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.checkForUpdate,
             channel = "GUILD",
             acceptsResponse = true,
-        }:send();
+        }):send();
 
         GL.Ace:ScheduleTimer(function ()
             self.checkingForUpdate = false;
@@ -373,11 +373,11 @@ function Version:inspectQuietly()
         return;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.requestAppVersion,
         channel = "GROUP",
         acceptsResponse = true,
-    }:send();
+    }):send();
 end
 
 Version:addRelease(Version.current);

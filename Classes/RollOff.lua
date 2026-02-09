@@ -24,7 +24,7 @@ GL.RollOff = GL.RollOff or {
     },
     InitiateCountDownTimer = nil;
     StopRollOffTimer = nil,
-    rollListenerCancelTimerId = nil,
+    rollListenerCancelTimerID = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -77,7 +77,7 @@ function RollOff:announceStart(itemLink, time, note)
         BoostedRolls.RangePerPlayer = {};
 
         for _, Player in pairs(GL.User:groupMembers()) do
-            (function()
+            (function ()
                 local normalizedName = GL.BoostedRolls:normalizedName(Player.fqn);
                 if (not GL.BoostedRolls:hasPoints(normalizedName)) then
                     return;
@@ -89,7 +89,7 @@ function RollOff:announceStart(itemLink, time, note)
         end
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.startRollOff,
         content = {
             item = itemLink,
@@ -100,7 +100,7 @@ function RollOff:announceStart(itemLink, time, note)
             BoostedRollData = BoostedRolls,
         },
         channel = "GROUP",
-    }:send();
+    }):send();
 
     GL.Settings:set("UI.RollOff.timer", time);
 
@@ -245,10 +245,10 @@ end
 
 --- Anounce to everyone in the raid that a roll off has ended
 function RollOff:announceStop()
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.stopRollOff,
         channel = "GROUP",
-    }:send();
+    }):send();
 end
 
 --- Start a roll off
@@ -295,7 +295,7 @@ function RollOff:start(CommMessage)
         local SupportedRolls = content.SupportedRolls or {};
 
         -- Add BoostedRolls to the list of SupportedRolls if data is available
-        if (type(content.BoostedRollData) == 'table'
+        if (type(content.BoostedRollData) == "table"
             and not GL:empty(content.BoostedRollData.identifier)
             and not GL:empty(content.BoostedRollData.RangePerPlayer)
         ) then
@@ -402,7 +402,7 @@ function RollOff:start(CommMessage)
 
         local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
         local itemOfInterestSound = GL.Settings:get("Rolling.itemOfInterestSound");
-        
+
         -- Play a raid warning sound
         GL:playSound(SOUNDKIT.RAID_WARNING);
 
@@ -494,7 +494,7 @@ function RollOff:stop(CommMessage)
         end
 
         -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-        self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
+        self.rollListenerCancelTimerID = GL.Ace:ScheduleTimer(function ()
             self:stopListeningForRolls();
         end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
     end
@@ -574,14 +574,14 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             or (not IsShiftKeyDown() and GL.Settings:get("AwardingLoot.skipAwardConfirmationDialog"))
         ) then
             -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner{
+            GL.AwardedLoot:addWinner({
                 winner = roller,
                 itemLink = itemLink,
                 isOS = isOS,
                 BRCost = BRCost,
                 Rolls = Rolls,
                 RollBracket = RollBracket,
-            };
+            });
 
             -- Add a +1 if that's expected for this roll bracket
             if (addPlusOne) then
@@ -603,7 +603,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
         end
 
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.Dialogs.AwardDialog:open{
+        GL.Interface.Dialogs.AwardDialog:open({
             question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
@@ -635,14 +635,14 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner{
+                GL.AwardedLoot:addWinner({
                     winner = roller,
                     itemLink = itemLink,
                     isOS = isOS,
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
-                };
+                });
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -654,7 +654,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             checkPlusOne = addPlusOne,
             isBR = isBR,
             boostedRollCost = BRCost,
-        };
+        });
 
         return;
     end
@@ -663,7 +663,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.Dialogs.AwardDialog:open{
+        GL.Interface.Dialogs.AwardDialog:open({
             question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
@@ -695,14 +695,14 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner{
+                GL.AwardedLoot:addWinner({
                     winner = roller,
                     itemLink = itemLink,
                     isOS = isOS,
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
-                };
+                });
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -716,7 +716,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             checkPlusOne = addPlusOne,
             isBR = isBR,
             boostedRollCost = BRCost,
-        };
+        });
     end);
 end
 
@@ -725,8 +725,8 @@ end
 ---@return nil
 function RollOff:listenForRolls()
     -- Make sure the timer to cancel listening for rolls is cancelled
-    if (self.rollListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    if (self.rollListenerCancelTimerID) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerID);
     end
 
     if (self.listeningForRolls) then
@@ -744,8 +744,8 @@ end
 ---
 ---@return nil
 function RollOff:stopListeningForRolls()
-    if (self.rollListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    if (self.rollListenerCancelTimerID) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerID);
     end
 
     self.listeningForRolls = false;
@@ -770,7 +770,7 @@ function RollOff:processRoll(message)
         low = tonumber(low) or 0;
         high = tonumber(high) or 0;
 
-        local RollType = (function()
+        local RollType = (function ()
             for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
                 if (low == RollType[2]
                     and high == RollType[3]

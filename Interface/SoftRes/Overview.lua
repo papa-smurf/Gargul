@@ -50,14 +50,14 @@ function Overview:draw()
     ));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_SOFTRES_OVERVIEW_WINDOW"] = Window.frame;
+    _G.GARGUL_SOFTRES_OVERVIEW_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_SOFTRES_OVERVIEW_WINDOW");
 
     --[[
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function() GL.Interface.Dialogs.PopupDialog:open({
+        onClick = function () GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure you want to broadcast your softres data to everyone in your party/raid?"],
             OnYes = function ()
                 GL.SoftRes:broadcast();
@@ -105,7 +105,7 @@ function Overview:draw()
     ]]
     local HardReservesLabel = AceGUI:Create("InteractiveLabel");
     HardReservesLabel:SetText("         " .. L["No hard-reserve info available"]);
-    HardReservesLabel:SetFontObject(_G["GameFontNormalSmall"]);
+    HardReservesLabel:SetFontObject(_G.GameFontNormalSmall);
     GL.Interface:set(self, "HardReserves", HardReservesLabel);
     HardReserveFrame:AddChild(HardReservesLabel);
 
@@ -137,13 +137,13 @@ function Overview:draw()
     SecondColumn:AddChild(Details);
 
     local Title = AceGUI:Create("Label");
-    Title:SetFontObject(_G["GameFontNormalLarge"]);
+    Title:SetFontObject(_G.GameFontNormalLarge);
     Title:SetFullWidth(true);
     Title:SetText(" ");
     Details:AddChild(Title);
 
     local Note = AceGUI:Create("Label");
-    Note:SetFontObject(_G["GameFontNormalSmall"]);
+    Note:SetFontObject(_G.GameFontNormalSmall);
     Note:SetFullWidth(true);
     Note:SetText(" \n \n ");
     -- The tripple newline is actually used for spacing, so keep it!
@@ -160,7 +160,7 @@ function Overview:draw()
         ItemIcon:SetHeight(30);
         ItemIcon:SetImageSize(30, 30);
         Details:AddChild(ItemIcon);
-        ItemIcon:SetCallback("OnLeave", function()
+        ItemIcon:SetCallback("OnLeave", function ()
             GameTooltip:Hide();
         end);
 
@@ -177,7 +177,7 @@ function Overview:draw()
             ITEM LABEL
         ]]
         local ItemLabel = AceGUI:Create("Label");
-        ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
+        ItemLabel:SetFontObject(_G.GameFontNormalSmall);
         ItemLabel:SetWidth(220);
         Details:AddChild(ItemLabel);
         ItemLabel:SetText(" \n ");
@@ -198,7 +198,7 @@ function Overview:draw()
     local PostSoftReserveLinkButton = AceGUI:Create("Button");
     PostSoftReserveLinkButton:SetText(L["Post SR URL"]);
     PostSoftReserveLinkButton:SetWidth(104); -- Minimum is 104
-    PostSoftReserveLinkButton:SetCallback("OnClick", function()
+    PostSoftReserveLinkButton:SetCallback("OnClick", function ()
         SoftRes:postLink();
     end);
     ButtonFrame:AddChild(PostSoftReserveLinkButton);
@@ -207,7 +207,7 @@ function Overview:draw()
     local PostMissingSoftReserveInfoButton = AceGUI:Create("Button");
     PostMissingSoftReserveInfoButton:SetText(L["Post missing SRs"]);
     PostMissingSoftReserveInfoButton:SetWidth(130); -- Minimum is 130
-    PostMissingSoftReserveInfoButton:SetCallback("OnClick", function()
+    PostMissingSoftReserveInfoButton:SetCallback("OnClick", function ()
         SoftRes:postMissingSoftReserves();
     end);
     ButtonFrame:AddChild(PostMissingSoftReserveInfoButton);
@@ -215,22 +215,22 @@ function Overview:draw()
     local ClearDataButton = AceGUI:Create("Button");
     ClearDataButton:SetText(L["Clear"]);
     ClearDataButton:SetWidth(100); -- Minimum is 102
-    ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    ClearDataButton:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure you want to clear all existing soft-reserve data?"],
             OnYes = function ()
                 GL.Interface.SoftRes.Overview:close();
                 GL.SoftRes:clear();
                 GL.SoftRes:draw();
             end,
-        };
+        });
     end);
     ButtonFrame:AddChild(ClearDataButton);
 
     local SettingsButton = AceGUI:Create("Button");
     SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(84); -- Minimum is 102
-    SettingsButton:SetCallback("OnClick", function()
+    SettingsButton:SetCallback("OnClick", function ()
         GL.Settings:draw("SoftRes");
     end);
     ButtonFrame:AddChild(SettingsButton);
@@ -243,25 +243,25 @@ function Overview:draw()
 
     if (DB.SoftRes.MetaData.source == Constants.SoftReserveSources.weakaura) then
         -- Show a game tooltip that explains the question mark
-        HardReservesLabel:SetCallback("OnEnter", function()
+        HardReservesLabel:SetCallback("OnEnter", function ()
             GameTooltip:SetOwner(HardReservesLabel.frame, "ANCHOR_CURSOR");
             GameTooltip:AddLine(L["\nHard-reserve information is not available because the soft-reserves\nprovided were not generated using the 'Gargul Export' button on softres.it"]);
             GameTooltip:Show();
         end)
 
-        HardReservesLabel:SetCallback("OnLeave", function()
+        HardReservesLabel:SetCallback("OnLeave", function ()
             GameTooltip:Hide();
         end)
     else
         local somethingWasHardReserved = false;
 
-        HardReservesLabel:SetCallback("OnEnter", function() return end);
+        HardReservesLabel:SetCallback("OnEnter", function () return end);
 
         -- Add interface items to the Overview class so we can manipulate them later
         for _ in pairs(SoftRes.MaterializedData.HardReserveDetailsByID or {}) do
             somethingWasHardReserved = true;
             HardReservesLabel:SetText("     " .. L["Click here to see hard-reserve info"]);
-            HardReservesLabel:SetCallback("OnClick", function()
+            HardReservesLabel:SetCallback("OnClick", function ()
                 self:showHardReserves();
             end);
             break;
@@ -350,12 +350,12 @@ function Overview:refreshDetailsFrame()
 
         if (ItemIcon) then
             ItemIcon:SetImage(Item.icon);
-            ItemIcon:SetCallback("OnEnter", function()
+            ItemIcon:SetCallback("OnEnter", function ()
                 GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_CURSOR");
                 GameTooltip:SetHyperlink(Item.link);
                 GameTooltip:Show();
             end)
-            ItemIcon:SetCallback("OnClick", function()
+            ItemIcon:SetCallback("OnClick", function ()
                 HandleModifiedItemClick(Item.link);
             end);
             ItemIcon.frame:Show();

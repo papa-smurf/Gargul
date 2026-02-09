@@ -38,7 +38,7 @@ GDKP.Auction = {
     waitingForStart = false,
 
     AutoBidTimer = nil,
-    BidListenerCancelTimerId = nil,
+    BidListenerCancelTimerID = nil,
     Current = {
         antiSnipe = nil, -- The anti snipe time
         duration = nil, -- The amount of time players get to bid
@@ -417,13 +417,13 @@ function Auction:restore(sessionID, auctionID)
     -- Remove the restored state from the previous states table
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
-    Instance.awardChecksum = GL.AwardedLoot:addWinner{
+    Instance.awardChecksum = GL.AwardedLoot:addWinner({
         announce = false,
         broadcast = false,
         gdkpCost = Instance.price,
         itemLink = Instance.itemLink,
         winner = Instance.Winner.guid,
-    };
+    });
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);
@@ -499,7 +499,7 @@ function Auction:sanitize(Instance)
         or type(Instance.CreatedBy) ~= "table"
         or (Instance.Winner and type(Instance.Winner) ~= "table")
         or (Instance.Bids and type(Instance.Bids) ~= "table")
-        or date('%Y', tonumber(Instance.createdAt) or 0) == "1970"
+        or date("%Y", tonumber(Instance.createdAt) or 0) == "1970"
         or not tonumber(Instance.itemID)
         or not tonumber(Instance.price)
         or not Instance.price
@@ -560,7 +560,7 @@ function Auction:sanitize(Instance)
                 or type(Bid.Bidder) ~= "table"
                 or not tonumber(Bid.bid or 0)
                 or GL:lt(Bid.bid, .0001)
-                or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
+                or date("%Y", tonumber(Bid.createdAt) or 0) == "1970"
             ) then
                 GL:xd("Auction:sanitize step 5 failed, contact support!\n" .. GL.JSON:encode(Bid));
                 return false;
@@ -1032,11 +1032,11 @@ function Auction:broadcastQueue(immediately)
     end
 
     local broadcast = function ()
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastGDKPAuctionQueue,
             content = QueueSegment or {},
             channel = "GROUP",
-        }:send();
+        }):send();
     end;
 
     if (immediately) then
@@ -1173,7 +1173,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         minimumBid = math.max(minimumBid, GL:tableGet(self.Current, "TopBid.bid", 0));
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.startGDKPAuction,
         content = {
             item = itemLink,
@@ -1190,7 +1190,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             },
         },
         channel = "GROUP",
-    }:send();
+    }):send();
 
     return true;
 end
@@ -1229,10 +1229,10 @@ function Auction:announceStop(forceStop)
     self:stopAutoBid();
     self:stop();
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.stopGDKPAuction,
         channel = "GROUP",
-    }:send();
+    }):send();
 end
 
 --- Announce to everyone in the raid that we're extending the current auction
@@ -1307,11 +1307,11 @@ function Auction:announceReschedule(time)
         time = 5;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.rescheduleGDKPAuction,
         content = time,
         channel = "GROUP",
-    }:send();
+    }):send();
 
     return true;
 end
@@ -1646,7 +1646,7 @@ function Auction:listenForBids()
     end
 
     -- Make sure the timer to cancel listening for bids is cancelled
-    GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
+    GL.Ace:CancelTimer(self.bidListenerCancelTimerID);
 
     self.listeningForBids = true;
     self.lastBidReceivedAt = 0;
@@ -1673,18 +1673,18 @@ end
 ---
 ---@return nil
 function Auction:stopListeningForBids()
-    if (self.bidListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
+    if (self.bidListenerCancelTimerID) then
+        GL.Ace:CancelTimer(self.bidListenerCancelTimerID);
     end
 
     self.listeningForBids = false;
-    Events:unregister{
+    Events:unregister({
         "GDKPChatMsgWhisperListener",
         "GDKPChatMsgPartyListener",
         "GDKPChatMsgPartyLeaderListener",
         "GDKPChatMsgRaidListener",
         "GDKPChatMsgRaidLeaderListener",
-    };
+    });
 end
 
 ---@param message string|number

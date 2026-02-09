@@ -330,7 +330,7 @@ function TradeWindow:handleEvents(event, ...)
             self:processItemsToAdd();
         end);
 
-        GL:interval(.2, "TradeWindowMoneyChangedInterval", function()
+        GL:interval(.2, "TradeWindowMoneyChangedInterval", function ()
             local myGold = GetPlayerTradeMoney();
             local theirGold = GetTargetTradeMoney();
             if (self.State.myGold ~= myGold
@@ -764,7 +764,7 @@ function TradeWindow:announceTradeDetails(Details)
     -- I gave 100G 10S 10C, item1, item2 and item3 to Player and also enchanted their item with enchantment
     -- Player enchanted my Ashjre'thul, Crossbow of Smiting with Stabilized Eternium Scope for 20G
     -- I enchanted Ashjre'thul, Crossbow of Smiting with Stabilized Eternium Scope for Player and received 20G
-    (function()
+    (function ()
         --[[
             THESE ARE ALL THE POSSIBLE SCENARIOS (e.g. we only traded gold, they only enchanted something etc)
         ]]
@@ -903,7 +903,7 @@ function TradeWindow:announceTradeDetails(Details)
                 local itemLinkLength = strlen(GL:getItemNameFromLink(Entry.itemLink)) + 2;
                 itemsProcessed = itemsProcessed + 1;
 
-                (function()
+                (function ()
                     if (Entry.quantity <= 1) then
                         if (messageLength < 1) then
                             message = (L.CHAT["I gave %s"]):format(Entry.itemLink);
@@ -1035,7 +1035,7 @@ function TradeWindow:announceTradeDetails(Details)
             local itemLinkLength = strlen(GL:getItemNameFromLink(Entry.itemLink)) + 2;
             itemsProcessed = itemsProcessed + 1;
 
-            (function()
+            (function ()
                 if (Entry.quantity <= 1) then
                     if (messageLength < 1) then
                         message = (L.CHAT["I received %s"]):format(Entry.itemLink);

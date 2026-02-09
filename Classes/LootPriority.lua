@@ -74,7 +74,7 @@ function LootPriority:drawImporter()
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
     LootPriorityFrame:SetTitle((L["Gargul v%s"]):format(GL.version));
-    LootPriorityFrame:SetStatusText(L["v"] ..GL.version);
+    LootPriorityFrame:SetStatusText(L["v"] .. GL.version);
     LootPriorityFrame:SetLayout("Flow");
     LootPriorityFrame:SetWidth(600);
     LootPriorityFrame:SetHeight(450);
@@ -92,7 +92,7 @@ function LootPriority:drawImporter()
     LootPriorityFrame:AddChild(LootPriorityBox);
     LootPriorityBox:SetText(self:toCSV());
 
-    LootPriorityBox:SetCallback("OnTextChanged", function(_, _, text)
+    LootPriorityBox:SetCallback("OnTextChanged", function (_, _, text)
         LootPriorityBoxContent = text;
     end)
 
@@ -108,7 +108,7 @@ function LootPriority:drawImporter()
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText(L["Ok"]);
     SaveButton:SetWidth(140);
-    SaveButton:SetCallback("OnClick", function()
+    SaveButton:SetCallback("OnClick", function ()
         self:save(LootPriorityBoxContent);
     end);
     FooterFrame:AddChild(SaveButton);
@@ -116,7 +116,7 @@ function LootPriority:drawImporter()
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText(L["Clear"]);
     ClearButton:SetWidth(140);
-    ClearButton:SetCallback("OnClick", function()
+    ClearButton:SetCallback("OnClick", function ()
         LootPriorityBox:SetText("");
     end);
     FooterFrame:AddChild(ClearButton);
@@ -124,7 +124,7 @@ function LootPriority:drawImporter()
     local ShareButton = AceGUI:Create("Button");
     ShareButton:SetText(L["Broadcast"]);
     ShareButton:SetWidth(140);
-    ShareButton:SetCallback("OnClick", function()
+    ShareButton:SetCallback("OnClick", function ()
         self:broadcast();
     end);
     FooterFrame:AddChild(ShareButton);
@@ -230,11 +230,11 @@ function LootPriority:broadcast()
             Label:SetText(L["Broadcasting..."]);
         end
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastLootPriorities,
             content = LootPriorityCSV,
             channel = "GROUP",
-        }:send(function ()
+        }):send(function ()
             GL:success(L["Broadcast finished!"]);
             self.broadcastInProgress = false;
             GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_ENDED");

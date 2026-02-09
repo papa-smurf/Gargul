@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -44,13 +44,13 @@ function Locale:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 375,
         height = 240,
         hideMinimizeButton = true,
         hideResizeButton = true,
-    };
+    });
 
     Window:ClearAllPoints();
     Window:SetPoint("CENTER", UIParent, "CENTER");
@@ -78,7 +78,7 @@ function Locale:build()
     Intro:SetJustifyH("CENTER");
 
     ---@type Frame
-    local Locales = Interface:createDropdown{
+    local Locales = Interface:createDropdown({
         Parent = Window,
         Options = {
             enUS = L["enUS"], -- English (United States)
@@ -94,7 +94,7 @@ function Locale:build()
             itIT = L["itIT"], -- Italian (Italy)
         },
         value = Settings:get("chatLocale", "enUS"),
-    };
+    });
     Locales:SetPoint("TOP", Intro, "BOTTOM", 0, -16);
     Locales:SetPoint("CENTER", Window, "CENTER");
 

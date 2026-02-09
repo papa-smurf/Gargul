@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -52,7 +52,7 @@ function Overview:build()
 
     local TradesHolder, ScrollFrame;
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
@@ -61,7 +61,7 @@ function Overview:build()
         maxWidth = 500,
         maxHeight = 700,
         hideMinimizeButton = true,
-    };
+    });
 
     Window:SetScript("OnHide", function ()
         self.isVisible = false;

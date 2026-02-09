@@ -34,7 +34,7 @@ function Overview:draw()
     Window:SetHeight(300);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitly show the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
        self:close();
     end);
     GL.Interface:set(self, "Window", Window);
@@ -47,7 +47,7 @@ function Overview:draw()
     }));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
+    _G.GARGUL_TMB_OVERVIEW_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_TMB_OVERVIEW_WINDOW");
 
     local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
@@ -58,7 +58,7 @@ function Overview:draw()
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
     MoreInfoLabel:SetText(GL:printfn(L["How to use Gargul with ${source}"], { source = GL.TMB:source(), }));
-    MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
+    MoreInfoLabel:SetFontObject(_G.GameFontGreenLarge);
     MoreInfoLabel:SetFullWidth(true);
     MoreInfoLabel:SetJustifyH("CENTER");
     Window:AddChild(MoreInfoLabel);
@@ -83,7 +83,7 @@ function Overview:draw()
         time = GL:colorize(date(L["%H:%M"], DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
     }));
     TimestampLabel:SetJustifyH("CENTER");
-    TimestampLabel:SetFontObject(_G["GameFontNormal"]);
+    TimestampLabel:SetFontObject(_G.GameFontNormal);
     Window:AddChild(TimestampLabel);
 
     local ItemNumberLabel = AceGUI:Create("Label");
@@ -92,7 +92,7 @@ function Overview:draw()
         GL:colorize(GL:count(DB:get("TMB.Items")) or 0, GL.Interface.Colors.WARLOCK)
     ));
     ItemNumberLabel:SetJustifyH("CENTER");
-    ItemNumberLabel:SetFontObject(_G["GameFontNormal"]);
+    ItemNumberLabel:SetFontObject(_G.GameFontNormal);
     Window:AddChild(ItemNumberLabel);
 
     local notesAvailable = "No";
@@ -107,7 +107,7 @@ function Overview:draw()
         GL:colorize(notesAvailable, GL.Interface.Colors.WARLOCK)
     ));
     PriorityNotesLabel:SetJustifyH("CENTER");
-    PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
+    PriorityNotesLabel:SetFontObject(_G.GameFontNormal);
     Window:AddChild(PriorityNotesLabel);
 
     local autoSharingEnabled = "No";
@@ -122,7 +122,7 @@ function Overview:draw()
         GL:colorize(autoSharingEnabled, GL.Interface.Colors.WARLOCK)
     ));
     AutoSharingStatusLabel:SetJustifyH("CENTER");
-    AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
+    AutoSharingStatusLabel:SetFontObject(_G.GameFontNormal);
     Window:AddChild(AutoSharingStatusLabel);
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
@@ -134,9 +134,9 @@ function Overview:draw()
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetWidth(110);
     ClearButton:SetText(L["Clear"]);
-    ClearButton:SetCallback("OnClick", function()
+    ClearButton:SetCallback("OnClick", function ()
         -- Show a confirmation dialog before clearing entries
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure?"],
             OnYes = function ()
                 local source = GL.TMB:source();
@@ -145,7 +145,7 @@ function Overview:draw()
 
                 GL.TMB:draw(strlower(source));
             end,
-        };
+        });
     end);
     GL.Interface:addTooltip(ClearButton, L["Clear TMB / DFT data. This doesn't affect any data on your raider's machines"]);
     Window:AddChild(ClearButton);
@@ -153,7 +153,7 @@ function Overview:draw()
     local ShareButton = AceGUI:Create("Button");
     ShareButton:SetWidth(108);
     ShareButton:SetText(L["Broadcast"]);
-    ShareButton:SetCallback("OnClick", function()
+    ShareButton:SetCallback("OnClick", function ()
         if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
             GL.TMB:broadcast();
         else
@@ -172,7 +172,7 @@ function Overview:draw()
     local SettingsButton = AceGUI:Create("Button");
     SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(90);
-    SettingsButton:SetCallback("OnClick", function()
+    SettingsButton:SetCallback("OnClick", function ()
         GL.Settings:draw("TMB");
     end);
     Window:AddChild(SettingsButton);
@@ -180,14 +180,14 @@ function Overview:draw()
     local ClearRaiderDataButton = AceGUI:Create("Button");
     ClearRaiderDataButton:SetText(L["Clear Raider Data"]);
     ClearRaiderDataButton:SetWidth(146); ---@TODO: TOO SHORT FOR FRENCH
-    ClearRaiderDataButton:SetCallback("OnClick", function()
+    ClearRaiderDataButton:SetCallback("OnClick", function ()
         -- Show a confirmation dialog before clearing entries
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Clear TMB data for all raiders?"],
             OnYes = function ()
                 GL.TMB:broadcast(true);
             end,
-        };
+        });
     end);
     GL.Interface:addTooltip(ClearRaiderDataButton, L["Remove TMB / DFT data on your raider's machines, useful if you broadcasted data accidentally"]);
     Window:AddChild(ClearRaiderDataButton);
@@ -206,7 +206,7 @@ function Overview:draw()
 
     local BroadcastProgressLabel = AceGUI:Create("Label");
     BroadcastProgressLabel:SetWidth(200);
-    BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
+    BroadcastProgressLabel:SetFontObject(_G.GameFontNormal);
     Window:AddChild(BroadcastProgressLabel);
     GL.Interface:set(GL.TMB, "BroadcastProgress", BroadcastProgressLabel);
 

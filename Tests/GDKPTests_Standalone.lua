@@ -2,11 +2,11 @@
 local _, GL = ...;
 local L = Gargul_L;
 
---- Standalone GDKP Tests (No WoWUnit Required)
---- Run with: /run GargulTests:runAll()
---- Run specific: /run GargulTests:run("Session Creation")
+--- Standalone GDKP Tests
+--- Run with: /run Gargul.Tests:runAll()
+--- Run specific: /run Gargul.Tests:run("Session Creation")
 
-_G.GargulTests = {
+GL.Tests = {
     results = {
         passed = 0,
         failed = 0,
@@ -15,7 +15,7 @@ _G.GargulTests = {
     currentCategory = nil,
 };
 
-local Tests = _G.GargulTests;
+local Tests = GL.Tests;
 
 --- Simple assertion framework (replaces WoWUnit)
 local Assert = {
@@ -109,11 +109,11 @@ function Tests:runTest(category, testName, testFunc, setup, teardown)
     -- Report result
     if (success) then
         self.results.passed = self.results.passed + 1;
-        Gargul:xd(("[Test] ✓ %s"):format(fullName));
+        Gargul:xd(("[Test] [PASS] %s"):format(fullName));
         return true;
     else
         self.results.failed = self.results.failed + 1;
-        Gargul:xd(("[Test] ✗ %s"):format(fullName));
+        Gargul:xd(("[Test] [FAIL] %s"):format(fullName));
         Gargul:xd(("[Test]   Error: %s"):format(tostring(err)));
 
         -- Print any assertion failures
@@ -153,7 +153,7 @@ function Tests:run(categoryName)
     Gargul:xd(("Failed: %d"):format(self.results.failed));
 
     if (self.results.failed == 0) then
-        Gargul:xd("✓ All tests passed!");
+        Gargul:xd("[PASS] All tests passed!");
     end
 end
 

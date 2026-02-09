@@ -54,7 +54,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     Window:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:RegisterForDrag("LeftButton");
     Window:SetScript("OnDragStart", Window.StartMoving);
-    Window:SetScript("OnDragStop", function()
+    Window:SetScript("OnDragStop", function ()
         Window:StopMovingOrSizing();
         GL.Interface:storePosition(Window, "Roller");
     end);
@@ -106,11 +106,11 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
             Button:SetMotionScriptsWhileDisabled(true);
 
             -- Make sure rolling is still possible in case something was amiss!
-            Button:SetScript("OnEnter", function()
+            Button:SetScript("OnEnter", function ()
                 Button:Enable();
             end);
 
-            Button:SetScript("OnLeave", function()
+            Button:SetScript("OnLeave", function ()
                 Button:Disable();
             end);
         end
@@ -241,7 +241,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 
     -- Close the roll window on rightclick
-    TimerBar:SetScript("OnMouseDown", function(_, button)
+    TimerBar:SetScript("OnMouseDown", function (_, button)
         if (button == "RightButton") then
             self:hide();
         end
@@ -284,7 +284,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
-    TimerBar:SetScript("OnEnter", function()
+    TimerBar:SetScript("OnEnter", function ()
         lastShiftStatus = IsShiftKeyDown();
 
         GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
@@ -293,7 +293,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
         itemTooltipIsShowing = true;
     end);
 
-    TimerBar:SetScript("OnLeave", function()
+    TimerBar:SetScript("OnLeave", function ()
         GameTooltip:Hide();
         itemTooltipIsShowing = false;
     end);

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -27,10 +27,10 @@ function ReminderToAssignLootUsingGargul:draw()
     Window:SetLayout("Flow");
     Window:SetWidth(240);
     Window:SetHeight(30);
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
-    Window.frame:SetScript("OnMouseDown", function(_, button)
+    Window.frame:SetScript("OnMouseDown", function (_, button)
         if (button == "RightButton") then
             GL.Settings:set("ExportingLoot.showLootAssignmentReminder", false);
             self:close();
@@ -46,7 +46,7 @@ function ReminderToAssignLootUsingGargul:draw()
     ]]
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
-    DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
+    DescriptionLabel:SetFontObject(_G.GameFontNormalSmall);
     DescriptionLabel:SetText(L["\nDon't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --"]);
     DescriptionLabel:SetColor(1, .95686, .40784);
     DescriptionLabel:SetJustifyH("CENTER")

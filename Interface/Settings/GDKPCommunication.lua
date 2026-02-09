@@ -63,7 +63,7 @@ function GDKPCommunication:draw(Parent)
     NumberOfSecondsToCountdown:SetFullWidth(true);
     NumberOfSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfSecondsToCountdown", 5));
     NumberOfSecondsToCountdown:SetSliderValues(0, 25, 1);
-    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 0) then
@@ -84,7 +84,7 @@ function GDKPCommunication:draw(Parent)
     NumberOfFiveSecondsToCountdown:SetFullWidth(true);
     NumberOfFiveSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfFiveSecondsToCountdown", 15));
     NumberOfFiveSecondsToCountdown:SetSliderValues(0, 30, 5);
-    NumberOfFiveSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+    NumberOfFiveSecondsToCountdown:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 0) then
@@ -105,7 +105,7 @@ function GDKPCommunication:draw(Parent)
     FinalCallTime:SetFullWidth(true);
     FinalCallTime:SetValue(GL.Settings:get("GDKP.finalCallTime", 15));
     FinalCallTime:SetSliderValues(5, 30, 1);
-    FinalCallTime:SetCallback("OnValueChanged", function(Slider)
+    FinalCallTime:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 0) then

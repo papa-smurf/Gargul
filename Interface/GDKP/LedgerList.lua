@@ -98,7 +98,7 @@ function LedgerList:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 1,
         height = 1,
@@ -108,7 +108,7 @@ function LedgerList:build()
         OnClose = function ()
             self:close();
         end,
-    };
+    });
 
     Window:SetClampedToScreen(false);
     Window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2, 2);

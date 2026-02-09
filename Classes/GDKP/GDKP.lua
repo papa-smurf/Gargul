@@ -91,7 +91,7 @@ function GDKP:importPerItemSettings(data)
                 return;
             end
         else -- The first line includes the heading, we don't need that
-            (function()
+            (function ()
                 local itemID = tonumber(strtrim(Segments[Columns.ItemID]));
                 local minimum = tonumber(defaultMinimum);
                 local increment = tonumber(defaultIncrement);

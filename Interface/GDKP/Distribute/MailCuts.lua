@@ -46,13 +46,13 @@ function MailCuts:_init()
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then
-        Events:register("MailCutsPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(_, type)
+        Events:register("MailCutsPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 17) then
                 self:openIfCutsToMail();
             end
         end);
 
-        Events:register("MailCutsPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, type)
+        Events:register("MailCutsPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function (_, type)
             if (type == 17) then
                 self:close();
             end
@@ -61,11 +61,11 @@ function MailCuts:_init()
         return;
     end
 
-    Events:register("MailCutsMailShowListener", "MAIL_SHOW", function()
+    Events:register("MailCutsMailShowListener", "MAIL_SHOW", function ()
         self:openIfCutsToMail();
     end);
 
-    Events:register("MailCutsMailClosedListener", "MAIL_CLOSED", function()
+    Events:register("MailCutsMailClosedListener", "MAIL_CLOSED", function ()
         self:close();
     end);
 end
@@ -110,14 +110,14 @@ function MailCuts:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 300,
         height = 1,
         hideMoveButton = true,
         hideResizeButton = true,
         closeWithEscape = false,
-    };
+    });
     Window:SetPoint("TOPLEFT", _G.MailFrame, "TOPRIGHT", 2, 2);
     Window:SetPoint("BOTTOMLEFT", _G.MailFrame, "BOTTOMRIGHT", 4, -2);
 
@@ -393,11 +393,11 @@ function MailCuts:mailPlayerCut(player, callback)
         { "MailCutsMailSuccess", "MAIL_SUCCESS" },
         { "MailCutsMailFailed", "MAIL_FAILED" },
         { "MailCutsMailTimedOut", "GL.MAIL_TIMED_OUT" },
-    }, function(event)
+    }, function (event)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", };
+        Events:unregister({"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", });
 
         local message;
         local success = false;

@@ -418,13 +418,13 @@ function Auctioneer:start(force, triedQueue)
         AuctioneerUI.time,
         AuctioneerUI.antiSnipe
     )) then
-        self:storeDetailsForFutureAuctions{
+        self:storeDetailsForFutureAuctions({
             itemLink = AuctioneerUI.itemLink,
             minimumBid = AuctioneerUI.minimumBid,
             increment = AuctioneerUI.increment,
             time = AuctioneerUI.time,
             antiSnipe = AuctioneerUI.antiSnipe,
-        };
+        });
     end;
 end
 
@@ -533,12 +533,12 @@ function Auctioneer:timeRanOut()
     end
 
     local winner = Auction.Current.TopBid.Bidder.name;
-    local awardChecksum = GL.AwardedLoot:addWinner{
+    local awardChecksum = GL.AwardedLoot:addWinner({
         broadcast = false,
         gdkpCost = bid,
         itemLink = Auction.Current.itemLink,
         winner = winner,
-    };
+    });
     if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
         return;
     end
@@ -762,7 +762,7 @@ function Auctioneer:award()
     local winner = selected.cols[4].value;
     local bid = selected.cols[2].value;
 
-    GL.Interface.Dialogs.PopupDialog:open{
+    GL.Interface.Dialogs.PopupDialog:open({
         question = (L["Award %s to %s for %s?"]):format(
             Auction.Current.itemLink,
             GL:formatPlayerName(winner, { colorize = true, }),
@@ -784,13 +784,13 @@ function Auctioneer:award()
                 end
             end
 
-            local awardChecksum = GL.AwardedLoot:addWinner{
+            local awardChecksum = GL.AwardedLoot:addWinner({
                 broadcast = false,
                 gdkpCost = bid,
                 isOS = isOS,
                 itemLink = Auction.Current.itemLink,
                 winner = winner,
-            };
+            });
 
             if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
                 return;
@@ -812,5 +812,5 @@ function Auctioneer:award()
                 Window.Minimize.MinimizeButton:Click();
             end
         end,
-    };
+    });
 end

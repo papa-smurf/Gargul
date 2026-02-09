@@ -44,18 +44,18 @@ function SoftRes:_init()
     end
 
     --- Connect to LootReserve
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         if (type(_G.LootReserve) ~= "table"
             or type(_G.LootReserve.RegisterListener) ~= "function"
         ) then
             return;
         end
 
-        local success, result = pcall(function()
+        local success, result = pcall(function ()
             return _G.LootReserve:RegisterListener(
                 "RESERVES",
                 GL.name,
-                function(Reserves)
+                function (Reserves)
                     self:importLootReserveData(Reserves);
                 end
             );
@@ -106,7 +106,7 @@ function SoftRes:_init()
         -- Check if we need to sync up with an existing multi-auction session
         self:requestData();
     end);
-    
+
     local reportStatus = false; -- No need to notify of "fixed" names after every /reload
     self:materializeData(reportStatus);
 
@@ -201,7 +201,7 @@ function SoftRes:requestData()
 
     self.requestingData = true;
 
-    local playerToRequestFrom = (function()
+    local playerToRequestFrom = (function ()
         -- We are the ML, we need to import the data ourselves
         if (GL.User.isMasterLooter) then
             return;
@@ -245,15 +245,15 @@ function SoftRes:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and updatedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.requestSoftResData,
         content = {
-            currentSoftResID = GL.DB:get('SoftRes.MetaData.id'),
-            softResDataUpdatedAt = GL.DB:get('SoftRes.MetaData.updatedAt'),
+            currentSoftResID = GL.DB:get("SoftRes.MetaData.id"),
+            softResDataUpdatedAt = GL.DB:get("SoftRes.MetaData.updatedAt"),
         },
         channel = "WHISPER",
         recipient = playerToRequestFrom,
-    }:send();
+    }):send();
 
     self.requestingData = false;
 end
@@ -274,29 +274,29 @@ function SoftRes:replyToDataRequest(CommMessage)
     end
 
     -- Nice try, but our SoftRes is marked as "hidden", no data for you!
-    if (GL.DB:get('SoftRes.MetaData.hidden', true)) then
+    if (GL.DB:get("SoftRes.MetaData.hidden", true)) then
         return;
     end
 
-    local playerSoftResID = CommMessage.content.currentSoftResID or '';
+    local playerSoftResID = CommMessage.content.currentSoftResID or "";
     local playerSoftResUpdatedAt = tonumber(CommMessage.content.softResDataUpdatedAt) or 0;
 
     -- Your data is newer than mine, leave me alone!
     if (not GL:empty(playerSoftResID)
         and playerSoftResUpdatedAt > 0
-        and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
-        and playerSoftResUpdatedAt > GL.DB:get('SoftRes.MetaData.updatedAt', 0)
+        and playerSoftResID == GL.DB:get("SoftRes.MetaData.id", "")
+        and playerSoftResUpdatedAt > GL.DB:get("SoftRes.MetaData.updatedAt", 0)
     ) then
         return;
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastSoftRes,
         content = DB:get("SoftRes.MetaData.importString"),
         channel = "WHISPER",
         recipient = CommMessage.senderFqn,
-    }:send();
+    }):send();
 end
 
 --- Check if an item is reserved by the current player
@@ -959,7 +959,7 @@ function SoftRes:import(data, openOverview)
         and self:userIsAllowedToBroadcast()
     ) then
         -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
-        if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+        if (not GL.DB:get("SoftRes.MetaData.hidden", true)) then
             self:broadcast();
         end
     end
@@ -1209,7 +1209,7 @@ function SoftRes:importGargulData(data)
     -- At this point in Era we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?"],
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
@@ -1217,7 +1217,7 @@ function SoftRes:importGargulData(data)
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,
-        };
+        });
     end
 
     GL.Interface.SoftRes.Importer:close();
@@ -1316,7 +1316,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?"],
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
@@ -1324,7 +1324,7 @@ function SoftRes:importCSVData(data, reportStatus)
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,
-        };
+        });
     end
 
     return not GL:empty(DB.SoftRes.SoftReserves);
@@ -1438,11 +1438,11 @@ function SoftRes:broadcast()
 
     self.broadcastInProgress = true;
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastSoftRes,
         content = DB:get("SoftRes.MetaData.importString"),
         channel = "GROUP",
-    }:send();
+    }):send();
 
     GL.Ace:ScheduleTimer(function ()
         GL:success(L["Broadcast finished!"]);

@@ -78,7 +78,7 @@ function GL:bootstrap(_, _, addonName)
     -- Mark the add-on as fully loaded
     GL.loadedOn = GetServerTime();
 
-    GL:after(1, nil, function()
+    GL:after(1, nil, function ()
         -- Check if ElvUI is loaded (useful for making adhoc UI changes)
         self.elvUILoaded = GL.GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
 
@@ -162,7 +162,7 @@ function GL:_init()
         GL.FONT = media:Fetch("font", "PTSansNarrow");
     end
 
-    GL:after(2, nil, function()
+    GL:after(2, nil, function ()
         -- Show a welcome message
         if (self.Settings:get("welcomeMessage")) then
             GL:message("|c00" .. self.Data.Constants.addonHexColor .. (L["v%s. Type |c00967FD2/gl|r or |c00967FD2/gargul|r to get started!"]):format(self.version));
@@ -205,7 +205,7 @@ function GL:_init()
     self:hookNativeWindowEvents();
 
     -- Hook item click events
-    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
+    hooksecurefunc("HandleModifiedItemClick", function (itemLink)
         self:handleItemClick(itemLink, GetMouseButtonClicked());
     end);
 
@@ -216,7 +216,7 @@ function GL:_init()
     self.User:refresh();
 
     -- GargulAutoRoll migration: if they have the addon but no Gargul auto roll rules, nudge them
-    GL:after(8, "GargulAutoRollMigration", function()
+    GL:after(8, "GargulAutoRollMigration", function ()
         for i = 1, GL.GetNumAddOns() do
             if (select(1, GL.GetAddOnInfo(i)) == "GargulAutoRoll") then
                 local color = GL.Data.Constants.addonHexColor;
@@ -291,7 +291,7 @@ function GL:hookNativeWindowEvents()
 
     -- See https://wowpedia.fandom.com/wiki/PLAYER_INTERACTION_MANAGER_FRAME_HIDE for types
     if (not GL.isEra) then
-        GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(_, type)
+        GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 5) then
                 self.merchantIsShown = true;
             elseif (type == 8) then
@@ -305,7 +305,7 @@ function GL:hookNativeWindowEvents()
             end
         end);
 
-        GL.Events:register("BootstrapPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, type)
+        GL.Events:register("BootstrapPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function (_, type)
             if (type == 5) then
                 self.merchantIsShown = false;
             elseif (type == 8) then
@@ -322,43 +322,43 @@ function GL:hookNativeWindowEvents()
         return;
     end
 
-    GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function()
+    GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function ()
         self.auctionHouseIsShown = true;
     end);
 
-    GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function()
+    GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function ()
         self.auctionHouseIsShown = false;
     end);
 
-    GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function()
+    GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function ()
         self.mailIsShown = true;
     end);
 
-    GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function()
+    GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function ()
         self.mailIsShown = false;
     end);
 
-    GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function()
+    GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function ()
         self.merchantIsShown = true;
     end);
 
-    GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function()
+    GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function ()
         self.merchantIsShown = false;
     end);
 
-    GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function()
+    GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function ()
         self.bankIsShown = true;
     end);
 
-    GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function()
+    GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function ()
         self.bankIsShown = false;
     end);
 
-    GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function()
+    GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function ()
         self.guildBankIsShown = true;
     end);
 
-    GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function()
+    GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function ()
         self.guildBankIsShown = false;
     end);
 end
@@ -366,7 +366,7 @@ end
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
 ---@return nil
 function GL:hookTooltipSetItemEvents()
-    GL.onTooltipSetItemFunc = function(Tooltip)
+    GL.onTooltipSetItemFunc = function (Tooltip)
         -- No valid item tooltip was provided
         if (not Tooltip
             or not Tooltip.GetItem

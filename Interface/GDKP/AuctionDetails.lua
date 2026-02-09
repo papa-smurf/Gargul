@@ -129,7 +129,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     local ItemLink = AceGUI:Create("Label");
-    ItemLink:SetFontObject(_G["GameFontNormal"]);
+    ItemLink:SetFontObject(_G.GameFontNormal);
     ItemLink:SetFullWidth(true);
     ItemLink:SetText(itemLabel);
     ScrollFrame:AddChild(ItemLink);
@@ -231,7 +231,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     local CloseButton = AceGUI:Create("Button");
     CloseButton:SetText(L["Close"]);
     CloseButton:SetFullWidth(true);
-    CloseButton:SetCallback("OnClick", function()
+    CloseButton:SetCallback("OnClick", function ()
         self:close();
     end);
     ScrollFrame:AddChild(CloseButton);

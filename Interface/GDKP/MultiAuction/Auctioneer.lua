@@ -130,14 +130,14 @@ function Auctioneer:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = WINDOW_WIDTH,
         minWidth = WINDOW_WIDTH,
         height = WINDOW_HEIGHT,
         minHeight = WINDOW_HEIGHT,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -194,7 +194,7 @@ function Auctioneer:build()
 
     --[[ SELECT ALL ]]
     ---@type CheckButton
-    local SelectAll = Interface:createCheckbox{
+    local SelectAll = Interface:createCheckbox({
         Parent = Window,
         checked = false,
         callback = function (_, value)
@@ -205,7 +205,7 @@ function Auctioneer:build()
                 end
             end
         end,
-    };
+    });
     SelectAll:SetPoint("TOPLEFT", SessionDetails, "BOTTOMLEFT", 0, -8);
     Interface:addTooltip(SelectAll, L["Select / Disable all"]);
     self.SelectAll = SelectAll;
@@ -284,10 +284,10 @@ function Auctioneer:build()
 
             --[[ SELECT ]]
             ---@type CheckButton
-            local Select = Interface:createCheckbox{
+            local Select = Interface:createCheckbox({
                 Parent = ItemRow,
                 checked = addToSelection,
-            };
+            });
             ItemRow._Select = Select;
             Select:SetPoint("TOP", ItemRow, "TOP", 0, 2);
             Select:SetPoint("LEFT", SelectAll, "LEFT", 0, 0);
@@ -485,13 +485,13 @@ function Auctioneer:build()
                     end
 
                     -- Start after double-checking if the user is OK with people missing out
-                    Interface.Dialogs.PopupDialog:open{
+                    Interface.Dialogs.PopupDialog:open({
                         question = L["Not everyone is using Gargul, are you sure you want to start the auction?"],
                         OnYes = function ()
                             self:start();
                             GroupVersionCheck:close();
                         end,
-                    };
+                    });
                 end,
                 tooltip = L["Start"],
             },
@@ -676,12 +676,12 @@ function Auctioneer:start()
     -- We still have running auctions, add the selected items to our current session
     if (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
         for _, Details in pairs(ItemsUpForAuction or {}) do
-            GL.GDKP.MultiAuction.Client:addToCurrentSession{
+            GL.GDKP.MultiAuction.Client:addToCurrentSession({
                 link = Details.link,
                 duration = duration,
                 minimum = Details.minimum,
                 increment = Details.increment,
-            };
+            });
         end
 
         return;

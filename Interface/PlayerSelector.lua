@@ -34,14 +34,14 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:SetHeight(292);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("PlayerSelector"));
     GL.Interface:set(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_PLAYER_SELECTOR_WINDOW"] = Window.frame;
+    _G.GARGUL_PLAYER_SELECTOR_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_PLAYER_SELECTOR_WINDOW");
 
     local DescriptionFrame = AceGUI:Create("SimpleGroup");
@@ -51,7 +51,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:AddChild(DescriptionFrame);
 
     local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFontObject(_G.GameFontNormal);
     Description:SetFullWidth(true);
     Description:SetJustifyH("CENTER");
     Description:SetText("\n" .. description);
@@ -116,7 +116,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     ConfirmButton:SetText(L["Ok"]);
     ConfirmButton:SetWidth(140);
     ConfirmButton:SetHeight(20);
-    ConfirmButton:SetCallback("OnClick", function()
+    ConfirmButton:SetCallback("OnClick", function ()
         local PlayersTable = GL.Interface:get(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 

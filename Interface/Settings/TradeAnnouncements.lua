@@ -34,7 +34,7 @@ function TradeAnnouncements:draw(Parent)
     AnnounceWhen:SetList(DropDownItems, ItemOrder);
     AnnounceWhen:SetText(DropDownItems[GL.Settings:get("TradeAnnouncements.mode")]);
     AnnounceWhen:SetWidth(250);
-    AnnounceWhen:SetCallback("OnValueChanged", function()
+    AnnounceWhen:SetCallback("OnValueChanged", function ()
         GL.Settings:set("TradeAnnouncements.mode", AnnounceWhen:GetValue());
     end);
     Parent:AddChild(AnnounceWhen);
@@ -111,7 +111,7 @@ function TradeAnnouncements:draw(Parent)
     MinimumQuality:SetList(DropDownItems);
     MinimumQuality:SetText(DropDownItems[GL.Settings:get("TradeAnnouncements.minimumQualityOfAnnouncedLoot", 0)]);
     MinimumQuality:SetWidth(150);
-    MinimumQuality:SetCallback("OnValueChanged", function()
+    MinimumQuality:SetCallback("OnValueChanged", function ()
         GL.Settings:set("TradeAnnouncements.minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
     end);
     Parent:AddChild(MinimumQuality);

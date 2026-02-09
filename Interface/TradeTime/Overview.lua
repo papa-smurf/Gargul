@@ -141,7 +141,7 @@ function Overview:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 250,
         height = 100,
@@ -153,7 +153,7 @@ function Overview:build()
         closeWithEscape = false,
         hideWatermark = true,
         template = false,
-    };
+    });
 
     -- Position move / minimize buttons
     Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -22, 0);
@@ -538,7 +538,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     end
     ItemRow.updateIcon();
 
-    CountDownBar:SetScript("OnLeave", function()
+    CountDownBar:SetScript("OnLeave", function ()
         CountDownBar:SetTimeVisibility(false);
 
         GameTooltip:Hide();
@@ -550,7 +550,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 
     -- Show a tooltip for the item up for roll
     -- when hovering over the progress bar
-    CountDownBar:SetScript("OnEnter", function()
+    CountDownBar:SetScript("OnEnter", function ()
         CountDownBar:SetTimeVisibility(true);
 
         GameTooltip:SetOwner(ItemRow);
@@ -575,7 +575,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     end);
 
     local itemIsHardReserved, itemIsSoftReserved, itemIsWishListed, itemIsPrioritized;
-    local updateReservationDetails = function()
+    local updateReservationDetails = function ()
         -- Check if this item is reserved
         itemIsHardReserved = SoftRes:linkIsHardReserved(Details.itemLink);
         itemIsSoftReserved = not itemIsHardReserved and SoftRes:linkIsReserved(Details.itemLink);

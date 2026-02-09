@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -67,7 +67,7 @@ function SlashCommands:draw(Parent)
     for _, Entry in pairs(Commands) do
         local CommandLabel = GL.AceGUI:Create("Label");
         CommandLabel:SetText("/gl " .. Entry.command);
-        CommandLabel:SetFontObject(_G["GameFontNormal"]);
+        CommandLabel:SetFontObject(_G.GameFontNormal);
         CommandLabel:SetColor(1, .95686, .40784);
         CommandLabel:SetWidth(120);
         Parent:AddChild(CommandLabel);
@@ -75,7 +75,7 @@ function SlashCommands:draw(Parent)
         if (not GL:empty(Entry.Shorthands)) then
             local CommandShorthands = GL.AceGUI:Create("Label");
             CommandShorthands:SetText("Shorthands: /gl " .. table.concat(Entry.Shorthands, " /gl "));
-            CommandShorthands:SetFontObject(_G["GameFontNormalSmall"]);
+            CommandShorthands:SetFontObject(_G.GameFontNormalSmall);
             CommandShorthands:SetColor(.95686, .5490, .72941);
             Parent:AddChild(CommandShorthands);
         end
@@ -83,7 +83,7 @@ function SlashCommands:draw(Parent)
         local CommandDescription = GL.AceGUI:Create("Label");
         CommandDescription:SetText(Entry.description);
         CommandDescription:SetFullWidth(true);
-        CommandDescription:SetFontObject(_G["GameFontNormalSmall"]);
+        CommandDescription:SetFontObject(_G.GameFontNormalSmall);
         Parent:AddChild(CommandDescription);
 
         local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");

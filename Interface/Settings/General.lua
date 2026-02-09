@@ -21,7 +21,7 @@ function General:draw(Parent)
     local ChatMessageLanguage = GL.AceGUI:Create("Button");
     ChatMessageLanguage:SetText("Change chat message language");
     ChatMessageLanguage:SetFullWidth(true);
-    ChatMessageLanguage:SetCallback("OnClick", function()
+    ChatMessageLanguage:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Interface.Locale:open();
     end);
@@ -95,7 +95,7 @@ function General:draw(Parent)
     SoundChannelDropdown:SetList(SoundChannels);
     SoundChannelDropdown:SetText(GL.Settings:get("soundChannel"));
     SoundChannelDropdown:SetWidth(250);
-    SoundChannelDropdown:SetCallback("OnValueChanged", function()
+    SoundChannelDropdown:SetCallback("OnValueChanged", function ()
         local channel = SoundChannelDropdown:GetValue();
         GL.Settings:set("soundChannel", channel);
     end);

@@ -68,7 +68,7 @@ function MinimapButton:draw(Parent)
         {
             label = "Enable minimap Icon",
             setting = "MinimapButton.enabled",
-            callback = function()
+            callback = function ()
                 GL.MinimapButton:drawOrHide();
             end,
         },
@@ -99,7 +99,7 @@ function MinimapButton:draw(Parent)
         Dropdown:SetList(DROPDOWN_ITEMS, ITEM_ORDER);
         Dropdown:SetText(DROPDOWN_ITEMS[GL.Settings:get("MinimapButton.Actions." .. shortcut)]);
         Dropdown:SetWidth(250);
-        Dropdown:SetCallback("OnValueChanged", function()
+        Dropdown:SetCallback("OnValueChanged", function ()
             GL.Settings:set("MinimapButton.Actions." .. shortcut, Dropdown:GetValue());
         end);
         Parent:AddChild(Dropdown);

@@ -47,7 +47,7 @@ function PackMuleIgnores:draw(Parent)
 
     local ItemIsIgnoredResult = GL.AceGUI:Create("Label");
     ItemIsIgnoredResult:SetText("");
-    ItemIsIgnoredResult:SetFontObject(_G["GameFontNormal"]);
+    ItemIsIgnoredResult:SetFontObject(_G.GameFontNormal);
     ItemIsIgnoredResult:SetFullWidth(true);
     Parent:AddChild(ItemIsIgnoredResult);
 

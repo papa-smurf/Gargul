@@ -61,7 +61,7 @@ function DroppedLoot:_init()
         end
     end);
 
-    MasterLooterFrame:HookScript("OnHide", function()
+    MasterLooterFrame:HookScript("OnHide", function ()
         GL.Interface.ReminderToAssignLootUsingGargul:close();
     end);
 
@@ -257,7 +257,7 @@ function DroppedLoot:hookClickEvents()
                 break;
             end
 
-            Button:HookScript("OnClick", function()
+            Button:HookScript("OnClick", function ()
                 local slot = tonumber(Button.slot) or buttonIndex;
                 if (not slot) then
                     return;
@@ -433,7 +433,7 @@ function DroppedLoot:announceTest(...)
                 GetLootSlotLink = function (slot)
                     return Details[slot].link or nil;
                 end,
-                GetLootSlotType = function(slot)
+                GetLootSlotType = function (slot)
                     local itemLink = Details[slot].link or "";
 
                     if (GL:strContains(itemLink, "Hcurrency:")) then
@@ -442,7 +442,7 @@ function DroppedLoot:announceTest(...)
 
                     return LOOT_SLOT_ITEM;
                 end,
-                GetLootSourceInfo = function() return GL:uuid() end,
+                GetLootSourceInfo = function () return GL:uuid() end,
             }
         };
     end);

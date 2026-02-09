@@ -26,7 +26,7 @@ function LootTradeTimers:draw(Parent)
     NumberOfTimerBars:SetFullWidth(true);
     NumberOfTimerBars:SetValue(min(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 12), 12));
     NumberOfTimerBars:SetSliderValues(1, 12, 1);
-    NumberOfTimerBars:SetCallback("OnValueChanged", function(Slider)
+    NumberOfTimerBars:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (type(value) ~= nil) then
@@ -48,7 +48,7 @@ function LootTradeTimers:draw(Parent)
     MaximumTradeTimeLeft:SetFullWidth(true);
     MaximumTradeTimeLeft:SetValue(GL.Settings:get("LootTradeTimers.maximumTradeTimeLeft", 120));
     MaximumTradeTimeLeft:SetSliderValues(1, 120, 1);
-    MaximumTradeTimeLeft:SetCallback("OnValueChanged", function(Slider)
+    MaximumTradeTimeLeft:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (type(value) ~= nil) then
@@ -156,7 +156,7 @@ function LootTradeTimers:draw(Parent)
 
     local DemoTradeTimersButton = GL.AceGUI:Create("Button");
     DemoTradeTimersButton:SetText(ButtonText);
-    DemoTradeTimersButton:SetCallback("OnClick", function()
+    DemoTradeTimersButton:SetCallback("OnClick", function ()
         -- Disable test mode
         if (self.testEnabled) then
             self.testEnabled = false;

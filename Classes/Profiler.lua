@@ -33,10 +33,10 @@ function Profiler:draw()
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetPoint(GL.Interface:getPosition("Profiler"));
     Window.frame:SetScale(.8);
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
-    Window.frame:SetScript("OnLeave", function()
+    Window.frame:SetScript("OnLeave", function ()
         self:storePosition();
     end);
     self.Window = Window;
@@ -54,7 +54,7 @@ function Profiler:draw()
     Window:AddChild(VerticalSpacer);
 
     local Usage = GL.AceGUI:Create("Label");
-    Usage:SetFontObject(_G["GameFontNormal"]);
+    Usage:SetFontObject(_G.GameFontNormal);
     Usage:SetFullWidth(true);
     Usage:SetJustifyH("CENTER");
     Window:AddChild(Usage);

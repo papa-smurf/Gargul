@@ -37,7 +37,7 @@ function Importer:draw()
     Window:SetHeight(550);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
         GL.BoostedRolls:draw();
     end);
@@ -46,12 +46,12 @@ function Importer:draw()
     Window:SetPoint(GL.Interface:getPosition("BoostedRollsImport"));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_BOOSTEDROLLS_IMPORTER_WINDOW"] = Window.frame;
+    _G.GARGUL_BOOSTEDROLLS_IMPORTER_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_BOOSTEDROLLS_IMPORTER_WINDOW");
 
     -- Explanation
     local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFontObject(_G.GameFontNormal);
     Description:SetFullWidth(true);
     Description:SetText(L["\nHere you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo"]);
     Window:AddChild(Description);
@@ -66,7 +66,7 @@ function Importer:draw()
     BoostedRollDataBox:SetMaxLetters(999999999);
     Window:AddChild(BoostedRollDataBox);
 
-    BoostedRollDataBox:SetCallback("OnTextChanged", function(_, _, text)
+    BoostedRollDataBox:SetCallback("OnTextChanged", function (_, _, text)
         self.boostedRollsBoxContent = text;
     end)
 
@@ -78,7 +78,7 @@ function Importer:draw()
     Window:AddChild(StatusMessageFrame);
 
     local StatusMessageLabel = AceGUI:Create("Label");
-    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
+    StatusMessageLabel:SetFontObject(_G.GameFontNormal);
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
     StatusMessageFrame:AddChild(StatusMessageLabel);
@@ -88,7 +88,7 @@ function Importer:draw()
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(140);
-    ImportButton:SetCallback("OnClick", function()
+    ImportButton:SetCallback("OnClick", function ()
         if (GL.BoostedRolls:available()) then
             GL.Interface.Dialogs.PopupDialog:open({
                 question = L["Are you sure you want to clear all boosted roll data?"],

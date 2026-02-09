@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -81,18 +81,18 @@ function MinimapButton:_init()
         type = "data source",
         text = L["Gargul"],
         icon = "Interface/AddOns/Gargul/Assets/Buttons/minimap",
-        OnClick = function(_, mouseButtonPressed)
+        OnClick = function (_, mouseButtonPressed)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
             local clickCombination = GL.Events:getClickCombination(mouseButtonPressed);
             ACTIONS[ButtonActions[clickCombination]]();
         end,
-        OnTooltipShow = function(tooltip)
+        OnTooltipShow = function (tooltip)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
 
             tooltip:AddLine(("|cff%s%s %s%s|r"):format(GL.Data.Constants.addonHexColor, L["Gargul"], L["v"], GL.version));
 
             for _, shortcut in pairs(SHORTCUT_ORDER) do
-                (function()
+                (function ()
                     local action = ButtonActions[shortcut];
                     if (action == "DISABLED") then
                         return;

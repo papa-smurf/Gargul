@@ -57,8 +57,8 @@ function Import:build()
     local Confirm = AceGUI:Create("Button");
     Confirm:SetText(L["Import"]);
     Confirm:SetFullWidth(true);
-    Confirm:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open{
+    Confirm:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["This will override any changes you've made to the cut window, are you sure?"],
             OnYes = function ()
                 local data = ImportBox:GetText();
@@ -73,7 +73,7 @@ function Import:build()
                     and GL:isCrossRealm()
                     and not GL:empty(Cuts)
                 ) then
-                    GL.Interface.Dialogs.PopupDialog:open{
+                    GL.Interface.Dialogs.PopupDialog:open({
                         question = (L["\n|c00BE3333!! WARNING !!|r\n\nYou're on a connected realm and are importing player names without\na realm suffix, '%s' for example. This can cause you to send\ncuts and cut mails to the wrong player.\n\nWhen on a connected realm always try to include the realm name of players!\n\nContinue importing?\n"]):format(GL:formatPlayerName(GL.User.name, { includeRealm = "always", colorize = true, })),
                         OnYes = function ()
                             if (GDKPPot:importCuts(self.sessionID, Cuts)) then
@@ -81,8 +81,8 @@ function Import:build()
                                 self:close();
                             end
                         end,
-                    };
-                    
+                    });
+
                     return;
                 end
 
@@ -91,14 +91,14 @@ function Import:build()
                     self:close();
                 end
             end,
-        };
+        });
     end);
     Window:AddChild(Confirm);
 
     local Cancel = AceGUI:Create("Button");
     Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
-    Cancel:SetCallback("OnClick", function()
+    Cancel:SetCallback("OnClick", function ()
         self:close();
     end);
     Window:AddChild(Cancel);

@@ -25,7 +25,7 @@ function Welcome:draw(Parent)
 
     local OpenSoftRes = AceGUI:Create("Button");
     OpenSoftRes:SetText("SoftRes");
-    OpenSoftRes:SetCallback("OnClick", function()
+    OpenSoftRes:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("softreserves");
     end);
@@ -34,7 +34,7 @@ function Welcome:draw(Parent)
 
     local OpenTMB = AceGUI:Create("Button");
     OpenTMB:SetText("TMB / DFT");
-    OpenTMB:SetCallback("OnClick", function()
+    OpenTMB:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("tmb");
     end);
@@ -44,7 +44,7 @@ function Welcome:draw(Parent)
     if (GL.GDKPIsAllowed) then
         local OpenGDKP = GL.AceGUI:Create("Button");
         OpenGDKP:SetText("GDKP");
-        OpenGDKP:SetCallback("OnClick", function()
+        OpenGDKP:SetCallback("OnClick", function ()
             GL.Settings:close();
             GL.Commands:call("gdkp");
         end);
@@ -54,7 +54,7 @@ function Welcome:draw(Parent)
 
     local OpenPackMule = AceGUI:Create("Button");
     OpenPackMule:SetText("Autolooting");
-    OpenPackMule:SetCallback("OnClick", function()
+    OpenPackMule:SetCallback("OnClick", function ()
         GL.Settings:draw("PackMule");
     end);
     OpenPackMule:SetWidth(120);
@@ -62,7 +62,7 @@ function Welcome:draw(Parent)
 
     local OpenAutoRoll = AceGUI:Create("Button");
     OpenAutoRoll:SetText(L["Auto Roll"]);
-    OpenAutoRoll:SetCallback("OnClick", function()
+    OpenAutoRoll:SetCallback("OnClick", function ()
         GL.Settings:draw("AutoRollRules");
     end);
     OpenAutoRoll:SetWidth(120);
@@ -70,7 +70,7 @@ function Welcome:draw(Parent)
 
     local OpenBonusFeatures = AceGUI:Create("Button");
     OpenBonusFeatures:SetText("Bonus Features");
-    OpenBonusFeatures:SetCallback("OnClick", function()
+    OpenBonusFeatures:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Interface.BonusFeatures:open();
     end);
@@ -148,13 +148,13 @@ function Welcome:draw(Parent)
 
         local PatronLabel = AceGUI:Create("Label");
         PatronLabel:SetText(" Patrons");
-        PatronLabel:SetFontObject(_G["GameFontNormal"]);
+        PatronLabel:SetFontObject(_G.GameFontNormal);
         PatronLabel:SetWidth(100);
         Parent:AddChild(PatronLabel);
 
         local Patrons = AceGUI:Create("Label");
         Patrons:SetText(patronString);
-        Patrons:SetFontObject(_G["GameFontNormal"]);
+        Patrons:SetFontObject(_G.GameFontNormal);
         Patrons:SetFullWidth(true);
         Parent:AddChild(Patrons);
     end
@@ -167,20 +167,20 @@ function Welcome:draw(Parent)
     if (not GL:empty(ContributorNames)) then
         local ContributorLabel = AceGUI:Create("Label");
         ContributorLabel:SetText("\n\nContributors");
-        ContributorLabel:SetFontObject(_G["GameFontSmall"]);
+        ContributorLabel:SetFontObject(_G.GameFontSmall);
         ContributorLabel:SetWidth(100);
         Parent:AddChild(ContributorLabel);
 
         local Contributors = AceGUI:Create("Label");
         Contributors:SetText(table.concat(ContributorNames, ", "));
-        Contributors:SetFontObject(_G["GameFontSmall"]);
+        Contributors:SetFontObject(_G.GameFontSmall);
         Contributors:SetFullWidth(true);
         Parent:AddChild(Contributors);
     end
 
     local Title = AceGUI:Create("Label");
     Title:SetText("\n\n|c00ff424dGargul would not be here without these awesome people, thank you! <3|r\n\n");
-    Title:SetFontObject(_G["GameFontNormal"]);
+    Title:SetFontObject(_G.GameFontNormal);
     Title:SetFullWidth(true);
     Parent:AddChild(Title);
 
@@ -192,7 +192,7 @@ function Welcome:draw(Parent)
 
     local MoreInfoLabel = AceGUI:Create("Label");
     MoreInfoLabel:SetText("Can't find something? Join our Discord!\n");
-    MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
+    MoreInfoLabel:SetFontObject(_G.GameFontNormal);
     MoreInfoLabel:SetFullWidth(true);
     Parent:AddChild(MoreInfoLabel);
 

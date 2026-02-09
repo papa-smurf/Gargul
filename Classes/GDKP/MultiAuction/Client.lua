@@ -60,7 +60,7 @@ function Client:currentSessionHash()
         return;
     end
 
-    local BidDetails = (function()
+    local BidDetails = (function ()
         local Result = {};
 
         for id, Details in pairs(self.AuctionDetails.Auctions or {}) do
@@ -197,24 +197,24 @@ end
 ---@return nil
 function Client:autobid(auctionID, amount, onConfirm)
     if (Auctioneer:auctionStartedByMe(auctionID)) then
-        Auctioneer:processBid{
+        Auctioneer:processBid({
             Sender = {
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
             content = GL:implode({ auctionID, amount, 1, }, "|"),
-        };
+        });
 
         return onConfirm and onConfirm(true) or nil;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
         content = GL:implode({ auctionID, amount, 1, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
         onConfirm = onConfirm,
-    }:send();
+    }):send();
 end
 
 ---@param auctionID number
@@ -233,24 +233,24 @@ end
 function Client:bid(auctionID, amount, onConfirm)
 
     if (Auctioneer:auctionStartedByMe(auctionID)) then
-        Auctioneer:processBid{
+        Auctioneer:processBid({
             Sender = {
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
             content = GL:implode({ auctionID, amount, }, "|"),
-        };
+        });
 
         return onConfirm and onConfirm(true) or nil;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
         content = GL:implode ({ auctionID, amount, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
         onConfirm = onConfirm,
-    }:send();
+    }):send();
 end
 
 --- The loot master sent us an update of all top bids, refresh our UI
@@ -265,7 +265,7 @@ function Client:updateBids(Message)
     end
 
     for auctionID, Details in pairs(Message.content or {}) do
-        (function()
+        (function ()
             -- This is a new item, add it to the auction
             if (not Message.Sender.isSelf and Details.I) then
                 self.AuctionDetails.Auctions[auctionID] = Details.I;

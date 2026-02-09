@@ -7,7 +7,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 GL.Interface.Settings.PackMuleRules = {
     description = [[For group loot use: |c00F7922EPASS|r, |c00F7922EGREED|r, |c00F7922ENEED|r, |c00F7922EIGNORE|r
     Note: group loot rules only work on items that are tradeable after picking them up. |c00F7922ENEED|r by default only works when you have lead/assist (see /gl pm settings)!
-    
+
     For Master Looting use player names and placeholders:
     |c00F7922ESELF|r - send to yourself
     |c00F7922ERANDOM|r - send to random player
@@ -62,7 +62,7 @@ function PackMuleRules:draw(Parent)
 
     local SectionDescription = GL.AceGUI:Create("Label");
     SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00A79EFFSELF GREED|r");
-    SectionDescription:SetFontObject(_G["GameFontNormal"]);
+    SectionDescription:SetFontObject(_G.GameFontNormal);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);
 
@@ -86,7 +86,7 @@ function PackMuleRules:draw(Parent)
 |c00F7922EIMPORTANT NOTICE:|r Rules based on item ID or item link take priority over name-based item rules! Example: |c00F7922E779 > SELF|r comes before |c00F7922EShiny Seashell > Player2|r
     ]]
     );
-    SectionDescription:SetFontObject(_G["GameFontNormal"]);
+    SectionDescription:SetFontObject(_G.GameFontNormal);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);
 
@@ -160,7 +160,7 @@ end
 function PackMuleRules:onClose()
     GL:debug("PackMuleRules:onClose");
 
-    local sanitizeTarget = function(target)
+    local sanitizeTarget = function (target)
         target = target:gsub(",", " ");
         target = target:gsub("  ", " ");
 

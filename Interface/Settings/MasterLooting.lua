@@ -36,7 +36,7 @@ function MasterLooting:draw(Parent)
         LootThreshold:SetList(DropdownItems);
         LootThreshold:SetText(DropdownItems[GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2)]);
         LootThreshold:SetWidth(150);
-        LootThreshold:SetCallback("OnValueChanged", function()
+        LootThreshold:SetCallback("OnValueChanged", function ()
             GL.Settings:set("MasterLooting.preferredMasterLootingThreshold", LootThreshold:GetValue());
         end);
         Parent:AddChild(LootThreshold);
@@ -50,7 +50,7 @@ function MasterLooting:draw(Parent)
         local ApplyLootThreshold = GL.AceGUI:Create("Button");
         ApplyLootThreshold:SetText("Apply");
         ApplyLootThreshold:SetWidth("80");
-        ApplyLootThreshold:SetCallback("OnClick", function()
+        ApplyLootThreshold:SetCallback("OnClick", function ()
             local Thresholds = {
                 [0] = "poor",
                 [1] = "common",
@@ -63,7 +63,7 @@ function MasterLooting:draw(Parent)
                 [8] = "wowtoken",
             };
             local threshold = LootThreshold:GetValue();
-            GL.SetLootMethod('master', GL.User.name, Thresholds[threshold]);
+            GL.SetLootMethod("master", GL.User.name, Thresholds[threshold]);
         end);
         Parent:AddChild(ApplyLootThreshold);
 
@@ -116,7 +116,7 @@ function MasterLooting:draw(Parent)
     NumberOfSecondsToCountdown:SetFullWidth(true);
     NumberOfSecondsToCountdown:SetValue(GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5));
     NumberOfSecondsToCountdown:SetSliderValues(3, 25, 1);
-    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 3) then

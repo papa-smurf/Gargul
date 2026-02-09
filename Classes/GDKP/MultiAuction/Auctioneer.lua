@@ -186,11 +186,11 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
             increment = GL:floor(Item.increment, precision),
         };
 
-        self:storeDetailsForFutureAuctions{
+        self:storeDetailsForFutureAuctions({
             link = Item.link,
             minimum = Item.minimum,
             increment = Item.increment,
-        };
+        });
     end
 
     -- Prepare all item data needed to start the multi-auction
@@ -332,7 +332,7 @@ function Auctioneer:syncWithRunningSession()
             return;
         end
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.requestRunningGDKPMultiAuctionDetails,
             channel = "WHISPER",
             recipient = playerToFetchDataFrom,
@@ -373,11 +373,11 @@ function Auctioneer:syncWithRunningSession()
                         and Auction.itemID
                         and Auction.Winner.guid
                     ) then
-                        KnownAwardHashes[GL:stringHash{
+                        KnownAwardHashes[GL:stringHash({
                             Auction.itemID,
                             Auction.Winner.guid,
                             Auction.price
-                        }] = true;
+                        })] = true;
                     end
                 end ;
 
@@ -409,11 +409,11 @@ function Auctioneer:syncWithRunningSession()
                         -- Check to see if we can extend it or whether it was already sold
                         if (Auction.endsAt == 0
                             and GL:gt(bid, 0)
-                            and KnownAwardHashes[GL:stringHash{
+                            and KnownAwardHashes[GL:stringHash({
                                 itemID,
                                 strlower(Auction.CurrentBid.player),
                                 bid,
-                            }]
+                            })]
                         ) then
                             return;
                         end
@@ -434,7 +434,7 @@ function Auctioneer:syncWithRunningSession()
                     end
                 end
 
-                GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                     question = L["You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items"],
                     inputValue = 60,
                     OnYes = function (duration)
@@ -451,9 +451,9 @@ function Auctioneer:syncWithRunningSession()
                         GL:sendChatMessage(L.CHAT["I resumed a previous bidding session, double check your bids!"], "GROUP");
                     end,
                     focus = true,
-                };
+                });
             end,
-        }:send();
+        }):send();
     end;
 
     -- Check how many answers we're expecting on our next comm message
@@ -471,11 +471,11 @@ function Auctioneer:syncWithRunningSession()
     end
 
     -- Get a current session hash from users so we can figure out which data to request
-    local CommMessage = GL.CommMessage.new{
+    local CommMessage = GL.CommMessage.new({
         action = CommActions.requestRunningGDKPMultiAuctionHash,
         channel = "GROUP",
         acceptsResponse = true,
-    }:send();
+    }):send();
 
     local cancelTimers = function ()
         GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHash");
@@ -516,12 +516,12 @@ function Auctioneer:respondToDetailsRequest(Message)
         return;
     end
 
-    Message:respond{
+    Message:respond({
         Auctions = AuctionDetails.Auctions,
         antiSnipe = AuctionDetails.antiSnipe,
         bth = AuctionDetails.bth,
         initiator = AuctionDetails.initiator,
-    };
+    });
 end
 
 --- Announce to everyone in the raid that a MultiAuction is starting
@@ -587,7 +587,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     ProgressBar:Start();
     ProgressBar:SetLabel(GL:printfn(L["Broadcast ${percentage}%"], { percentage = 0, }));
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.startGDKPMultiAuction,
         content = {
             ItemDetails = ItemDetails,
@@ -597,7 +597,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
             precision = precision,
         },
         channel = "GROUP",
-    }:send(function ()
+    }):send(function ()
         ProgressBar:Stop();
 
         self:scheduleUpdater();
@@ -657,11 +657,11 @@ function Auctioneer:broadcastChanges()
         return;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.announceChangesForGDKPMultiAuction,
         content = Changes,
         channel = "GROUP",
-    }:send();
+    }):send();
 end
 
 --- Send all top bids to the group
@@ -740,11 +740,11 @@ function Auctioneer:syncNewItems()
         return;
     end
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.announceChangesForGDKPMultiAuction,
         content = Changes,
         channel = "GROUP",
-    }:send();
+    }):send();
 
     GL:sendChatMessage(
         (L.CHAT["I added %s item(s) to the auction for a total of %s"]):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
@@ -1036,12 +1036,12 @@ function Auctioneer:closeAuction(auctionID)
         end
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
-        local awardChecksum = GL.AwardedLoot:addWinner{
+        local awardChecksum = GL.AwardedLoot:addWinner({
             broadcast = false,
             gdkpCost = BidDetails.amount,
             itemLink = itemLink,
             winner = BidDetails.player,
-        };
+        });
         GDKPAuction:create(itemLink, BidDetails.amount, BidDetails.player, nil, HighestBidPerPlayer, nil, awardChecksum);
         GL:unmute();
     end

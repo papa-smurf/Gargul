@@ -82,7 +82,7 @@ function EditMutator:build()
     HelpIcon.frame:SetPoint("BOTTOMLEFT", AutoApplyTo.frame, "BOTTOMLEFT", 2, 22);
     HelpIcon.frame:Show();
 
-    HelpIcon:SetCallback("OnEnter", function()
+    HelpIcon:SetCallback("OnEnter", function ()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" \n" .. L["You can automatically apply this mutator to raiders using keywords:"] .. "\n ");
 
@@ -94,14 +94,14 @@ function EditMutator:build()
         GameTooltip:Show();
     end);
 
-    HelpIcon:SetCallback("OnLeave", function()
+    HelpIcon:SetCallback("OnLeave", function ()
         GameTooltip:Hide();
     end);
 
     local Save = AceGUI:Create("Button");
     Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
-    Save:SetCallback("OnClick", function()
+    Save:SetCallback("OnClick", function ()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
             GL:warning(L["Invalid data supplied"]);
@@ -158,7 +158,7 @@ function EditMutator:build()
     local Cancel = AceGUI:Create("Button");
     Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
-    Cancel:SetCallback("OnClick", function()
+    Cancel:SetCallback("OnClick", function ()
         self:close();
     end);
     Window:AddChild(Cancel);

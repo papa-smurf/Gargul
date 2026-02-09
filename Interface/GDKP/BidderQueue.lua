@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -70,7 +70,7 @@ function BidderQueue:build()
 
     local ItemHolder, ScrollFrame;
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         closeWithEscape = false,
         width = DEFAULT_WINDOW_WIDTH,
@@ -79,7 +79,7 @@ function BidderQueue:build()
         minHeight = 100,
         maxWidth = 500,
         maxHeight = 700,
-    };
+    });
 
     Window:SetScript("OnHide", function ()
         self.isVisible = false;
@@ -132,22 +132,22 @@ function BidderQueue:build()
             CloseMenus();
         end },
         "divider",
-        {text = L["Hide unusable items"], setting = "GDKP.bidderQueueHideUnusable", func = function(Entry, _, _, checked)
+        {text = L["Hide unusable items"], setting = "GDKP.bidderQueueHideUnusable", func = function (Entry, _, _, checked)
             Settings:set("GDKP.bidderQueueHideUnusable", checked);
             Entry.checked = checked;
             self:refreshTable();
         end},
-        {text = L["Show upcoming items"], setting = "GDKP.enableBidderQueue", func = function(Entry, _, _, checked)
+        {text = L["Show upcoming items"], setting = "GDKP.enableBidderQueue", func = function (Entry, _, _, checked)
             if (not checked) then
                 -- Show a confirmation dialog before clearing entries
-                GL.Interface.Dialogs.PopupDialog:open{
+                GL.Interface.Dialogs.PopupDialog:open({
                     question = L["Are you sure? You won't be able to see, or bid on, upcoming items!"],
                     OnYes = function ()
                         Settings:set("GDKP.enableBidderQueue", checked);
                         Entry.checked = checked;
                         self:close();
                     end,
-                };
+                });
 
                 CloseMenus();
                 return;
@@ -351,14 +351,14 @@ function BidderQueue:refreshTable()
                         return;
                     end
 
-                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                         question = (L["What's your maximum bid? (Minimum %s|c00FFF569g)"]):format(QueuedItem.minimumBid),
                         OnYes = function (max)
                             Auction:setAutoBid(max, ItemRow._identifier);
                             self:refreshTable();
                         end,
                         focus = true,
-                    };
+                    });
                 end);
 
                 -- Remove this items bid

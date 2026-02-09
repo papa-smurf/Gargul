@@ -22,7 +22,7 @@ GL.Interface.Identity = {
         cutMailSubject = L["Gargul GDKP: %sg"],
 
         ---@return Frame
-        ledger = function()
+        ledger = function ()
             local Identity = GL.Interface.Identity.default;
 
             ---@type Frame
@@ -35,12 +35,12 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
             Logo:SetAllPoints();
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -78,12 +78,12 @@ GL.Interface.Identity = {
             TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
             TextBottom:SetFont(1.1, "OUTLINE");
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -127,12 +127,12 @@ GL.Interface.Identity = {
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
                 Interface:addTooltip(Window, Identity.tooltip);
 
-                Window:SetScript("OnMouseUp", function(_, button)
+                Window:SetScript("OnMouseUp", function (_, button)
                     if (button == "LeftButton") then
-                        GL.Interface.Dialogs.HyperlinkDialog:open{
+                        GL.Interface.Dialogs.HyperlinkDialog:open({
                             description = Identity.urlInfo,
                             hyperlink = Identity.url,
-                        };
+                        });
                     end
                 end);
             end
@@ -170,12 +170,12 @@ GL.Interface.Identity = {
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
                 Interface:addTooltip(Window, Identity.tooltip);
 
-                Window:SetScript("OnMouseUp", function(_, button)
+                Window:SetScript("OnMouseUp", function (_, button)
                     if (button == "LeftButton") then
-                        GL.Interface.Dialogs.HyperlinkDialog:open{
+                        GL.Interface.Dialogs.HyperlinkDialog:open({
                             description = Identity.urlInfo,
                             hyperlink = Identity.url,
-                        };
+                        });
                     end
                 end);
             end
@@ -196,7 +196,7 @@ GL.Interface.Identity = {
         Realms = { "firemaw", },
 
         ---@return Frame
-        ledger = function()
+        ledger = function ()
             local Identity = GL.Interface.Identity["54402906-2451533554"];
 
             ---@type Frame
@@ -209,12 +209,12 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
             Logo:SetAllPoints();
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -246,12 +246,12 @@ GL.Interface.Identity = {
             Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
             Text:SetFont(1.4, "OUTLINE");
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -286,12 +286,12 @@ GL.Interface.Identity = {
             Text:SetFont(1.4, "OUTLINE");
 
             Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -325,12 +325,12 @@ GL.Interface.Identity = {
             Text:SetFont(1.2, "OUTLINE");
 
             Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -350,7 +350,7 @@ GL.Interface.Identity = {
         cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your ${cut} cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
 
         ---@return Frame
-        ledger = function()
+        ledger = function ()
             local Identity = GL.Interface.Identity["2118133100-1868759167"];
 
             ---@type Frame
@@ -364,12 +364,12 @@ GL.Interface.Identity = {
             Logo:SetPoint("CENTER", Window, "CENTER");
             Logo:SetSize(74, 74);
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -395,12 +395,12 @@ GL.Interface.Identity = {
             Logo:SetSize(75, 75);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -421,12 +421,12 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
             Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -450,12 +450,12 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -474,7 +474,7 @@ GL.Interface.Identity = {
         cutMailSubject = L["Gargul GDKP: %sg"],
 
         ---@return Frame
-        ledger = function()
+        ledger = function ()
             local Identity = GL.Interface.Identity["4120152845-1402702386"];
 
             ---@type Frame
@@ -487,12 +487,12 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
             Logo:SetAllPoints();
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -524,12 +524,12 @@ GL.Interface.Identity = {
             Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
             Text:SetFont(1.4, "OUTLINE");
 
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -564,12 +564,12 @@ GL.Interface.Identity = {
             Text:SetFont(1.4, "OUTLINE");
 
             Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 
@@ -603,12 +603,12 @@ GL.Interface.Identity = {
             Text:SetFont(1.2, "OUTLINE");
 
             Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
+            Window:SetScript("OnMouseUp", function (_, button)
                 if (button == "LeftButton") then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                    GL.Interface.Dialogs.HyperlinkDialog:open({
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
-                    };
+                    });
                 end
             end);
 

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -47,7 +47,7 @@ function BonusFeatures:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 220,
         height = 420,
@@ -56,7 +56,7 @@ function BonusFeatures:build()
         maxWidth = 475,
         maxHeight = 500,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

@@ -48,14 +48,14 @@ function AwardedLoot:_init()
     -- Bind a item successfully assigned (masterlooted) to the winner to the tradeCompleted method
     Events:register("AwardedLootTradeCompletedListener", "GL.ITEM_MASTER_LOOTED", function (_, player, itemID)
         -- Mimic the GL.TRADE_COMPLETED payload so we can reuse the tradeCompleted method!
-        self:tradeCompleted{
+        self:tradeCompleted({
             partner = player,
             MyItems = {
                 {
                     itemID = itemID,
                 },
             },
-        };
+        });
     end);
 
     -- Add item GUIDs to previously awarded items that don't have a GUID linked yet
@@ -70,11 +70,11 @@ function AwardedLoot:_init()
                 return;
             end
 
-            self:addWinner{
+            self:addWinner({
                 itemLink = Details.itemLink,
                 winner = Details.playerName,
                 isBonusLoot = true,
-            };
+            });
         end
 
         -- We don't want to automatically award loot
@@ -99,16 +99,16 @@ function AwardedLoot:_init()
         local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
 
-        self:addWinner{
+        self:addWinner({
             announce = false,
             automaticallyAwarded = true,
             itemLink = Details.itemLink,
             winner = Details.playerName,
-        };
+        });
 
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
     end);
-    
+
     self._initialized = true;
 end
 
@@ -242,12 +242,12 @@ function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
 
     announce = GL:toboolean(announce);
 
-    return self:addWinner{
+    return self:addWinner({
         winner = winner,
         itemLink = itemLink,
         announce = announce,
         date = date,
-    };
+    });
 end
 
 --- Remove a winner for an item
@@ -292,11 +292,11 @@ function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
     -- to broadcast or attempt to auto assign loot to the winner
     if (GL.User.isInGroup and broadcast) then
         -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.deleteAwardedItem,
             content = checksum,
             channel = "GROUP",
-        }:send();
+        }):send();
     end
 end
 
@@ -396,11 +396,11 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     end
 
     -- Broadcast the awarded loot details to everyone in the group
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.editAwardedItem,
         content = AwardEntry,
         channel = "GROUP",
-    }:send();
+    }):send();
 
     -- The loot window is not active and the auto assign setting is enabled
     if (not GL.DroppedLoot.lootWindowIsOpened
@@ -686,11 +686,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         -- In case we award a lot we want to spread out the awarded loot
         GL:after((self.outStandingBroadcasts * 2.3) + 10, nil, function ()
             -- Broadcast the awarded loot details to everyone in the group
-            GL.CommMessage.new{
+            GL.CommMessage.new({
                 action = CommActions.awardItem,
                 content = AwardEntry,
                 channel = "GROUP",
-            }:send();
+            }):send();
 
             self.outStandingBroadcasts = self.outStandingBroadcasts - 1;
         end);

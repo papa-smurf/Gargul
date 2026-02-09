@@ -146,7 +146,7 @@ GL.Commands = GL.Commands or {
 
     Dictionary = {
         -- Open the window for auctioning off items
-        auction = function(...) GL.Interface.GDKP.Auctioneer:open(); end,
+        auction = function (...) GL.Interface.GDKP.Auctioneer:open(); end,
 
         -- Open the multi-auction bid UI
         bid = function ()
@@ -166,13 +166,13 @@ GL.Commands = GL.Commands or {
         end,
 
         -- Open the window for rolling off items
-        rolloff = function(...) GL.MasterLooterUI:draw(...); end,
+        rolloff = function (...) GL.MasterLooterUI:draw(...); end,
 
         -- Open the settings menu
-        settings = function(...) Settings:draw(); end,
+        settings = function (...) Settings:draw(); end,
 
         -- Award an item. This either awards it directly or opens the UI
-        award = function(...)
+        award = function (...)
             local winner, itemLink = ...;
 
             if (GL:strContains(winner, "Hitem:")) then
@@ -188,10 +188,10 @@ GL.Commands = GL.Commands or {
                 return GL.Interface.Award.Award:draw(itemLink);
             end
 
-            GL.AwardedLoot:addWinner{
+            GL.AwardedLoot:addWinner({
                 winner = winner,
                 itemLink = itemLink,
-            };
+            });
         end,
 
         -- Toggle the award history window
@@ -200,7 +200,7 @@ GL.Commands = GL.Commands or {
         end,
 
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
-        awardondate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
+        awardondate = function (...) GL.AwardedLoot:addWinnerOnDate(...); end,
 
         -- Open the Auto Roll rules window
         autoroll = function () GL.Settings:draw("AutoRollRules"); end,
@@ -297,7 +297,7 @@ GL.Commands = GL.Commands or {
         version = function () GL.Interface.GroupVersionCheck:open() end,
 
         -- Check if everyone is running the most up-to-date version
-        inspect = function(...) GL.BagInspector:inspect(...); end,
+        inspect = function (...) GL.BagInspector:inspect(...); end,
     }
 };
 

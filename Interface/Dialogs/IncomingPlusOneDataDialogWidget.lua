@@ -46,31 +46,31 @@ end
 
 -- Widget Events
 local Events = {
-    OnYes = function(self, yesCallback)
+    OnYes = function (self, yesCallback)
         self.yesCallback = function ()
             yesCallback();
             self.frame:Hide();
         end
     end,
 
-    OnNo = function(self, noCallback)
+    OnNo = function (self, noCallback)
         self.noCallback = function ()
             noCallback();
             self.frame:Hide();
         end
     end,
 
-    SetQuestion = function(self, question)
+    SetQuestion = function (self, question)
         self.DialogLabel:SetText(question);
     end,
 
-    SetSender = function(self, playerName)
+    SetSender = function (self, playerName)
         sender = playerName;
 
         self.TrustSenderLabel:SetText((L["Automatically accept incoming broadcasts from %s"]):format(GL:formatPlayerName(playerName, { colorize = true, })));
     end,
 
-    OnAcquire = function(self)
+    OnAcquire = function (self)
         self:ApplyStatus();
         self.frame:SetParent(UIParent);
         self.frame:SetFrameStrata("FULLSCREEN_DIALOG");
@@ -84,14 +84,14 @@ local Events = {
         self:Show();
     end,
 
-    OnRelease = function(self)
+    OnRelease = function (self)
         GL.Interface:storePosition(self, "PopupDialog");
 
         self.status = nil;
         wipe(self.localstatus);
     end,
 
-    LayoutFinished = function(self, _, height)
+    LayoutFinished = function (self, _, height)
         if (self.noAutoHeight) then
             return;
         end
@@ -99,18 +99,18 @@ local Events = {
         self:SetHeight((height or 0) + 40);
     end,
 
-    Show = function(self)
+    Show = function (self)
         self.frame:Show();
     end,
 
     -- called to set an external table to store status in
-    SetStatusTable = function(self, status)
+    SetStatusTable = function (self, status)
         assert(type(status) == "table");
         self.status = status;
         self:ApplyStatus();
     end,
 
-    ApplyStatus = function(self)
+    ApplyStatus = function (self)
         local status = self.status or self.localstatus;
         local frame = self.frame;
         self:SetWidth(status.width or 700);
@@ -125,7 +125,7 @@ local Events = {
         end
     end,
 
-    OnWidthSet = function(self, width)
+    OnWidthSet = function (self, width)
         local content = self.content;
         local contentwidth = width - 20;
 
@@ -137,7 +137,7 @@ local Events = {
         content.width = contentwidth;
     end,
 
-    OnHeightSet = function(self, height)
+    OnHeightSet = function (self, height)
         local content = self.content;
         local contentheight = height - 20;
 
@@ -205,7 +205,7 @@ local function constructor()
 
     -- Dialog
     local Dialog = AceGUI:Create("Label");
-    Dialog:SetFontObject(_G["GameFontNormal"]);
+    Dialog:SetFontObject(_G.GameFontNormal);
     Dialog:SetWidth(272);
     Dialog.label:SetJustifyH("CENTER");
     PopupDialogInstance:AddChild(Dialog);
@@ -249,12 +249,12 @@ local function constructor()
 
         -- Trust sender label
         local TrustSenderLabel = AceGUI:Create("InteractiveLabel");
-        TrustSenderLabel:SetFontObject(_G["GameFontNormal"]);
+        TrustSenderLabel:SetFontObject(_G.GameFontNormal);
         TrustSenderLabel:SetWidth(200);
         TrustSenderLabel:SetText("");
         Widget.TrustSenderLabel = TrustSenderLabel;
 
-        TrustSenderLabel:SetCallback("OnClick", function()
+        TrustSenderLabel:SetCallback("OnClick", function ()
             TrustSenderCheckBox:ToggleChecked();
             TrustSenderCheckBox:Fire("OnValueChanged", TrustSenderCheckBox:GetValue());
         end);
@@ -273,7 +273,7 @@ local function constructor()
     VerticalSpacer:SetWidth(40);
     VerticalSpacer:SetHeight(10);
     OptionsFrame:AddChild(VerticalSpacer);
- 
+
     -- Block shared data checkbox
     local BlockSharedDataCheckBox = AceGUI:Create("CheckBox");
     BlockSharedDataCheckBox:SetLabel("");
@@ -294,17 +294,17 @@ local function constructor()
 
     -- Block shared data label
     local BlockSharedDataLabel = AceGUI:Create("InteractiveLabel");
-    BlockSharedDataLabel:SetFontObject(_G["GameFontNormal"]);
+    BlockSharedDataLabel:SetFontObject(_G.GameFontNormal);
     BlockSharedDataLabel:SetWidth(200);
     BlockSharedDataLabel:SetText(L["Block all incoming +1 shared data"]);
     Widget.BlockSharedDataLabel = BlockSharedDataLabel;
 
-    BlockSharedDataLabel:SetCallback("OnClick", function()
+    BlockSharedDataLabel:SetCallback("OnClick", function ()
         BlockSharedDataCheckBox:ToggleChecked();
         BlockSharedDataCheckBox:Fire("OnValueChanged", BlockSharedDataCheckBox:GetValue());
     end);
 
-    OptionsFrame:AddChild(BlockSharedDataLabel);   
+    OptionsFrame:AddChild(BlockSharedDataLabel);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -323,7 +323,7 @@ local function constructor()
     YesButton:SetText(L["Yes"]);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
-    YesButton:SetCallback("OnClick", function()
+    YesButton:SetCallback("OnClick", function ()
         if (type(Widget.yesCallback) == "function") then
             Widget.yesCallback();
         end
@@ -341,7 +341,7 @@ local function constructor()
     NoButton:SetText(L["No"]);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
-    NoButton:SetCallback("OnClick", function()
+    NoButton:SetCallback("OnClick", function ()
         if (type(Widget.noCallback) == "function") then
             Widget.noCallback();
         end

@@ -69,15 +69,15 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
     self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
     self.recipient = recipient and GL:formatPlayerName(recipient) or nil;
 
-    -- Make sure self.correspondenceId is unique!
+    -- Make sure self.correspondenceID is unique!
     -- This is very important if we wish to track responses to our comm message
     if (acceptsResponse) then
         local i = 0;
         while(true) do
             i = i + 1;
-            self.correspondenceId = ("%s.%s"):format(floor(GetTime()), i);
+            self.correspondenceID = ("%s.%s"):format(floor(GetTime()), i);
 
-            if (not CommMessage.Box[self.correspondenceId]) then
+            if (not CommMessage.Box[self.correspondenceID]) then
                 break;
             end
         end
@@ -86,7 +86,7 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
         self.onResponse = onResponse or function () end;
         self.onConfirm = onConfirm;
         self.confirmed = false;
-        CommMessage.Box[self.correspondenceId] = self;
+        CommMessage.Box[self.correspondenceID] = self;
     end
 
     return self;
@@ -108,7 +108,7 @@ function CommMessage.newFromReceived(Message)
     self.Sender = Message.Sender;
     self.senderFqn = Message.senderFqn;
     self.recipient = Message.recipient;
-    self.correspondenceId = Message.correspondenceId or Message.id;
+    self.correspondenceID = Message.correspondenceID or Message.id;
     self.Responses = Message.Responses or {};
 
     return self;
@@ -121,10 +121,10 @@ end
 ---@return self
 function CommMessage:send(broadcastFinishedCallback, packageSentCallback)
     -- Make sure to mark the message as unreceived if 3 seconds pass without receiving a confirmation
-    if (self.onConfirm and self.correspondenceId) then
+    if (self.onConfirm and self.correspondenceID) then
         local originalBroadcastFinishedCallback = broadcastFinishedCallback;
         broadcastFinishedCallback = function (...)
-            GL:after(3, ("MARK_COMM_%s_AS_UNRECEIVED"):format(self.correspondenceId), function ()
+            GL:after(3, ("MARK_COMM_%s_AS_UNRECEIVED"):format(self.correspondenceID), function ()
                 if (self.confirmed) then
                     return;
                 end
@@ -163,11 +163,11 @@ function CommMessage:respond(message)
         minimumVersion = GL.Data.Constants.Comm.minimumAppVersion,
         senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm),
         recipient = recipient,
-        correspondenceId = self.correspondenceId or self.correspondenceId,
+        correspondenceID = self.correspondenceID or self.correspondenceID,
     };
 
     -- Not all comm messages accept a response
-    if (Response.correspondenceId) then
+    if (Response.correspondenceID) then
         GL.Comm:send(Response);
     end
 
@@ -179,7 +179,7 @@ end
 ---@return self
 function CommMessage:confirm()
     -- We can't confirm that we received a message without a correspondence ID
-    if (not self.correspondenceId) then
+    if (not self.correspondenceID) then
         return;
     end
 
@@ -191,7 +191,7 @@ function CommMessage:confirm()
     end
 
     local success, encoded = pcall(function ()
-        local serialized = LibSerialize:Serialize(self.correspondenceId);
+        local serialized = LibSerialize:Serialize(self.correspondenceID);
         local compressed = LibDeflate:CompressDeflate(serialized, { level = 5, });
         local encoded = LibDeflate:EncodeForWoWAddonChannel(compressed);
 
@@ -203,7 +203,7 @@ function CommMessage:confirm()
     end
 
     if (GL.User:isDev()) then
-        GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceId) or 0, "N"));
+        GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceID) or 0, "N"));
     end
 
     GL.Ace:SendCommMessage(GL.Data.Constants.Comm.channel, encoded, "WHISPER", recipient, "ALERT");
@@ -215,17 +215,17 @@ end
 ---@return nil
 function CommMessage:processResponse()
     -- Make sure the message exists and actually accepts responses
-    if (not self.correspondenceId
-        or not CommMessage.Box[self.correspondenceId]
+    if (not self.correspondenceID
+        or not CommMessage.Box[self.correspondenceID]
     ) then
         return;
     end
 
-    local numberOfResponses = #CommMessage.Box[self.correspondenceId].Responses;
-    CommMessage.Box[self.correspondenceId].Responses[numberOfResponses + 1] = self;
+    local numberOfResponses = #CommMessage.Box[self.correspondenceID].Responses;
+    CommMessage.Box[self.correspondenceID].Responses[numberOfResponses + 1] = self;
 
     -- Execute the original message's onResponse handler
-    CommMessage.Box[self.correspondenceId].onResponse(self);
+    CommMessage.Box[self.correspondenceID].onResponse(self);
 end
 
 --- Compress a CommMessage so we can safely send it
@@ -247,7 +247,7 @@ function CommMessage:compress(Message)
         a = Message.action, -- Action
         b = Message.content, -- Content
         c = FQN, -- Name of the sender
-        d = Message.correspondenceId or Message.id, -- Response ID
+        d = Message.correspondenceID or Message.id, -- Response ID
         m = Message.minimumVersion, -- Minimum version recipient should have
         v = Message.version, -- Version of sender
         r = Message.channel ~= "WHISPER" and Message.recipient or nil;
@@ -293,7 +293,7 @@ function CommMessage:decompress(encoded)
         action = Payload.a or nil, -- Action
         content = Payload.b or nil, -- Content
         senderFqn = Payload.c or nil, -- Name of the sender
-        correspondenceId = Payload.d or Payload.id, -- Response ID
+        correspondenceID = Payload.d or Payload.id, -- Response ID
         minimumVersion = Payload.m or nil, -- Minimum version recipient should have
         version = Payload.v or nil, -- Version of sender
         recipient = Payload.r or nil, -- Recipient (in case we route whisper through group)

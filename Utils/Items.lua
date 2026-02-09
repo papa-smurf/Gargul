@@ -15,7 +15,7 @@ local TimeFormats = {
 };
 for pattern, coefficient in pairs(TimeFormats) do
     local prefix = "";
-    pattern = pattern:gsub("%%d(%s?)", function(s)
+    pattern = pattern:gsub("%%d(%s?)", function (s)
         prefix = "(%d+)" .. s;
         return "";
     end);
@@ -426,7 +426,7 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
     end
 
     local Results = {};
-    self:forEachItemInBags(function(Location, bag, slot)
+    self:forEachItemInBags(function (Location, bag, slot)
         -- This is not the item we're looking for
         if (C_Item.GetItemID(Location) ~= itemID) then
             return;
@@ -558,7 +558,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             end
         end
 
-        ItemResult:ContinueOnItemLoad(function()
+        ItemResult:ContinueOnItemLoad(function ()
             itemsLoaded = itemsLoaded + 1;
 
             local NormalizedItem = self:normalizeItem(ItemResult);
@@ -681,7 +681,7 @@ function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, in
     local itemID = identifierIsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
     for bag = Enum.BagIndex.Backpack, maxBagID do
         for slot = 1, GL.GetContainerNumSlots(bag) do
-            local Result = (function()
+            local Result = (function ()
                 local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
                 if ((not includeLocked and locked) -- The item is locked and can not be used
@@ -711,7 +711,7 @@ function GL:getBagAndSlotByGUID(itemGUID)
     local itemBag = false;
     local itemSlot = false;
 
-    self:forEachItemInBags(function(Location, bag, slot)
+    self:forEachItemInBags(function (Location, bag, slot)
         -- This is not the item we're looking for
         if (C_Item.GetItemGUID(Location) ~= itemGUID) then
             return;
@@ -1033,13 +1033,13 @@ function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, colu
     if (icon) then
         frame:SetNormalTexture(icon);
         frame:Show();
-        frame:SetScript("OnEnter", function()
+        frame:SetScript("OnEnter", function ()
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
             GameTooltip:SetHyperlink("item:" .. tostring(itemID));
             GameTooltip:Show();
         end)
 
-        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
+        frame:SetScript("OnLeave", function () GameTooltip:Hide() end);
     else
         frame:Hide();
     end
@@ -1051,13 +1051,13 @@ function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, 
 
     if (value) then
         frame:Show();
-        frame:SetScript("OnEnter", function()
+        frame:SetScript("OnEnter", function ()
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
             GameTooltip:SetHyperlink(data[realrow].cols[column].value);
             GameTooltip:Show();
         end)
 
-        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
+        frame:SetScript("OnLeave", function () GameTooltip:Hide() end);
     else
         frame:Hide();
     end

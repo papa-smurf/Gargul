@@ -48,19 +48,19 @@ function RaidGroups:drawImporter()
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     Window:SetTitle((L["Gargul v%s"]):format(GL.version));
-    Window:SetStatusText(L["v"] ..GL.version);
+    Window:SetStatusText(L["v"] .. GL.version);
     Window:SetLayout("Flow");
     Window:EnableResize(false);
     Window:SetWidth(600);
     Window:SetHeight(500);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
+    Window:SetCallback("OnClose", function ()
         self:close();
     end);
     GL.Interface:set(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_RAID_GROUP_WINDOW"] = Window.frame;
+    _G.GARGUL_RAID_GROUP_WINDOW = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_RAID_GROUP_WINDOW");
 
     -- First part of explanation
@@ -88,8 +88,8 @@ function RaidGroups:drawImporter()
     local WowheadButton = AceGUI:Create("Button");
     WowheadButton:SetText(L["Wowhead Comp Tool"]);
     WowheadButton:SetWidth(180);
-    WowheadButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.HyperlinkDialog:open{
+    WowheadButton:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.HyperlinkDialog:open({
             description = L["You can visit the wowhead comp tool using the URL down below. After creating your comp you can paste it here or in the large edit field of the Gargul group window"],
             hyperlink = wowheadURL,
             OnConfirm = function (value)
@@ -99,7 +99,7 @@ function RaidGroups:drawImporter()
                 return true;
             end,
             closeOnConfirm = true,
-        };
+        });
     end);
     Window:AddChild(WowheadButton);
 
@@ -125,11 +125,11 @@ function RaidGroups:drawImporter()
     local WikiButton = AceGUI:Create("Button");
     WikiButton:SetText(L["Gargul Group Wiki"]);
     WikiButton:SetWidth(180);
-    WikiButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.HyperlinkDialog:open{
+    WikiButton:SetCallback("OnClick", function ()
+        GL.Interface.Dialogs.HyperlinkDialog:open({
             description = L["Visit the Gargul group wiki for more info on the raid group format"],
             hyperlink = "https://github.com/papa-smurf/Gargul/wiki/Sort-Groups-&-Tanks",
-        };
+        });
     end);
     Window:AddChild(WikiButton);
 
@@ -146,7 +146,7 @@ function RaidGroups:drawImporter()
     RaidGroupsBox:SetMaxLetters(999999999);
     Window:AddChild(RaidGroupsBox);
 
-    RaidGroupsBox:SetCallback("OnTextChanged", function(EditBox, _, text)
+    RaidGroupsBox:SetCallback("OnTextChanged", function (EditBox, _, text)
         local rosterString = self:normalizeInput(EditBox, text);
         GL.DB:set("Utility.RaidGroupsString", rosterString);
         self.rosterString = rosterString;
@@ -175,7 +175,7 @@ function RaidGroups:drawImporter()
     local InviteButton = AceGUI:Create("Button");
     InviteButton:SetText(L["Invite"]);
     InviteButton:SetWidth(76);
-    InviteButton:SetCallback("OnClick", function()
+    InviteButton:SetCallback("OnClick", function ()
         self:invitePlayers(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(InviteButton);
@@ -184,7 +184,7 @@ function RaidGroups:drawImporter()
     local AttendanceCheckButton = AceGUI:Create("Button");
     AttendanceCheckButton:SetText(L["Who's Missing"]);
     AttendanceCheckButton:SetWidth(128);
-    AttendanceCheckButton:SetCallback("OnClick", function()
+    AttendanceCheckButton:SetCallback("OnClick", function ()
         self:checkAttendance(RaidGroups.rosterString, CheckAttendanceOutput);
     end);
     FooterFrame:AddChild(AttendanceCheckButton);
@@ -193,7 +193,7 @@ function RaidGroups:drawImporter()
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText(L["Apply Groups"]);
     SaveButton:SetWidth(126);
-    SaveButton:SetCallback("OnClick", function()
+    SaveButton:SetCallback("OnClick", function ()
         self:applyRaidGroups(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(SaveButton);
@@ -213,7 +213,7 @@ function RaidGroups:drawImporter()
     local KickUnwantedButton = AceGUI:Create("Button");
     KickUnwantedButton:SetText(L["Kick unwanted players"]);
     KickUnwantedButton:SetWidth(170);
-    KickUnwantedButton:SetCallback("OnClick", function()
+    KickUnwantedButton:SetCallback("OnClick", function ()
         self:kickUnwanted(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(KickUnwantedButton);
@@ -222,9 +222,9 @@ function RaidGroups:drawImporter()
     local DisbandButton = AceGUI:Create("Button");
     DisbandButton:SetText(L["Disband raid"]);
     DisbandButton:SetWidth(126);
-    DisbandButton:SetCallback("OnClick", function()
+    DisbandButton:SetCallback("OnClick", function ()
         -- Show a confirmation dialog before disbanding the raid
-        GL.Interface.Dialogs.PopupDialog:open{
+        GL.Interface.Dialogs.PopupDialog:open({
             question = L["Are you sure?"],
             OnYes = function ()
                 GL:forEachGroupMember(function (Member)
@@ -236,7 +236,7 @@ function RaidGroups:drawImporter()
                     UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
                 end);
             end
-        };
+        });
     end);
     FooterFrame:AddChild(DisbandButton);
     GL.Interface:addTooltip(DisbandButton, L["Disband your raid"]);

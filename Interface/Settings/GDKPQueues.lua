@@ -33,7 +33,7 @@ function GDKPQueues:draw(Parent)
         {
             label = "Show the GDKP bid queue that allows you to prebid on queued items",
             setting = "GDKP.enableBidderQueue",
-            callback = function()
+            callback = function ()
                 local BidderQueue = GL.Interface.GDKP.BidderQueue;
 
                 if (not GL.Settings:get("GDKP.enableBidderQueue")) then
@@ -68,7 +68,7 @@ function GDKPQueues:draw(Parent)
     MinimumDropQuality:SetWidth(250);
     MinimumDropQuality:SetList(QualityList);
     MinimumDropQuality:SetValue(GL.Settings:get("GDKP.minimumDropQuality"));
-    MinimumDropQuality:SetCallback("OnValueChanged", function()
+    MinimumDropQuality:SetCallback("OnValueChanged", function ()
         GL.Settings:set("GDKP.minimumDropQuality", MinimumDropQuality:GetValue());
     end);
     Parent:AddChild(MinimumDropQuality);
@@ -91,7 +91,7 @@ function GDKPQueues:draw(Parent)
     QueuedAuctionNoBidsActionDropdown:SetList(Actions);
     QueuedAuctionNoBidsActionDropdown:SetText(GL.Settings:get("GDKP.queuedAuctionNoBidsAction"));
     QueuedAuctionNoBidsActionDropdown:SetWidth(250);
-    QueuedAuctionNoBidsActionDropdown:SetCallback("OnValueChanged", function()
+    QueuedAuctionNoBidsActionDropdown:SetCallback("OnValueChanged", function ()
         local value = QueuedAuctionNoBidsActionDropdown:GetValue();
 
         if (GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions[value]) then
@@ -112,7 +112,7 @@ function GDKPQueues:draw(Parent)
     DelayInSecondsBetweenQueuedAuctions:SetFullWidth(true);
     DelayInSecondsBetweenQueuedAuctions:SetValue(GL.Settings:get("GDKP.delayBetweenQueuedAuctions", 1));
     DelayInSecondsBetweenQueuedAuctions:SetSliderValues(1, 30, 1);
-    DelayInSecondsBetweenQueuedAuctions:SetCallback("OnValueChanged", function(Slider)
+    DelayInSecondsBetweenQueuedAuctions:SetCallback("OnValueChanged", function (Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
         if (value >= 0) then

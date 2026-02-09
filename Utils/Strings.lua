@@ -37,7 +37,7 @@ function GL:explode(s, delimiter)
 
     -- No delimiter is provided, split all characters
     if (not delimiter) then
-        s:gsub(".",function(character) table.insert(Result, character); end);
+        s:gsub(".",function (character) table.insert(Result, character); end);
         return Result;
     end
 
@@ -155,7 +155,7 @@ end
 ---@return string
 function GL:printfn(str, Tab)
     return Tab
-        and str:gsub("($%b{})", function(match) return Tab[match:sub(3, -2)] or match; end)
+        and str:gsub("($%b{})", function (match) return Tab[match:sub(3, -2)] or match; end)
         or str;
 end
 
@@ -179,7 +179,7 @@ end
 ---@param url string
 ---@return string
 function GL:urlDecode(url)
-    local hexToChar = function(x)
+    local hexToChar = function (x)
         return strchar(tonumber(x, 16));
     end
 

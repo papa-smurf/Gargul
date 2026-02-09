@@ -48,25 +48,25 @@ local Events = {
         self.CloseButton:Fire("OnClick");
     end,
 
-    EnableHyperLinkButton = function(self)
+    EnableHyperLinkButton = function (self)
         self.HyperlinkEditbox:DisableButton(false);
     end,
 
-    SetHyperlink = function(self, hyperlink)
+    SetHyperlink = function (self, hyperlink)
         self.HyperlinkEditbox:SetText(hyperlink);
         self.HyperlinkEditbox:HighlightText();
         self.HyperlinkEditbox:SetFocus();
     end,
 
-    SetOnConfirm = function(self, callback)
+    SetOnConfirm = function (self, callback)
         self.HyperlinkEditbox:SetCallback("OnEnterPressed", callback);
     end,
 
-    SetDescription = function(self, description)
+    SetDescription = function (self, description)
         self.DialogLabel:SetText(description);
     end,
 
-    OnAcquire = function(self)
+    OnAcquire = function (self)
         self:ApplyStatus();
         self.frame:SetParent(UIParent);
         self.frame:SetFrameStrata("FULLSCREEN_DIALOG");
@@ -80,14 +80,14 @@ local Events = {
         self:Show();
     end,
 
-    OnRelease = function(self)
+    OnRelease = function (self)
         GL.Interface:storePosition(self, "PopupDialog");
 
         self.status = nil;
         wipe(self.localstatus);
     end,
 
-    LayoutFinished = function(self, _, height)
+    LayoutFinished = function (self, _, height)
         if (self.noAutoHeight) then
             return;
         end
@@ -95,18 +95,18 @@ local Events = {
         self:SetHeight((height or 0) + 40);
     end,
 
-    Show = function(self)
+    Show = function (self)
         self.frame:Show();
     end,
 
     -- called to set an external table to store status in
-    SetStatusTable = function(self, status)
+    SetStatusTable = function (self, status)
         assert(type(status) == "table");
         self.status = status;
         self:ApplyStatus();
     end,
 
-    ApplyStatus = function(self)
+    ApplyStatus = function (self)
         local status = self.status or self.localstatus;
         local frame = self.frame;
         self:SetWidth(status.width or 700);
@@ -121,7 +121,7 @@ local Events = {
         end
     end,
 
-    OnWidthSet = function(self, width)
+    OnWidthSet = function (self, width)
         local content = self.content;
         local contentwidth = width - 20;
 
@@ -133,7 +133,7 @@ local Events = {
         content.width = contentwidth;
     end,
 
-    OnHeightSet = function(self, height)
+    OnHeightSet = function (self, height)
         local content = self.content;
         local contentheight = height - 20;
 
@@ -193,7 +193,7 @@ local function constructor()
 
     -- Dialog
     local Dialog = AceGUI:Create("Label");
-    Dialog:SetFontObject(_G["GameFontNormal"]);
+    Dialog:SetFontObject(_G.GameFontNormal);
     Dialog:SetWidth(272);
     Dialog.label:SetJustifyH("CENTER");
     HyperlinkDialogInstance:AddChild(Dialog);
@@ -230,7 +230,7 @@ local function constructor()
     CloseButton:SetText(L["Close"]);
     CloseButton:SetHeight(20);
     CloseButton:SetWidth(120);
-    CloseButton:SetCallback("OnClick", function()
+    CloseButton:SetCallback("OnClick", function ()
         Frame:Hide();
     end);
     HyperlinkDialogInstance:AddChild(CloseButton);

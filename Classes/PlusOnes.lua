@@ -96,7 +96,7 @@ function PlusOnes:markPlayerAsTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
     if (GL:empty(trustedPlayerCSV)) then
         GL.Settings:set("PlusOnes.automaticallyAcceptDataFrom", playerName);
-        return
+        return;
     end
 
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
@@ -229,11 +229,11 @@ function PlusOnes:clearPlusOnes()
     self.MaterializedData = {
         DetailsByPlayerName = {},
     };
-    
+
     if (GL.Settings:get("PlusOnes.automaticallyShareData")
         and self:userIsAllowedToBroadcast()
     ) then
-        self:broadcast(); 
+        self:broadcast();
     end
 
     self:triggerChangeEvent();
@@ -321,7 +321,7 @@ function PlusOnes:import(data, openOverview, MetaData)
         --- PlayerName,Points
         --- This facilitates imports from CSV, TSV files or pasting from Google Docs
         local Segments = GL:separateValues(line);
-        
+
         local playerName = tostring(Segments[1]);
         local plusOne = self:toPlusOne(Segments[2]);
 
@@ -420,14 +420,14 @@ function PlusOnes:broadcast()
             Label:SetText(L["Broadcasting..."]);
         end
 
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastPlusOnesData,
             content = {
                 importString = self:export(false),
                 MetaData = DB:get("PlusOnes.MetaData", {}),
             },
             channel = "GROUP",
-        }:send(function ()
+        }):send(function ()
             GL:success(L["Broadcast finished!"]);
 
             self.broadcastInProgress = false;
@@ -472,7 +472,7 @@ function PlusOnes:receiveBroadcast(CommMessage)
         return;
     end
 
-    local importString = CommMessage.content.importString or '';
+    local importString = CommMessage.content.importString or "";
     local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
         if (GL:empty(importString)) then
@@ -498,10 +498,10 @@ function PlusOnes:receiveBroadcast(CommMessage)
     end
 
     --- Display different messages depending on whether it is an update of the same import or completely new data.
-    local uuid = DB:get("PlusOnes.MetaData.uuid", '');
+    local uuid = DB:get("PlusOnes.MetaData.uuid", "");
     local updatedAt = DB:get("PlusOnes.MetaData.updatedAt", 0);
     local question;
-    
+
     if (GL:empty(importString)) then
         question = (L["%s wants to clear all your PlusOne data. Clear all data?"]):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
@@ -544,7 +544,7 @@ function PlusOnes:requestData()
 
     self.requestingData = true;
 
-    local playerToRequestFrom = (function()
+    local playerToRequestFrom = (function ()
         -- We are the ML, we need to import the data ourselves
         if (GL.User.isMasterLooter) then
             return;
@@ -588,12 +588,12 @@ function PlusOnes:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.requestPlusOnesData,
-        content = DB:get('PlusOnes.MetaData', {}),
+        content = DB:get("PlusOnes.MetaData", {}),
         channel = "WHISPER",
         recipient = playerToRequestFrom,
-    }:send();
+    }):send();
 
     self.requestingData = false;
 end
@@ -618,18 +618,18 @@ function PlusOnes:replyToDataRequest(CommMessage)
         return;
     end
 
-    local uuid = CommMessage.content.uuid or '';
+    local uuid = CommMessage.content.uuid or "";
     local lastUpdate = CommMessage.content.updatedAt or 0;
     -- Your data is up to date, leave me alone!
     if (not GL:empty(uuid)
-        and uuid == DB:get('PlusOnes.MetaData.uuid', '')
-        and lastUpdate >= DB:get('PlusOnes.MetaData.updatedAt', 0)
+        and uuid == DB:get("PlusOnes.MetaData.uuid", "")
+        and lastUpdate >= DB:get("PlusOnes.MetaData.updatedAt", 0)
     ) then
         return;
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastPlusOnesData,
         content = {
             importString = self:export(false),
@@ -637,7 +637,7 @@ function PlusOnes:replyToDataRequest(CommMessage)
         },
         channel = "WHISPER",
         recipient = CommMessage.senderFqn,
-    }:send();
+    }):send();
 end
 
 --- Add points to a give user's balance
@@ -700,14 +700,14 @@ function PlusOnes:broadcastQueuedUpdates()
         and self:userIsAllowedToBroadcast()
     ) then
         GL:message(L["Broadcasting..."]);
-        GL.CommMessage.new{
+        GL.CommMessage.new({
             action = CommActions.broadcastPlusOnesMutation,
             content = {
                 importString = self:export(false),
                 MetaData = DB:get("PlusOnes.MetaData", {}),
             },
             channel = "GROUP",
-        }:send(function ()
+        }):send(function ()
             GL:success(L["Broadcast finished!"]);
         end);
     end
@@ -735,7 +735,7 @@ function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
 
     GL:message(L["Broadcasting..."]);
 
-    GL.CommMessage.new{
+    GL.CommMessage.new({
         action = CommActions.broadcastPlusOnesMutation,
         content = {
             updates = {{
@@ -746,7 +746,7 @@ function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
             uuid = DB:get("PlusOnes.MetaData.uuid", ""),
         },
         channel = "GROUP",
-    }:send();
+    }):send();
 
     return true;
 end
@@ -767,7 +767,7 @@ function PlusOnes:receiveUpdate(CommMessage)
         return;
     end
 
-    local importString = CommMessage.content.importString or '';
+    local importString = CommMessage.content.importString or "";
     local MetaData = CommMessage.content.MetaData or {};
     local importUpdates = (function ()
         if (GL:empty(importString)) then
@@ -791,7 +791,7 @@ function PlusOnes:receiveUpdate(CommMessage)
     end
 
     --- Display different messages depending on whether it is an update of the same import or completely new data.
-    local uuid = DB:get("PlusOnes.MetaData.uuid", '');
+    local uuid = DB:get("PlusOnes.MetaData.uuid", "");
     local updatedAt = DB:get("PlusOnes.MetaData.updatedAt", 0);
     local question;
 

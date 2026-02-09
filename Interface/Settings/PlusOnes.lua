@@ -66,7 +66,7 @@ function PlusOnes:draw(Parent)
 
     local OpenDataButton = GL.AceGUI:Create("Button");
     OpenDataButton:SetText("Open Plus Ones Data");
-    OpenDataButton:SetCallback("OnClick", function()
+    OpenDataButton:SetCallback("OnClick", function ()
         GL.Settings:close();
         GL.Commands:call("plusone");
     end);

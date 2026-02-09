@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -86,14 +86,14 @@ function AddItem:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow{
+    local Window = Interface:createWindow({
         name = self.windowName,
         width = 315,
         minWidth = 315,
         height = 128,
         minHeight = 128,
         hideMinimizeButton = true,
-    };
+    });
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -162,12 +162,12 @@ function AddItem:build()
             duration = 5;
         end
 
-        GL.GDKP.MultiAuction.Client:addToCurrentSession{
+        GL.GDKP.MultiAuction.Client:addToCurrentSession({
             link = link,
             duration = duration,
             minimum = minimum,
             increment = increment,
-        };
+        });
 
         self:close();
     end);

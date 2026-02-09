@@ -46,13 +46,13 @@ GL.Interface.Alerts = {
                 Alert.Icon:SetTexture(Details.icon);
                 Alert.Message:SetText(message);
 
-                Alert:SetScript("OnEnter", function()
+                Alert:SetScript("OnEnter", function ()
                     GameTooltip:SetOwner(Alert, "ANCHOR_TOP");
                     GameTooltip:SetHyperlink(Details.link);
                     GameTooltip:Show();
                 end);
 
-                Alert:SetScript("OnLeave", function()
+                Alert:SetScript("OnLeave", function ()
                     GameTooltip:Hide();
                 end);
 
