@@ -1,6 +1,7 @@
 ---@type GL
 local _, GL = ...;
 
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 local fontSize;
 
 --- LUA supports tostring, tonumber etc but no toboolean, let's fix that!
