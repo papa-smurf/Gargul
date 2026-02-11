@@ -474,54 +474,61 @@ function AutoRollRules:refreshRulesList(RulesList)
             end
         end
 
+        local shownIDs = {};
         for itemID, action in pairs(rules) do
             local ruleItemID = tonumber(itemID) or itemID;
-            local idForRemove = ruleItemID;
-            local itemDetails = detailsByID[ruleItemID] or detailsByID[itemID];
-            local itemLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("[%d]"):format(ruleItemID);
-            if (type(itemLink) ~= "string" or GL:empty(itemLink)) then
-                itemLink = ("[%d]"):format(ruleItemID);
-            end
+            -- SavedVariables can store numeric keys as strings; show one row per item ID
+            if (shownIDs[ruleItemID]) then
+                -- skip duplicate
+            else
+                shownIDs[ruleItemID] = true;
+                local idForRemove = ruleItemID;
+                local itemDetails = detailsByID[ruleItemID] or detailsByID[itemID];
+                local itemLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("[%d]"):format(ruleItemID);
+                if (type(itemLink) ~= "string" or GL:empty(itemLink)) then
+                    itemLink = ("[%d]"):format(ruleItemID);
+                end
 
-            local tooltipLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("|Hitem:%d:0:0:0:0:0:0:0:0|h[%d]|h"):format(ruleItemID, ruleItemID);
+                local tooltipLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("|Hitem:%d:0:0:0:0:0:0:0:0|h[%d]|h"):format(ruleItemID, ruleItemID);
 
-            -- Explicit capture per row to avoid closure capturing wrong item when switching profiles
-            local linkForTooltip = tooltipLink;
+                -- Explicit capture per row to avoid closure capturing wrong item when switching profiles
+                local linkForTooltip = tooltipLink;
 
-            local Row = GL.AceGUI:Create("SimpleGroup");
-            Row:SetLayout("Table");
-            Row:SetUserData("table", { columns = { 250, 80, 90 }, alignV = "middle" });
-            Row:SetFullWidth(true);
-            Row:SetHeight(28);
-            RulesList:AddChild(Row);
+                local Row = GL.AceGUI:Create("SimpleGroup");
+                Row:SetLayout("Table");
+                Row:SetUserData("table", { columns = { 250, 80, 90 }, alignV = "middle" });
+                Row:SetFullWidth(true);
+                Row:SetHeight(28);
+                RulesList:AddChild(Row);
 
-            local ItemLabel = GL.AceGUI:Create("Label");
-            ItemLabel:SetText(itemLink);
-            ItemLabel:SetWidth(250);
-            ItemLabel:SetHeight(20);
-            GL.Interface:addItemTooltipToCursor(ItemLabel, linkForTooltip);
-            Row:AddChild(ItemLabel);
+                local ItemLabel = GL.AceGUI:Create("Label");
+                ItemLabel:SetText(itemLink);
+                ItemLabel:SetWidth(250);
+                ItemLabel:SetHeight(20);
+                GL.Interface:addItemTooltipToCursor(ItemLabel, linkForTooltip);
+                Row:AddChild(ItemLabel);
 
-            local ActionLabel = GL.AceGUI:Create("Label");
-            ActionLabel:SetText(action == "need" and L["Need"] or action == "greed" and L["Greed"] or L["Pass"]);
-            ActionLabel:SetWidth(80);
-            ActionLabel:SetHeight(20);
-            -- Prevent stray item tooltips when hovering over action (e.g. from text overflow or frame overlap)
-            if ActionLabel.frame then
-                ActionLabel.frame:SetScript("OnEnter", function ()
-                    GameTooltip:Hide();
+                local ActionLabel = GL.AceGUI:Create("Label");
+                ActionLabel:SetText(action == "need" and L["Need"] or action == "greed" and L["Greed"] or L["Pass"]);
+                ActionLabel:SetWidth(80);
+                ActionLabel:SetHeight(20);
+                -- Prevent stray item tooltips when hovering over action (e.g. from text overflow or frame overlap)
+                if (ActionLabel.frame) then
+                    ActionLabel.frame:SetScript("OnEnter", function ()
+                        GameTooltip:Hide();
+                    end);
+                end
+                Row:AddChild(ActionLabel);
+
+                local RemoveButton = GL.AceGUI:Create("Button");
+                RemoveButton:SetText(L["Remove"]);
+                RemoveButton:SetWidth(90);
+                RemoveButton:SetCallback("OnClick", function ()
+                    GL.AutoRoll:removeRule(idForRemove);
+                    self:refreshRulesList(RulesList);
                 end);
+                Row:AddChild(RemoveButton);
             end
-            Row:AddChild(ActionLabel);
-
-            local RemoveButton = GL.AceGUI:Create("Button");
-            RemoveButton:SetText(L["Remove"]);
-            RemoveButton:SetWidth(90);
-            RemoveButton:SetCallback("OnClick", function ()
-                GL.AutoRoll:removeRule(idForRemove);
-                self:refreshRulesList(RulesList);
-            end);
-            Row:AddChild(RemoveButton);
         end
 
         if (RulesList.DoLayout) then

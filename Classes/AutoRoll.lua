@@ -60,23 +60,7 @@ function AutoRoll:getRule(itemID)
 
     local data = Profiles:getProfileData(Profiles.NAMESPACE_AUTOROLL);
     -- SavedVariables may serialize numeric keys as strings; check both
-    local rule = data[itemID] or data[tostring(itemID)];
-    if (rule) then
-        return rule;
-    end
-
-    -- Check linked item IDs (NormalModeHardModeLinks, ItemLinks) for a matching rule
-    local linkedIDs = GL:getLinkedItemsForID(itemID, true);
-    for _, linkedID in pairs(linkedIDs) do
-        if (linkedID ~= itemID) then
-            rule = data[linkedID] or data[tostring(linkedID)];
-            if (rule) then
-                return rule;
-            end
-        end
-    end
-
-    return nil;
+    return data[itemID] or data[tostring(itemID)] or nil;
 end
 
 ---@param itemID number|string
@@ -89,12 +73,6 @@ function AutoRoll:setRule(itemID, action)
     end
 
     local data = Profiles:getProfileData(Profiles.NAMESPACE_AUTOROLL);
-    -- Remove any existing rules for linked items (only 1 rule per item family)
-    local linkedIDs = GL:getLinkedItemsForID(itemID, true);
-    for _, linkedID in pairs(linkedIDs) do
-        data[linkedID] = nil;
-        data[tostring(linkedID)] = nil;
-    end
     data[itemID] = action;
     data[tostring(itemID)] = nil; -- Remove string key to avoid duplicates from SavedVariables
     Profiles:setProfileData(Profiles.NAMESPACE_AUTOROLL, data);
@@ -109,12 +87,8 @@ function AutoRoll:removeRule(itemID)
     end
 
     local data = Profiles:getProfileData(Profiles.NAMESPACE_AUTOROLL);
-    -- Remove rules for this item and all linked items (only 1 rule per item family)
-    local linkedIDs = GL:getLinkedItemsForID(itemID, true);
-    for _, linkedID in pairs(linkedIDs) do
-        data[linkedID] = nil;
-        data[tostring(linkedID)] = nil;
-    end
+    data[itemID] = nil;
+    data[tostring(itemID)] = nil;
     Profiles:setProfileData(Profiles.NAMESPACE_AUTOROLL, data);
 end
 
