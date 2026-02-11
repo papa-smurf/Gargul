@@ -416,4 +416,11 @@ function Bidder:hide()
 
     Interface:release(self.Window);
     self.Window = nil;
+    -- Clear named globals so the next draw() creates new frames instead of reusing released ones (children were destroyed). Fixes E2E and second-run Bidder not showing or Minimum not working.
+    _G["GARGUL_GDKP_BIDDER_WINDOW"] = nil;
+    _G["GARGUL_GDKP_BIDDER_BID_INPUT"] = nil;
+    _G["GARGUL_GDKP_BIDDER_MINIMUM_BUTTON"] = nil;
+    _G["GARGUL_GDKP_BIDDER_BID_BUTTON"] = nil;
+    _G["GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON"] = nil;
+    _G["GARGUL_GDKP_BIDDER_PASS_BUTTON"] = nil;
 end

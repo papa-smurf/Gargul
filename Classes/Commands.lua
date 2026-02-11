@@ -41,6 +41,7 @@ GL.Commands = GL.Commands or {
         settings = "Open the settings menu",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
         thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
+        tests = "Open the E2E test launcher to run or stop scenario tests (e.g. GDKP Multi-Auction E2E)",
         version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
     },
 
@@ -139,6 +140,9 @@ GL.Commands = GL.Commands or {
         -- thatsmybis
         tmb = "thatsmybis",
         wl = "thatsmybis",
+
+        -- tests
+        t = "tests",
 
         -- version
         ve = "version",
@@ -292,6 +296,11 @@ GL.Commands = GL.Commands or {
 
         -- Export data from the addon to use on our website
         export = function () GL.Exporter:draw(); end,
+
+        -- Open the E2E test launcher
+        tests = function ()
+            GL.Interface.Tests.Launcher:open();
+        end,
 
         -- Check if everyone is running the most up-to-date version
         version = function () GL.Interface.GroupVersionCheck:open() end,

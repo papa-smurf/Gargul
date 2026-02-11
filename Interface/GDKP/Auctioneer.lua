@@ -421,6 +421,7 @@ function AuctioneerUI:build()
     MinInput:HookScript("OnTextChanged", function ()
         self.minimumBid = tonumber(MinInput:GetText());
     end);
+    Window.MinInput = MinInput;
 
     --[[ INCREMENT ]]
     ---@type FontString
@@ -434,6 +435,7 @@ function AuctioneerUI:build()
     IncInput:HookScript("OnTextChanged", function ()
         self.increment = tonumber(IncInput:GetText());
     end);
+    Window.IncInput = IncInput;
 
     --[[ TIME ]]
     ---@type FontString
@@ -448,6 +450,7 @@ function AuctioneerUI:build()
     TimeInput:HookScript("OnTextChanged", function ()
         self.time = tonumber(TimeInput:GetText());
     end);
+    Window.TimeInput = TimeInput;
 
     --[[ ANTI SNIPE ]]
     ---@type FontString
@@ -462,6 +465,7 @@ function AuctioneerUI:build()
     SnipeInput:HookScript("OnTextChanged", function ()
         self.antiSnipe = tonumber(SnipeInput:GetText());
     end);
+    Window.SnipeInput = SnipeInput;
 
     do --[[ HELP ICON ]]
         local texturePath = "interface/friendsframe/informationicon";
@@ -504,6 +508,7 @@ function AuctioneerUI:build()
         StartButton:SetScript("OnClick", function ()
             Auctioneer:start(true);
         end);
+        Window.StartButton = StartButton;
 
         --[[ DISENCHANT ]]
         ---@type Button

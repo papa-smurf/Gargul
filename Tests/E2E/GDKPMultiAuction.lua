@@ -2,106 +2,79 @@
 local _, GL = ...;
 local L = Gargul_L;
 
---- End-to-End Test for GDKP MultiAuction
---- Run with: /run Gargul.Tests.MultiAuctionE2E:start()
---- Stop with: /run Gargul.Tests.MultiAuctionE2E:stop()
+--- End-to-End Test for GDKP MultiAuction: creates a session, opens MultiAuction, fills items, runs version check, then terminates.
+--- Run with: /run Gargul.Tests.E2E.GDKPMultiAuction:start()
+--- Stop with: /run Gargul.Tests.E2E.GDKPMultiAuction:stop()
 
-GL.Tests.MultiAuctionE2E = {
+assert(GL.Tests.E2E and GL.Tests.E2E.Base and type(GL.Tests.E2E.Base.startWith) == "function", "GL.Tests.E2E.Base missing (TOC: Tests/E2E/Base.lua before this file)");
+
+---@class GDKPMultiAuction : E2EBase
+local E2E = {
+    scenarioName = "GDKPMultiAuction",
     isRunning = false,
-    currentStep = 0,
     runnerStep = 0,
     sessionName = nil,
     sessionID = nil,
     retryCount = 0,
 };
+setmetatable(E2E, { __index = GL.Tests.E2E.Base });
+GL.Tests.E2E.GDKPMultiAuction = E2E; ---@type GDKPMultiAuction
 
 local MAX_RETRIES = {
-    step9b = 15,   -- Start button (30s)
-    step10 = 30,   -- Wait for MultiAuction client (60s)
-    step11b = 20,  -- Confirm dialog (10s)
-    step11c = 10,  -- Verify termination (10s)
+    step10 = 15,   -- Start button (30s)
+    step11 = 30,   -- Wait for MultiAuction client (60s)
+    step13 = 20,   -- Confirm dialog (10s)
+    step14 = 10,   -- Verify termination (10s)
 };
-
-local E2E = GL.Tests.MultiAuctionE2E;
 
 local E2E_STEPS = {
-    "Open GDKP Overview",
-    "Open Create Session",
-    "Fill Session Details",
-    "Create Session",
-    "Close GDKP Windows",
-    "Open MultiAuction",
-    "Fill Items from Inventory",
-    "Select Items",
-    "Click Next",
-    "Click Start in Version Check",
-    "Wait for MultiAuction Client",
-    "Click Terminate",
-    "Confirm Terminate",
-    "Verify Termination",
-    "Close Windows",
+    { title = "Open GDKP Overview", fn = "step1_OpenGDKPOverview", },
+    { title = "Open Create Session", fn = "step2_OpenCreateSession", },
+    { title = "Fill Session Details", fn = "step3_FillSessionDetails", },
+    { title = "Create Session", fn = "step4_CreateSession", },
+    { title = "Close GDKP Windows", fn = "step5_CloseGDKPWindows", },
+    { title = "Open MultiAuction", fn = "step6_OpenMultiAuction", },
+    { title = "Fill Items from Inventory", fn = "step7_FillItems", },
+    { title = "Select Items", fn = "step8_SelectItems", },
+    { title = "Click Next", fn = "step9_ClickNext", },
+    { title = "Click Start in Version Check", fn = "step10_ClickStartInVersionCheck", },
+    { title = "Wait for MultiAuction Client", fn = "step11_WaitForMultiAuctionClient", },
+    { title = "Click Terminate", fn = "step12_ClickTerminate", },
+    { title = "Confirm Terminate", fn = "step13_ClickYesOnConfirmation", },
+    { title = "Verify Termination", fn = "step14_VerifyTermination", },
+    { title = "Close Windows", fn = "step15_CloseWindows", },
 };
 
-function E2E:log(message)
-    Gargul:xd(("[E2E] %s"):format(message));
-    local runner = GL.Interface.Tests.Runner;
-    if (runner.isVisible and self.runnerStep > 0) then
-        runner:appendStepLog(self.runnerStep, message);
+---@return table Array of step title strings (used when Launcher opens Runner for queue).
+function E2E:getStepTitles()
+    local t = {};
+    for _, s in ipairs(E2E_STEPS) do
+        tinsert(t, s.title);
     end
+    return t;
 end
 
-function E2E:success(message)
-    Gargul:xd(("[E2E] [OK] %s"):format(message));
-    local runner = GL.Interface.Tests.Runner;
-    if (runner.isVisible and self.runnerStep > 0) then
-        runner:setStepStatus(self.runnerStep, "success", message);
-    end
-end
-
-function E2E:error(message)
-    Gargul:xd(("[E2E] [FAIL] ERROR: %s"):format(message));
-    local runner = GL.Interface.Tests.Runner;
-    if (runner.isVisible and self.runnerStep > 0) then
-        runner:setStepStatus(self.runnerStep, "fail", message);
-    end
-    self:stop();
-end
-
-function E2E:scheduleNext(delay, callback)
-    GL:after(delay, "GargulVisualE2E.Step" .. (self.currentStep + 1), callback);
-end
-
+---@return nil
 function E2E:stop()
-    self.isRunning = false;
-    self.currentStep = 0;
-    self.runnerStep = 0;
+    self:resetRunnerState();
 
-    -- Keep Runner open so user can review results and click for logs
-    -- Cleanup session
     if (self.sessionID) then
         local sessionID = self.sessionID;
-
-        -- First delete via traditional UI means (soft delete)
         GL.GDKP.Session:delete(sessionID);
         self:log("Session soft-deleted");
-
-        -- Then permanently delete after 2 seconds
-        GL:after(2, "GargulVisualE2E.PermanentDelete", function ()
+        GL:after(2, "E2E.GDKPMultiAuction.PermanentDelete", function ()
             GL.DB:set("GDKP.Ledger." .. sessionID, nil);
             self:log("Session permanently deleted");
         end);
-
         self.sessionID = nil;
     end
 
-    -- Close all windows
     GL.Interface.GDKP.Overview:close();
     GL.Interface.GDKP.CreateSession:close();
     GL.Interface.GDKP.MultiAuction.Auctioneer:close();
     GL.Interface.GDKP.MultiAuction.FillFromInventory:close();
     GL.Interface.GroupVersionCheck:close();
 
-    -- Close client window
     local clientWindow = _G["Gargul.Interface.GDKP.MultiAuction.Client.Window"];
     if (clientWindow) then
         clientWindow:Hide();
@@ -110,30 +83,39 @@ function E2E:stop()
     self:log("Stopped and cleaned up");
 end
 
-function E2E:start()
-    if (self.isRunning) then
-        self:log("Test already running. Use /run Gargul.Tests.MultiAuctionE2E:stop() to stop it first.");
+---@param skipRunnerOpen boolean|nil If true, Runner was already opened by Launcher; only set active scenario and run.
+---@return nil
+function E2E:start(skipRunnerOpen)
+    self.retryCount = 0;
+    self.sessionName = ("E2E Test %s"):format(date("%H:%M:%S"));
+    self.steps = E2E_STEPS;
+
+    if (skipRunnerOpen) then
+        if (self.isRunning) then
+            self:log(("Test already running. Use /run Gargul.Tests.E2E.%s:stop() to stop it first."):format(self.scenarioName or "E2E"));
+            return;
+        end
+        self.isRunning = true;
+        self.runnerStep = 0;
+        GL.Interface.Tests.Runner:setActiveScenario(self.scenarioName);
+        self:log("========== Starting Visual E2E Test ==========");
+        self:runStep(1);
         return;
     end
 
-    self.isRunning = true;
-    self.currentStep = 0;
-    self.runnerStep = 0;
-    self.retryCount = 0;
-    self.sessionName = ("E2E Test %s"):format(date("%H:%M:%S"));
-
-    GL.Interface.Tests.Runner:open("GDKP MultiAuction E2E", E2E_STEPS);
-
-    self:log("========== Starting Visual E2E Test ==========");
-    self:step1_OpenGDKPOverview();
+    local titles = {};
+    for _, step in ipairs(E2E_STEPS) do
+        tinsert(titles, step.title);
+    end
+    self:startWith("E2E Tests", { { name = "GDKPMultiAuction", steps = titles, } });
+    self:runStep(1);
 end
 
 --- Step 1: Open GDKP Overview
+---@return nil
 function E2E:step1_OpenGDKPOverview()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 1;
-    self.runnerStep = 1;
     self:log("Step 1: Opening GDKP Overview...");
 
     GL.Interface.GDKP.Overview:open();
@@ -145,15 +127,14 @@ function E2E:step1_OpenGDKPOverview()
     end
 
     self:success("GDKP Overview opened");
-    self:scheduleNext(1, function () self:step2_OpenCreateSession() end);
+    self:next();
 end
 
 --- Step 2: Open Create Session
+---@return nil
 function E2E:step2_OpenCreateSession()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 2;
-    self.runnerStep = 2;
     self:log("Step 2: Opening Create Session...");
 
     GL.Interface.GDKP.CreateSession:open();
@@ -170,15 +151,14 @@ function E2E:step2_OpenCreateSession()
     end
 
     self:success("Create Session opened");
-    self:scheduleNext(1, function () self:step3_FillSessionDetails() end);
+    self:next();
 end
 
 --- Step 3: Fill Session Details
+---@return nil
 function E2E:step3_FillSessionDetails()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 3;
-    self.runnerStep = 3;
     self:log("Step 3: Filling session details...");
 
     local Window = Gargul.Interface:get(GL.Interface.GDKP.CreateSession, "Window");
@@ -194,33 +174,29 @@ function E2E:step3_FillSessionDetails()
 
     Window.TitleBox:SetText(self.sessionName);
     self:log("  - Name: " .. self.sessionName);
-
     Window.ManagementCutBox:SetText("10");
     self:log("  - Management cut: 10%");
-
     Window.SessionTypeDropdown:SetValue("multi");
     Window.SessionTypeDropdown:SetText(L["Multi-Auction"]);
     self:log("  - Type: Multi-Auction");
-
     Window.SwitchCheckbox:SetValue(true);
     self:log("  - Auto-switch: Yes");
 
     self:success("Session details filled");
-    self:scheduleNext(1, function () self:step4_CreateSession() end);
+    self:next();
 end
 
 --- Step 4: Create Session
+---@return nil
 function E2E:step4_CreateSession()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 4;
-    self.runnerStep = 4;
     self:log("Step 4: Creating session...");
 
     local createdSessionID = nil;
-    GL.Events:register("E2E.Step4.CreatedSession", "GL.GDKP_SESSION_CREATED", function (_, Instance)
+    GL.Events:register("E2E.GDKPMultiAuction.Step4", "GL.GDKP_SESSION_CREATED", function (_, Instance)
         createdSessionID = Instance and Instance.ID;
-        GL.Events:unregister("E2E.Step4.CreatedSession");
+        GL.Events:unregister("E2E.GDKPMultiAuction.Step4");
     end);
 
     local Window = Gargul.Interface:get(GL.Interface.GDKP.CreateSession, "Window");
@@ -231,9 +207,7 @@ function E2E:step4_CreateSession()
 
     Window.SaveButton:Fire("OnClick");
 
-    -- Verify that the session we just created is the actual active session.
-    -- Use a short delay so the Save callback (create + setActive + close) has finished.
-    GL:after(0.1, "GargulVisualE2E.Step4Verify", function ()
+    GL:after(.1, "E2E.GDKPMultiAuction.Step4Verify", function ()
         if (not self.isRunning) then return; end
 
         if (not createdSessionID) then
@@ -249,17 +223,15 @@ function E2E:step4_CreateSession()
 
         self.sessionID = activeSessionID;
         self:success("Session created: " .. activeSessionID);
-
-        self:scheduleNext(1, function () self:step5_CloseGDKPWindows() end);
+        self:next();
     end);
 end
 
 --- Step 5: Close GDKP Windows
+---@return nil
 function E2E:step5_CloseGDKPWindows()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 5;
-    self.runnerStep = 5;
     self:log("Step 5: Closing GDKP windows...");
 
     GL.Interface.GDKP.Overview:close();
@@ -276,23 +248,19 @@ function E2E:step5_CloseGDKPWindows()
     end
 
     self:success("GDKP windows closed");
-    -- Open MultiAuction immediately
-    self:step6_OpenMultiAuction();
+    self:next(0);
 end
 
 --- Step 6: Open MultiAuction
+---@return nil
 function E2E:step6_OpenMultiAuction()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 6;
-    self.runnerStep = 6;
     self:log("Step 6: Opening MultiAuction (/gl ma)...");
 
-    -- Make sure any previous instance is closed first
     GL.Interface.GDKP.MultiAuction.Auctioneer:close();
 
-    -- Wait a moment then open
-    GL:after(0.1, "GargulVisualE2E.OpenMA", function ()
+    GL:after(.1, "E2E.GDKPMultiAuction.OpenMA", function ()
         GL.Interface.GDKP.MultiAuction.Auctioneer:open();
 
         local window = _G["Gargul.Interface.GDKP.MultiAuction.Auctioneer.Window"];
@@ -302,16 +270,15 @@ function E2E:step6_OpenMultiAuction()
         end
 
         self:success("MultiAuction opened");
-        self:scheduleNext(1, function () self:step7_FillItems() end);
+        self:next();
     end);
 end
 
 --- Step 7: Fill Items from Inventory
+---@return nil
 function E2E:step7_FillItems()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 7;
-    self.runnerStep = 7;
     self:log("Step 7: Filling items from inventory...");
 
     local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
@@ -320,17 +287,8 @@ function E2E:step7_FillItems()
         return;
     end
 
-    -- Trigger fill from inventory with parameters
-    -- fillFromInventory(minimumQuality, minimumItemLevel, includeBOEs, includeAwarded, includeMaterials)
-    Auctioneer:fillFromInventory(
-        0,      -- minimumQuality (0 = Poor)
-        0,      -- minimumItemLevel
-        true,   -- includeBOEs
-        true,   -- includeAwarded
-        true    -- includeMaterials
-    );
+    Auctioneer:fillFromInventory(0, 0, true, true, true);
 
-    -- ItemRows is on the UI Interface, not the Auctioneer class
     local ItemRows = GL.Interface.GDKP.MultiAuction.Auctioneer.ItemRows;
     if (type(ItemRows) ~= "table") then
         self:error("Auctioneer ItemRows is not a table after fillFromInventory");
@@ -344,22 +302,19 @@ function E2E:step7_FillItems()
         self:log("WARNING: No items found in inventory to auction - test may fail");
     end
 
-    self:scheduleNext(1, function () self:step8_SelectItems() end);
+    self:next();
 end
 
 --- Step 8: Select Items
+---@return nil
 function E2E:step8_SelectItems()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 8;
-    self.runnerStep = 8;
     self:log("Step 8: Selecting items...");
 
-    -- Click the SelectAll checkbox to trigger its callback
     local SelectAll = GL.Interface.GDKP.MultiAuction.Auctioneer.SelectAll;
     if (SelectAll) then
         SelectAll:Click();
-
         local itemCount = #(GL.Interface.GDKP.MultiAuction.Auctioneer.ItemRows or {});
         self:success(("Selected all %d items"):format(itemCount));
     else
@@ -367,26 +322,22 @@ function E2E:step8_SelectItems()
         return;
     end
 
-    self:scheduleNext(1, function () self:step9_ClickNext() end);
+    self:next();
 end
 
 --- Step 9: Click Next Button (Opens Version Check)
+---@return nil
 function E2E:step9_ClickNext()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 9;
-    self.runnerStep = 9;
     self:log("Step 9: Clicking Next button...");
 
-    -- Find and click the Next button in the auctioneer window
     local auctioneerWindow = _G["Gargul.Interface.GDKP.MultiAuction.Auctioneer.Window"];
     if (not auctioneerWindow) then
         self:error("Auctioneer window not found");
         return;
     end
 
-    -- Find the Next button (it's a dynamicPanelButton)
-    -- We need to search through the window's children
     local nextButton = nil;
     for _, child in ipairs({ auctioneerWindow:GetChildren() }) do
         if (child.GetText and child:GetText() == L["Next"]) then
@@ -399,21 +350,20 @@ function E2E:step9_ClickNext()
         nextButton:Click();
         self:success("Clicked Next button - Version Check should open");
         self:log("Waiting for version check to complete...");
-        self:scheduleNext(5, function () self:step9b_ClickStartInVersionCheck() end);
+        self:next(5);
     else
         self:error("Next button not found");
     end
 end
 
---- Step 9b: Auto-click Start in Version Check
-function E2E:step9b_ClickStartInVersionCheck()
+--- Step 10: Auto-click Start in Version Check
+---@return nil
+function E2E:step10_ClickStartInVersionCheck()
     if (not self.isRunning) then return; end
 
-    self.runnerStep = 10;
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 9b: Auto-clicking Start in Version Check... (attempt " .. self.retryCount .. ")");
+    self:log("Step 10: Auto-clicking Start in Version Check... (attempt " .. self.retryCount .. ")");
 
-    -- Find the Start button in GroupVersionCheck
     local startButton = nil;
     for _, button in pairs(GL.Interface.GroupVersionCheck.ActionButtons or {}) do
         if (button and button.GetText and button:GetText() == L["Start"]) then
@@ -426,140 +376,133 @@ function E2E:step9b_ClickStartInVersionCheck()
         self.retryCount = 0;
         startButton:Click();
         self:success("Clicked Start button");
-        self:scheduleNext(1, function () self:step10_WaitForMultiAuctionClient() end);
-    elseif (self.retryCount >= MAX_RETRIES.step9b) then
-        self:error(("Start button not found after %d attempts"):format(MAX_RETRIES.step9b));
+        self:next();
+    elseif (self.retryCount >= MAX_RETRIES.step10) then
+        self:error(("Start button not found after %d attempts"):format(MAX_RETRIES.step10));
     else
         self:log("Start button not found yet, waiting...");
-        self:scheduleNext(2, function () self:step9b_ClickStartInVersionCheck() end);
+        self:retry(2);
     end
 end
 
---- Step 10: Wait for MultiAuction Client
-function E2E:step10_WaitForMultiAuctionClient()
+--- Step 11: Wait for MultiAuction Client
+---@return nil
+function E2E:step11_WaitForMultiAuctionClient()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 10;
-    self.runnerStep = 11;
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 10: Checking if MultiAuction client is visible... (attempt " .. self.retryCount .. ")");
+    self:log("Step 11: Checking if MultiAuction client is visible... (attempt " .. self.retryCount .. ")");
 
-    -- Check if auction is running
     if (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
         self.retryCount = 0;
         self:success("MultiAuction client is running");
-        self:scheduleNext(3, function () self:step11_ClickTerminate() end);
-    elseif (self.retryCount >= MAX_RETRIES.step10) then
-        self:error(("MultiAuction client did not start after %d attempts"):format(MAX_RETRIES.step10));
+        self:next(3);
+    elseif (self.retryCount >= MAX_RETRIES.step11) then
+        self:error(("MultiAuction client did not start after %d attempts"):format(MAX_RETRIES.step11));
     else
         self:log("MultiAuction not started yet, waiting...");
-        self:scheduleNext(2, function () self:step10_WaitForMultiAuctionClient() end);
+        self:retry(2);
     end
 end
 
---- Step 11: Click Terminate Button
-function E2E:step11_ClickTerminate()
+--- Step 12: Click Terminate Button
+---@return nil
+function E2E:step12_ClickTerminate()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 11;
-    self.runnerStep = 12;
-    self:log("Step 11: Clicking Terminate button...");
+    self:log("Step 12: Clicking Terminate button...");
 
-    -- Find and click Terminate button in the client window
     local clientWindow = _G["Gargul.Interface.GDKP.MultiAuction.Client.Window"];
     if (not clientWindow) then
         self:error("Client window not found");
         return;
     end
 
-    -- Use the shortcut reference
     local terminateButton = clientWindow.TerminateButton;
 
     if (terminateButton) then
         terminateButton:Click();
         self:success("Clicked Terminate button - waiting for confirmation dialog...");
-        self:scheduleNext(1, function () self:step11b_ClickYesOnConfirmation() end);
+        self:next();
     else
         self:error("Terminate button not found");
     end
 end
 
---- Step 11b: Click Yes on Confirmation (PopupDialog - AceGUI)
-function E2E:step11b_ClickYesOnConfirmation()
+--- Step 13: Click Yes on Confirmation (StaticPopup)
+---@return nil
+function E2E:step13_ClickYesOnConfirmation()
     if (not self.isRunning) then return; end
 
-    self.runnerStep = 13;
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 11b: Looking for StaticPopup confirmation dialog... (attempt " .. self.retryCount .. ")");
+    self:log("Step 13: Looking for StaticPopup confirmation dialog... (attempt " .. self.retryCount .. ")");
 
+    ---@diagnostic disable-next-line: undefined-field
     local dialog = _G.StaticPopup1;
 
     if (dialog and dialog:IsShown()) then
         local dialogText = dialog.Text and dialog.Text:GetText() or "";
         if (not dialogText:match("Remove all")) then
-            if (self.retryCount >= MAX_RETRIES.step11b) then
-                self:error(("Wrong or unexpected dialog shown after %d attempts: '%s'"):format(MAX_RETRIES.step11b, strsub(dialogText, 1, 80)));
+            if (self.retryCount >= MAX_RETRIES.step13) then
+                self:error(("Wrong or unexpected dialog shown after %d attempts: '%s'"):format(MAX_RETRIES.step13, strsub(dialogText, 1, 80)));
                 return;
             end
             self:log("Wrong dialog shown: '" .. strsub(dialogText, 1, 50) .. "', waiting...");
-            self:scheduleNext(0.5, function () self:step11b_ClickYesOnConfirmation() end);
+            self:retry(.5);
             return;
         end
 
         self.retryCount = 0;
         self:log("Found terminate confirmation dialog");
 
-        -- Get the dialog info and call OnButton1 directly
+        ---@diagnostic disable-next-line: undefined-field
         local dialogInfo = _G.StaticPopupDialogs[dialog.which];
         if (dialogInfo and dialogInfo.OnButton1) then
             self:log("Executing Yes callback...");
             dialogInfo.OnButton1(dialog);
             dialog:Hide();
             self:success("Executed Yes callback and closed dialog");
-            self:scheduleNext(0.5, function () self:step11c_VerifyTermination() end);
+            self:next(.5);
         else
             self:error("OnButton1 callback not found on terminate confirmation dialog");
         end
-    elseif (self.retryCount >= MAX_RETRIES.step11b) then
-        self:error(("StaticPopup confirmation dialog did not appear after %d attempts"):format(MAX_RETRIES.step11b));
+    elseif (self.retryCount >= MAX_RETRIES.step13) then
+        self:error(("StaticPopup confirmation dialog did not appear after %d attempts"):format(MAX_RETRIES.step13));
     else
         self:log("StaticPopup dialog not visible yet, waiting...");
-        self:scheduleNext(0.5, function () self:step11b_ClickYesOnConfirmation() end);
+        self:retry(.5);
     end
 end
 
---- Step 11c: Verify Termination Completed
-function E2E:step11c_VerifyTermination()
+--- Step 14: Verify Termination Completed
+---@return nil
+function E2E:step14_VerifyTermination()
     if (not self.isRunning) then return; end
 
-    self.runnerStep = 14;
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 11c: Verifying auction terminated... (attempt " .. self.retryCount .. ")");
+    self:log("Step 14: Verifying auction terminated... (attempt " .. self.retryCount .. ")");
 
-    -- Check if auctions are still running
     if (not GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
         self.retryCount = 0;
         self:success("MultiAuction successfully terminated");
-        self:scheduleNext(1, function () self:step12_CloseWindows() end);
-    elseif (self.retryCount >= MAX_RETRIES.step11c) then
-        self:error(("Auction did not terminate after %d attempts"):format(MAX_RETRIES.step11c));
+        self:next();
+    elseif (self.retryCount >= MAX_RETRIES.step14) then
+        self:error(("Auction did not terminate after %d attempts"):format(MAX_RETRIES.step14));
     else
         self:log("Auction still running, waiting...");
-        self:scheduleNext(1, function () self:step11c_VerifyTermination() end);
+        self:retry(1);
     end
 end
 
---- Step 12: Close Windows
-function E2E:step12_CloseWindows()
+--- Step 15: Close Windows
+---@return nil
+function E2E:step15_CloseWindows()
     if (not self.isRunning) then return; end
 
-    self.currentStep = 12;
-    self.runnerStep = 15;
-    self:log("Step 12: Closing MultiAuction windows...");
+    self:log("Step 15: Closing MultiAuction windows...");
 
     GL.Interface.GDKP.MultiAuction.Auctioneer:close();
 
-    -- Close client window
     local clientWindow = _G["Gargul.Interface.GDKP.MultiAuction.Client.Window"];
     if (clientWindow) then
         clientWindow:Hide();
@@ -577,11 +520,7 @@ function E2E:step12_CloseWindows()
 
     self:success("MultiAuction windows closed");
     self:log("========== E2E Test Complete ==========");
-
-    -- Wait 1s before cleanup
-    self:scheduleNext(1, function ()
-        self:stop();
-    end);
+    self:next();
 end
 
 return E2E;
