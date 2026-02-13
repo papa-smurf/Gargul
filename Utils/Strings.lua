@@ -239,7 +239,7 @@ function GL:separateValues(s)
     return Segments;
 end
 
---- Turn a given wow pattern into something we can use in strmatch
+--- Turn a given wow pattern into something we can use in string.match
 ---
 ---@param pattern string
 ---@param maximize boolean|nil
@@ -258,10 +258,10 @@ function GL:createPattern(pattern, maximize)
     pattern = string.gsub(pattern, "%%d", "%(%%d-%)");
 
     if (not maximize) then
-        pattern = string.gsub(pattern, "%%(%d)$s", "%(%%d-%%)");
+        pattern = string.gsub(pattern, "%%%d%$s", "(.-)");
     else
-        pattern = string.gsub(pattern, "%%(%d)$s", "%(%%d+%%)");
+        pattern = string.gsub(pattern, "%%%d%$s", "(.+)");
     end
 
-    return pattern;
+    return string.gsub(pattern, "%%%d$d", "%(%%d-%)");
 end
