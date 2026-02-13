@@ -1,0 +1,31 @@
+---
+description: Flag confidence level when claiming WoW client/engine behavior
+alwaysApply: true
+---
+
+# WoW Engine & Client Behavior Claims
+
+When describing WoW client behavior that cannot be verified by reading the codebase or linked documentation, **flag your confidence level**.
+
+## What counts as "engine behavior"
+
+- Addon loading mechanics (discovery, load order, taint)
+- Frame rendering details (backdrop timing, draw layers, texture thresholds)
+- API quirks not documented on warcraft.wiki.gg
+- SavedVariables serialization behavior
+- Combat lockdown / protected-frame specifics
+- Client performance characteristics
+
+## Required format
+
+When making such a claim, add one of:
+
+- **(verified)** — you confirmed it from code in this repo, warcraft.wiki.gg, or wow-ui-source
+- **(from memory, unverified)** — you believe this is correct but have not checked a source
+
+## Rules
+
+1. Never present unverified engine claims as fact. Always tag them.
+2. If the claim is central to a decision (e.g. "WoW scans subdirectories for .toc files"), verify it first via `WebSearch` or `WebFetch` against warcraft.wiki.gg before stating it.
+3. If you cannot verify, say so and suggest the user test in-game.
+4. Do NOT pad uncertainty with filler like "I think" or "I believe" — use the tags above so they're scannable.

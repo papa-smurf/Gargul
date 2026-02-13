@@ -1,7 +1,7 @@
 _scratch
-Data/APIAvailability
+Data/APIAvailability/dumps/*
 
 .DS_Store
 .idea
 .vscode
-.cursor
+.cursor/plans

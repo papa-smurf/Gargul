@@ -73,7 +73,7 @@ L["4. Automatically roll need, greed or pass based on saved rules! Click below o
 L["Action"] = "Acción";
 L["Add"] = "Añadir";
 L["Add item rules to automatically roll need, greed or pass when a roll is announced. Rules are stored per item ID. When you win an item, its rule is automatically set to pass."] = "Añade reglas para rodar automáticamente need, greed o pass. Las reglas se guardan por ID. Al ganar un objeto, su regla pasa a pass.";
-L["Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls). Rules are stored per item ID. When you win an item, its rule is automatically set to pass. Shift-click items or drag them into the box below."] = "Añade reglas para rodar automáticamente need, greed o pass cuando se anuncia un roll de Gargul (no funciona con rolls de botín de grupo). Las reglas se guardan por ID. Al ganar un objeto, su regla pasa a pass. Shift+clic en objetos o arrástralos al cuadro de abajo.";
+L["Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls). Rules are stored per item ID. When you win an item, its rule is automatically set to pass. Shift-click items, drag them into the box below or just start typing to search."] = "Añade reglas para rodar automáticamente need, greed o pass cuando se anuncia un roll de Gargul (no funciona con rolls de botín de grupo). Las reglas se guardan por ID. Al ganar un objeto, su regla pasa a pass. Shift+clic en objetos o arrástralos al cuadro de abajo.";
 L["Add rule"] = "Añadir regla";
 L["Auto Roll"] = "Auto Roll";
 L["Enable Auto Roll"] = "Activar Auto Roll";
@@ -324,7 +324,7 @@ L["total gold received from the player"] = "oro total recibido del jugador";
 L["date/time at which the first item was awarded"] = "fecha/hora en la que se otorgó el primer artículo";
 L["gold traded to the player"] = "oro intercambiado al jugador";
 L["@ITEM,@WINNER,@GOLD,@WOWHEAD"] = "@ARTÍCULO,@GANADOR,@ORO,@WOWHEAD";
-L["Item link or ID"] = "Enlace o ID de objeto";
+L["Item link, ID, or type to search"] = "Enlace o ID de objeto";
 L["Item,Player,Gold,Wowheadlink"] = "Artículo, Jugador, Oro, Wowheadlink";
 L["Date/time at which the first item was awarded"] = "Fecha/hora en la que se adjudicó el primer artículo";
 L["The title of the GDKP session"] = "El título de la sesión del GDKP";

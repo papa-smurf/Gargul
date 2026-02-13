@@ -1,0 +1,13 @@
+---
+description: Source for up-to-date WoW addon interface version numbers
+globs: "**/*.toc"
+alwaysApply: true
+---
+
+# WoW Interface Versions
+
+For up-to-date interface version numbers (e.g., when updating `## Interface:` lines in TOC files), check:
+
+**https://warcraft.wiki.gg/wiki/Template:LatestPatchInfo**
+
+This wiki template is maintained with current TOC interface values for Retail, Classic Era, SoD, BCC, Wrath, Cata, Mists, Titan, and other active game versions.

@@ -30,25 +30,83 @@ end
 local lastClickTime;
 
 --- Return an item's ID from an item link, false if invalid itemlink is provided
+--- Second parameter are item "extra's" that can be ommited in a comm-setting to save bandwidth
+--- 
+--- Courtesy of Lantis and the team over at Core Loot Manager: https://github.com/CoreLootManager/CoreLootManager
 ---
 ---@param itemLink string
----@return number|boolean
-function GL:getItemIDFromLink(itemLink)
+---@param minify? boolean This will minify the 'extra' part, only viable when sending a single item link over the wire
+---@return number|boolean, string?
+---
+---@test DevTools_Dump(_G.Gargul:getItemIDFromLink("|cnIQ5:|Hitem:19019::::::::2:1451:::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r"));
+function GL:getItemIDFromLink(itemLink, minify)
     if (not itemLink
         or type(itemLink) ~= "string"
         or itemLink == ""
     ) then
-        return false;
+        return false, "";
     end
 
-    local itemID = strmatch(itemLink, "Hitem:(%d+):");
-    itemID = tonumber(itemID);
+    local _, _, itemID, extra = string.find(itemLink, "item:(%d+)([-?%d:]*)|h");
 
-    if (not itemID) then
-        return false;
+    if (extra and minify) then
+        extra = GL:replaceColonsWithAlpha(extra);
     end
 
-    return itemID;
+    return tonumber(itemID) or false, extra or nil;
+end
+
+--- Courtesy of Lantis and the team over at Core Loot Manager: https://github.com/CoreLootManager/CoreLootManager
+---
+---@param itemLink string
+---@param extra? string
+---@return string
+function GL:enrichItemLink(itemLink, extra)
+    if (not extra) then
+        return itemLink;
+    end
+
+    local _, _, pre, post = string.find(itemLink, "(.*item:%d+)[-?%d:]+(|h.*)");
+    if (not pre or not post) then
+        return itemLink;
+    end
+
+    if (not GL:strContains(extra, ":")) then
+        extra = GL:replaceAlphaWithColons(extra);
+    end
+
+    return pre .. extra .. post;
+end
+
+--- Generate an item link by a given item ID and extra ( requires callback after item load )
+---
+---@param itemID number
+---@param extra string
+---@param callback function
+function GL:buildItemLink(itemID, extra, callback)
+    GL:onItemLoadDo(itemID, function (Result)
+        callback(GL:enrichItemLink(Result.link, extra));
+    end);
+end
+
+-- Used mainly for shorting the 'extra' string from getItemIDFromLink
+--
+---@param str string
+---@return string, number?
+function GL:replaceColonsWithAlpha(str)
+    return str:gsub(":+", function(c)
+        return #c <= 26 and string.char(96 + #c) or c;
+    end);
+end
+
+-- Used mainly for restoring the minified 'extra' string from replaceColonsWithAlpha
+--
+---@param str string
+---@return string, number?
+function GL:replaceAlphaWithColons(str)
+    return str:gsub("%a", function(c)
+        return string.rep(":", string.byte(c:lower(), 1) - 96);
+    end);
 end
 
 --- Return an item's name from an item link
@@ -500,6 +558,28 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     local callbackCalled = false;
     local numberOfItemsToLoad = self:count(Items);
 
+    --- Check whether all items have been processed and fire the callback if so
+    ---@return nil
+    local function tryCallback()
+        if (callbackCalled
+            or itemsLoaded < numberOfItemsToLoad
+        ) then
+            return;
+        end
+
+        callbackCalled = true;
+
+        if (type(sorter) == "function") then
+            tsort(ItemData, sorter);
+        end
+
+        if (singleItemProvided) then
+            ItemData = ItemData[1];
+        end
+
+        callback(ItemData, lastError);
+    end
+
     --- We use this nasty function construct in order to be able to return out of a for loop (see below)
     ---
     ---@param itemIdentifier string|number
@@ -558,35 +638,34 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             end
         end
 
+        local itemLoaded = false;
         ItemResult:ContinueOnItemLoad(function ()
+            itemLoaded = true;
             itemsLoaded = itemsLoaded + 1;
 
             local NormalizedItem = self:normalizeItem(ItemResult);
-            if (not NormalizedItem) then
+            if (NormalizedItem) then
+                tinsert(ItemData, NormalizedItem);
+            else
                 GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
-
-                return; -- Return here so we don't cache any incomplete data
+                lastError = "GetItemInfo data was not yet available for item with ID: " .. itemID;
             end
 
-            tinsert(ItemData, NormalizedItem);
+            tryCallback();
+        end)
 
-            if (not callbackCalled
-                and itemsLoaded >= numberOfItemsToLoad
-            ) then
-                callbackCalled = true;
-
-                if (type(sorter) == "function") then
-                    table.sort(ItemData, sorter);
-                end
-
-                if (singleItemProvided) then
-                    ItemData = ItemData[1];
-                end
-
-                callback(ItemData, lastError);
+        -- Safety net: if ContinueOnItemLoad never fires (e.g. item exists
+        -- in client DB but server data is unavailable), don't block forever
+        GL.Ace:ScheduleTimer(function ()
+            if (itemLoaded) then
                 return;
             end
-        end)
+
+            itemsLoaded = itemsLoaded + 1;
+            lastError = "Timed out loading item with identifier " .. itemIdentifier;
+
+            tryCallback();
+        end, .5);
     end
 
     ---@param itemLinkOrID string|number
@@ -599,24 +678,10 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         loadOrReturnItem(itemLinkOrID);
 
-        -- Make sure the callback has not yet been executed in the async onload method
-        if (not callbackCalled
-            and itemsLoaded >= numberOfItemsToLoad
-        ) then
-            callbackCalled = true;
-
-            if (singleItemProvided) then
-                ItemData = ItemData[1];
-                callback(ItemData, lastError);
-                return;
-            end
-
-            if (type(sorter) == "function") then
-                table.sort(ItemData, sorter);
-            end
-
-            callback(ItemData, lastError);
-            return;
+        -- All items may have loaded synchronously, check if we're done
+        tryCallback();
+        if (callbackCalled) then
+            return ItemData;
         end
     end
 

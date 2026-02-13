@@ -90,6 +90,7 @@ Classes/TMB.lua
 Classes/Exporter.lua
 Classes/RollerUI.lua
 Classes/AutoRoll.lua
+Classes/ItemDataManager.lua
 Classes/RollOff.lua
 Classes/GroupLoot.lua
 Classes/MasterLooterUI.lua

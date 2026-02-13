@@ -182,6 +182,7 @@ function GL:_init()
     self.User:_init();
     self.AwardedLoot:_init();
     self.AutoRoll:_init();
+    self.ItemDataManager:_init();
     self.SoftRes:_init();
     self.GDKP.Auction:_init();
     self.TMB:_init();

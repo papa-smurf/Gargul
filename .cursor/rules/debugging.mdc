@@ -1,0 +1,62 @@
+---
+description: Debug tooling reference — Gargul:xd / Gargul:xda and when to use each message API
+alwaysApply: true
+---
+
+# Debug & Message API Reference
+
+## Gargul:xd(mixed) — Debug / Profile Tool
+
+Use `Gargul:xd()` for all debugging and profiling. **Never use `GL:debug()` or `GL:xd()`.**
+
+- Immediately prints via `DevTools_Dump()` so you see output in the chat frame
+- Appends to `GL.XDOutputBuffer` for batch inspection later
+- Accepts any type: string, number, table, boolean, nil
+
+Prefer structured tables over bare strings (see `ai-debug-profiling` rule for format):
+
+```lua
+Gargul:xd({
+    event = "SomeClass:someMethod",
+    itemID = itemID,
+    loaded = true,
+});
+```
+
+## Gargul:xda() — View Accumulated Output
+
+Opens a scrollable, selectable, copyable frame with everything buffered by `Gargul:xd()`.
+
+- In-game command: `/gl xda`
+- Lua: `Gargul:xda();`
+
+## User-Facing Messages (not for debugging)
+
+| Method | Color | Purpose |
+|--------|-------|---------|
+| `GL:success(msg)` | Green | Confirm a completed action |
+| `GL:warning(msg)` | Yellow | Warn about a potential issue |
+| `GL:error(msg)` | Red | Report an error to the user |
+| `GL:notice(msg)` | Blue | Informational notice |
+
+These are for **player-visible feedback**, not for developer profiling.
+
+## Placement Guidelines
+
+1. **Function entry** — dump inputs/args for functions with 2+ parameters or complex logic
+2. **Before and after async boundaries** — callbacks, `GL:after`, `C_Timer`, `onItemLoadDo`
+3. **Branch outcomes** — inside each significant branch to confirm which path executed
+4. **Function exit** — dump the return value or final state for functions that build/transform data
+5. **Error/fallback paths** — always instrument the "something went wrong" path
+
+## Labeling Convention
+
+Always include an `event` key using `ClassName:methodName` or `module:action` format:
+
+```lua
+Gargul:xd({ event = "Exporter:buildCSV", rowCount = #rows, elapsed = GetTime() - start, });
+```
+
+## Removal
+
+These calls are **temporary**. Once the user confirms the feature works correctly in-game, remove all `Gargul:xd()` calls from that code in a cleanup pass. Do not remove them proactively — wait for explicit confirmation.

@@ -1,0 +1,29 @@
+---
+description: How to decode /gl bug reports and where the script lives
+alwaysApply: true
+---
+# Decoding Gargul /gl Bug Reports
+
+When a user shares a `/gl bug` output and you need to check specific settings (e.g. Auto Roll, PackMule, etc.):
+
+**Use the script:** `Scripts/decode_bug_report.py`
+
+**Input file:** `Scripts/bug_report_input.txt` (gitignored) — convenient place for users to paste `/gl bug` output
+
+```bash
+# Decode and show full payload
+python Scripts/decode_bug_report.py Scripts/bug_report_input.txt
+
+# Extract specific settings
+python Scripts/decode_bug_report.py Scripts/bug_report_input.txt --key Settings.AutoRoll
+python Scripts/decode_bug_report.py Scripts/bug_report_input.txt --key Settings.AutoRoll.enabled
+python Scripts/decode_bug_report.py Scripts/bug_report_input.txt --key Settings.PackMule
+```
+
+**Bug report format:** base64(zlib(JSON)) — the script strips non-base64 chars and fixes invalid length (4n+1 → 4n).
+
+**Common settings paths:**
+- `Settings.AutoRoll.enabled` — Auto Roll on/off
+- `Settings.AutoRoll` — Full Auto Roll config (Profiles, ActiveProfileByChar, enabled)
+- `Settings.Rolling` — Roll UI settings (closeAfterRoll, etc.)
+- `Settings.PackMule` — PackMule config

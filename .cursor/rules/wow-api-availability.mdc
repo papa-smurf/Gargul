@@ -1,0 +1,34 @@
+---
+description: WoW API availability workflow — dump, compare, consult diffs
+globs: "**/*.lua"
+alwaysApply: true
+---
+
+# WoW API Availability
+
+**Before using any WoW global**, check `.cursor/rules/wow-api-diffs.mdc` — it lists which globals exist in which clients (Classic, TBC, Wrath+, Retail).
+
+## Workflow
+
+1. **Dump**: Run `/gl dumpglobals` in each client, copy JSON, save to `Data/APIAvailability/dumps/{Client}_{tocVersion}.json`
+2. **Compare**: Run `python Data/APIAvailability/compare_dumps.py` to regenerate `wow-api-diffs.mdc`
+3. **Consult**: Use `wow-api-diffs.mdc` when writing version-agnostic code
+
+## Gargul Interface Versions
+
+| Version | tocVersion | Dump file |
+|---------|------------|-----------|
+| Classic (Era) | 11508 | Classic_11508.json |
+| TBC (BCC) | 20505 | TBC_20505.json |
+| Wrath+ | 30405+ | Mists_50503.json (Wrath, Titan, Cata, Mists share API) |
+| Retail | 120000 | Retail_120000.json |
+
+## Existing Shims
+
+When a global is missing in some clients, add a shim in `Utils/Shims.lua`:
+
+- `GL.LE_ITEM_CLASS_RECIPE`, `GL.LE_ITEM_CLASS_QUESTITEM`, `GL.LE_ITEM_CLASS_MISCELLANEOUS` — use these instead of raw globals
+
+## Manual Verification
+
+If a global isn't in the diffs file: `/dump GlobalName` in-game, or check [warcraft.wiki.gg](https://warcraft.wiki.gg/wiki/World_of_Warcraft_API).

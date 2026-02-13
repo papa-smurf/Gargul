@@ -1,0 +1,36 @@
+---
+description: How to validate Lua syntax for Gargul addon files
+globs: "**/*.lua"
+alwaysApply: true
+---
+
+# Lua Syntax Validation
+
+**Trigger:** "validate", "syntax check", "check Lua" — NOT "lint" (lint = style rules, see lint-rules.mdc).
+
+When validating Lua files (e.g. after bulk edits, before pushing, or when the user asks to "check Lua" / "validate Lua"):
+
+**Use the script:** `Scripts/validate_lua.py`
+
+```bash
+# Validate all .lua files (excludes Libs/, Data/, Scripts/, automations/)
+python Scripts/validate_lua.py
+
+# Validate specific file(s)
+python Scripts/validate_lua.py Classes/Player.lua Utils/helpers.lua
+
+# Validate a directory
+python Scripts/validate_lua.py Classes/
+```
+
+**Prerequisite:** Lua 5.1 must be installed (provides `luac`). WoW uses Lua 5.1; luac 5.4 may accept/reject differently.
+
+- **Windows:** LuaBinaries 5.1.5 — https://sourceforge.net/projects/luabinaries/files/5.1.5/Tools%20Executables/ — download lua-5.1.5_Win64_bin.zip (or Win32), extract and add folder to PATH (contains luac5.1.exe)
+- **Or:** https://www.lua.org/download.html — build/install Lua 5.1, add bin to PATH
+
+**When to run:**
+- After bulk refactors (e.g. string.format → ():format)
+- Before pushing or when user asks to verify Lua files
+- When debugging suspected syntax errors
+
+**Excluded:** Libs/, Data/, Scripts/, automations/, .git/

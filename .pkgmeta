@@ -3,5 +3,11 @@ ignore:
   - automations
   - build.sh
   - .cursor
+  - Data/APIAvailability
 
 changelog-title: Gargul
+
+# Ship Gargul_ItemData as a second addon in the same zip (load-on-demand module).
+# Source is repo path Gargul_ItemData/; packager moves it to zip root as Gargul_ItemData.
+move-folders:
+  Gargul/Gargul_ItemData: Gargul_ItemData

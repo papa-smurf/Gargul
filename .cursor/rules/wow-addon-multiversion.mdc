@@ -1,0 +1,151 @@
+---
+description: WoW addon multi-version development (Era, BCC, Wrath, Titan, Cata, Mists, Retail)
+globs: "**/*.lua"
+alwaysApply: true
+---
+
+# WoW Addon Multi-Version Development
+
+Gargul supports: **Era (11508)**, **BCC (20505)**, **Wrath (30405)**, **Titan (38000)**, **Cata (40402/3)**, **Mists (50503/4)**, **Retail (120000)**.
+
+## Version Detection
+
+Use existing flags from `bootstrap.lua`:
+- `GL.isEra` — tocVersion < 20000
+- `GL.isClassic` — BCC/Wrath/Cata/Mists (not Era, not Retail)
+- `GL.isRetail` — tocVersion >= 90000
+- `GL.isSoD` — Era + Season of Discovery
+- `GL.tocVersion` — raw interface version from `select(4, GetBuildInfo())`
+
+For exact checks, use `GL.Data.Constants.InterfaceVersions`:
+```lua
+if GL.tocVersion >= GL.Data.Constants.InterfaceVersions.WRATH then
+    -- Wrath or newer
+end
+```
+
+## Version-Specific Code
+
+When an API or feature exists only in certain versions, wrap it:
+
+```lua
+-- ✅ GOOD: Check before using
+if GL.isEra then
+    GL.SetLootThreshold("common");  -- Era allows poor/common
+else
+    -- Retail: master loot threshold is fixed, skip
+end
+
+-- ✅ GOOD: Use shims for API differences
+GL.GetContainerNumSlots(bag)  -- Uses GetContainerNumSlots or C_Container.GetContainerNumSlots
+GL.ReloadUI()                 -- Uses C_UI.Reload or ReloadUI
+```
+
+## Adding New Shims
+
+1. Add to `Utils/Shims.lua` (loaded first)
+2. Use `NewAPI or LegacyAPI` pattern
+3. Prefer `GL.FunctionName` so callers use the shim
+
+### Constants (LE_*, Enum.*)
+
+When a WoW constant (e.g. `LE_ITEM_CLASS_RECIPE`) is missing in some clients:
+
+1. **Check for Enum equivalents first** — Retail often uses `Enum.*` (e.g. `Enum.ItemClass.Recipe`) for the same values. Prefer `LE_* or (Enum and Enum.X and Enum.X.Y) or fallback` over hardcoding.
+2. **Use the shim** — Callers should use `GL.LE_ITEM_CLASS_RECIPE` etc., not raw globals.
+
+**CRITICAL: Never use hardcoded numeric fallbacks unless the value is verified.** Wrong values cause silent bugs (e.g. wrong item bind detection). To verify:
+- Run `/dump Enum.ItemBind.Quest` (or the relevant path) in-game and note the output.
+- Or check an authoritative source you trust.
+- If uncertain: omit the numeric fallback and add a `---@todo verify in-game` comment instead.
+
+## Frame Script Handlers
+
+WoW frame scripts (OnEnter, OnLeave, OnClick, etc.) receive the **frame as the first argument** (`self`). When chaining or calling a previously stored handler, you must pass the frame:
+
+```lua
+-- ❌ BAD: existingHandler() — self is nil inside the Blizzard handler
+local existingOnEnter = Button:GetScript("OnEnter");
+Button:SetScript("OnEnter", function()
+    if existingOnEnter then existingOnEnter(); end  -- CRASH: attempt to index nil
+    -- ...
+end);
+
+-- ✅ GOOD: Pass the frame as first argument
+Button:SetScript("OnEnter", function()
+    if existingOnEnter then existingOnEnter(Button); end
+    -- ...
+end);
+```
+
+## Naming: ID vs Id
+
+Use uppercase `ID` for identifier abbreviations, not `Id`:
+
+```lua
+-- ✅ GOOD
+local timerID = GL:after(5, "MyTimer", fn);
+local queueAddTimerID = "GDKP.Auction.initializeQueueAdd";
+local playerID = GL.User.id;
+
+-- ❌ BAD
+local timerId = ...;
+local queueAddTimerId = ...;
+local playerId = ...;
+```
+
+## Naming: Variable case
+
+Start variable names with **lowercase** unless the variable holds a table/class:
+
+```lua
+-- ✅ GOOD (primitive or single value)
+local timerID = GL:after(5, "MyTimer", fn);
+self.refreshTimerID = GL:interval(1, "Refresh", fn);
+
+-- ✅ GOOD (table/class)
+local Auction = GL.GDKP.Auction;
+local Settings = GL.Settings;
+
+-- ❌ BAD
+self.RefreshTimerID = ...;  -- should be refreshTimerID
+```
+
+## Hex Color Codes
+
+Use uppercase for hex color codes: `1EFF00` not `1eff00`.
+
+## Table Formatting
+
+For tables: (1) The last entry must be followed by a trailing comma. (2) For single-line tables only, use exactly 1 space before the first item and after the last item. Multiline tables use normal indentation.
+
+```lua
+-- ❌ BAD
+{"=", "<", "<=", ">", ">=",}
+{ GL.LE_ITEM_BIND_ON_ACQUIRE, GL.LE_ITEM_BIND_QUEST }
+
+-- ✅ GOOD
+{ "=", "<", "<=", ">", ">=", }
+{ GL.LE_ITEM_BIND_ON_ACQUIRE, GL.LE_ITEM_BIND_QUEST, }
+```
+
+## Lua 5.1 Constraints
+
+- **FORBIDDEN:** `goto`, `::labels::`, `_ENV`
+- **REQUIRED:** `select(index, ...)` for varargs; `local` for variables
+- **Taint:** Use `hooksecurefunc`, never replace globals directly
+
+### WoW-injected globals
+
+`tinsert` and `tsort` are WoW-injected aliases for `table.insert` and `table.sort`. They are available in all supported clients (Era, BCC, Wrath, Retail, etc.). **Use `tinsert` and `tsort`** instead of `table.insert` and `table.sort`.
+
+## Documentation
+
+**Before using any WoW global**, check `.cursor/rules/wow-api-diffs.mdc` for availability by client. See `wow-api-availability.mdc` for the dump/compare workflow.
+
+Additional sources:
+- [warcraft.wiki.gg](https://warcraft.wiki.gg/wiki/World_of_Warcraft_API) — API availability per patch
+- [wow-ui-source live](https://github.com/Gethe/wow-ui-source/tree/live/Interface) — Retail
+- [wow-ui-source classic](https://github.com/Gethe/wow-ui-source/tree/classic/Interface) — Classic Era
+
+When you discover a version-specific global, add a shim in `Utils/Shims.lua` if needed. Re-run `python Data/APIAvailability/compare_dumps.py` after updating dumps to refresh `wow-api-diffs.mdc`.

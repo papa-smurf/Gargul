@@ -1,0 +1,41 @@
+---
+description: Gargul Lua style. Apply when user says lint/format; follow whenever writing or editing .lua.
+globs: "**/*.lua"
+alwaysApply: true
+---
+
+# Gargul Lint Rules
+
+**When writing or editing Lua in this project, follow these rules.** On "lint"/"format" requests, scan and fix violations. Exclude: `.*`, `automations/*`, `Data/*`, `Libs/*`, `Scripts/*`.
+
+## Whitespace
+- No lines with only spaces/tabs; no trailing spaces. At most one consecutive blank line.
+
+## Tables
+- Trailing comma on last entry (single- and multiline). Single-line: one space before first and after last item.
+- In table **definitions**, use `[]` only for: numeric indices `[1]`, keys starting with digit `["1EFF00"]`, reserved words `["for"]`. Otherwise identifier keys: `key = value` not `["key"] = value`.
+- Good: `{ "a", "b", }` / `{ key = 1, }`. Bad: `{ "a", "b"}` or `["key"] = 1` in literals.
+
+## Table access
+- Prefer dot for valid identifiers: `t.foo` not `t["foo"]`. Exception: **L** (localization) always bracket: `L["key"]`; **L.CHAT** uses dot then bracket: `L.CHAT["key"]`. **_G** reads: dot `_G.name`.
+
+## Naming
+- ID not Id: `timerID`, `playerID`. Lowercase for primitives; uppercase only for variables holding a table/class: `local Runner = ...`.
+
+## Hex colors
+- Uppercase: `1EFF00` not `1eff00`.
+
+## WoW string API
+- Use WoW globals: `strupper`, `strlower`, `strfind`, `strmatch`, `strchar`, `strlen`, `strsub`, `strrep` — not `string.upper` etc.
+
+## Doc & style
+- Functions that return nothing: add `---@return nil`. Semicolons at end of statements. Parentheses around `if` condition; use `elseif` not `else if`. Anonymous functions: space before `()`: `function () end`. Decimals in (0,1): `.5` not `0.5`. Strings: double quotes. Format: `("%s"):format(x)` not `string.format(...)`. Single table arg: explicit parens `fn({ ... })` not `fn{ ... }`. Default-arg pattern: use `x = x == nil and default or x` not `if (x == nil) then x = default; end`.
+
+## Class definitions (GL)
+**Define the class in a local first, then immediately assign to GL (with `---@type ClassName` on that line).** Do not put the GL assignment at the end of the file. Never assign an inline table to `GL.*` and then take a local reference.
+- Insert a single blank line between namespace/table initialization (e.g. `GL.Tests.E2E = GL.Tests.E2E or {};`) and the following `---@class` / `local ClassName = ...` block.
+- Good: `---@class Foo` then `local Foo = { ... };` then `GL.Some.Path = Foo; ---@type Foo` then method definitions. With inheritance: `local E2E = { ... }; setmetatable(E2E, { __index = Base }); GL.Tests.E2E = E2E; ---@type E2E` then methods.
+- Bad: `GL.Tests.Foo = { ... }; local Foo = GL.Tests.Foo;` or GL assign at end of file instead of right after local.
+
+## Intentional globals
+- Assigning to a non-local: use `_G.` prefix: `_G.Gargul = GL;` not `Gargul = GL;`. Applies to assignments that create globals, not reads.

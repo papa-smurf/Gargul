@@ -1,0 +1,40 @@
+---
+description: Don't automatically stage changes when inspecting or checking code
+alwaysApply: true
+---
+
+# No Auto-Staging During Inspection
+
+When the user asks you to **lint**, **check**, **inspect**, **verify**, or **review** code, do NOT automatically stage any changes you make.
+
+## Wait for Explicit Instructions
+
+Only stage changes (`git add`) when:
+- The user explicitly asks you to stage them
+- The user asks you to commit (staging is part of the commit workflow)
+- You're making changes as part of an implementation task (not an inspection task)
+
+## Inspection Tasks Include
+
+- "lint this file"
+- "check if this is correct"
+- "verify the staged changes"
+- "inspect for bugs"
+- "review the code"
+- "fix any linting errors"
+
+## Implementation Tasks (OK to stage)
+
+- "refactor this function"
+- "implement feature X"
+- "fix this bug" (when explicitly fixing, not just finding)
+- User explicitly says "and stage it" or "commit these changes"
+
+## Rationale
+
+During inspection, the user wants to:
+1. See what you found
+2. Review your fixes
+3. Decide whether to keep them
+
+Auto-staging removes this control and can clutter the git state during exploratory work.

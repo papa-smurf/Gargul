@@ -76,7 +76,7 @@ L["4. Automatically roll need, greed or pass based on saved rules! Click below o
 L["Action"] = "操作";
 L["Add"] = "添加";
 L["Add item rules to automatically roll need, greed or pass when a roll is announced. Rules are stored per item ID. When you win an item, its rule is automatically set to pass."] = "添加物品规则，在宣布Roll时自动需求/贪婪/放弃。规则按物品ID存储。赢得物品后规则自动设为放弃。";
-L["Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls). Rules are stored per item ID. When you win an item, its rule is automatically set to pass. Shift-click items or drag them into the box below."] = "添加物品规则，在Gargul宣布Roll时自动需求/贪婪/放弃（不适用于团队拾取Roll）。规则按物品ID存储。赢得物品后规则自动设为放弃。Shift+点击物品或将其拖入下方框内。";
+L["Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls). Rules are stored per item ID. When you win an item, its rule is automatically set to pass. Shift-click items, drag them into the box below or just start typing to search."] = "添加物品规则，在Gargul宣布Roll时自动需求/贪婪/放弃（不适用于团队拾取Roll）。规则按物品ID存储。赢得物品后规则自动设为放弃。Shift+点击物品或将其拖入下方框内。";
 L["Add rule"] = "添加规则";
 L["Auto Roll"] = "自动Roll";
 L["Enable Auto Roll"] = "启用自动Roll";
@@ -326,7 +326,7 @@ L["total gold received from the player"] = "从玩家处收到的总金币";
 L["date/time at which the first item was awarded"] = "第一件物品被分配的日期/时间";
 L["gold traded to the player"] = "交易给玩家的金币";
 L["@ITEM,@WINNER,@GOLD,@WOWHEAD"] = "@ITEM、@WINNER、@GOLD、@WOWHEAD";
-L["Item link or ID"] = "物品链接或ID";
+L["Item link, ID, or type to search"] = "物品链接或ID";
 L["Item,Player,Gold,Wowheadlink"] = "物品、玩家、金币、Wowheadlink";
 L["Date/time at which the first item was awarded"] = "第一个物品被分配的日期/时间";
 L["The title of the GDKP session"] = "GDKP 账单标题";

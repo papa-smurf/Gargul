@@ -1,0 +1,19 @@
+---
+description: When user says "lint" vs "validate" — apply the correct check
+alwaysApply: true
+---
+
+# Lint vs Validate
+
+**"Lint" / "format" / "style check"** → Apply **@.cursor/rules/lint-rules.mdc**:
+- Scan for style violations (tables, naming, WoW string functions, semicolons, etc.)
+- Report and optionally fix violations
+- Do NOT use validate_lua.py for this
+
+**"Validate" / "syntax check"** → Run **Scripts/validate_lua.py**:
+- Lua 5.1 syntax validation via luac
+- See @.cursor/rules/lua-validation.mdc
+
+**"Full lint check" / "pre-push check"** → Do BOTH:
+1. Apply lint-rules.mdc (style)
+2. Run `python Scripts/validate_lua.py` (syntax)

@@ -1,0 +1,20 @@
+## Interface: 120000, 120001
+## Interface-Classic: 11508
+## Interface-BCC: 20505
+## Interface-Wrath: 30405
+## Interface-Titan: 38000
+## Interface-Cata: 40402
+## Interface-Mists: 50503
+## Title: Gargul |cffffffffItem Data|r
+## Notes: Optional item cache for Gargul. Enables players to search for items.
+## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
+## Author: Gargul
+## Version: 1.0.0
+## Dependencies: Gargul
+## DefaultState: enabled
+## LoadOnDemand: 1
+# Omit DefaultState so addon is enabled by default when installed
+## SavedVariables: GargulItemDataDB, GargulSkippedItemDB
+## X-Embed: Gargul
+
+bootstrap.lua

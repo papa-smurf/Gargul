@@ -155,6 +155,7 @@ function Dialog:setButtons(Buttons)
             onClick = nil,
             display = nil,
         };
+        Button.onClick = Button.onClick or function () end;
 
         self["button" .. i] = Button.label;
         self["OnButton" .. i] = Button.onClick and function ()
@@ -299,10 +300,18 @@ function Dialog:show(Details, callback)
         self.text = self.text .. strrep("\n", self.paddingBottom);
     end
 
-    -- Wire OnShow: store frame, handle copper/editBox, then call original
+    -- Wire OnShow: store frame, raise above Gargul windows, handle copper/editBox, then call original
     local originalOnShow = self.originalOnShow;
     self.OnShow = function (DialogFrame)
         self._lastShownFrame = DialogFrame;
+
+        -- Ensure dialog appears above Gargul UI (e.g. Settings / Auto Roll window)
+        if (DialogFrame.SetFrameStrata) then
+            DialogFrame:SetFrameStrata("FULLSCREEN_DIALOG");
+        end
+        if (DialogFrame.SetFrameLevel) then
+            DialogFrame:SetFrameLevel(100);
+        end
 
         if (self.copper) then
             MoneyFrame_Update(DialogFrame.moneyFrame, self.copper);
