@@ -30,30 +30,25 @@ end
 local lastClickTime;
 
 --- Return an item's ID from an item link, false if invalid itemlink is provided
---- Second parameter are item "extra's" that can be ommited in a comm-setting to save bandwidth
---- 
---- Courtesy of Lantis and the team over at Core Loot Manager: https://github.com/CoreLootManager/CoreLootManager
 ---
 ---@param itemLink string
----@param minify? boolean This will minify the 'extra' part, only viable when sending a single item link over the wire
----@return number|boolean, string?
----
----@test DevTools_Dump(_G.Gargul:getItemIDFromLink("|cnIQ5:|Hitem:19019::::::::2:1451:::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r"));
-function GL:getItemIDFromLink(itemLink, minify)
+---@return number|boolean
+function GL:getItemIDFromLink(itemLink)
     if (not itemLink
         or type(itemLink) ~= "string"
         or itemLink == ""
     ) then
-        return false, "";
+        return false;
     end
 
-    local _, _, itemID, extra = string.find(itemLink, "item:(%d+)([-?%d:]*)|h");
+    local itemID = string.match(itemLink, "Hitem:(%d+):");
+    itemID = tonumber(itemID);
 
-    if (extra and minify) then
-        extra = GL:replaceColonsWithAlpha(extra);
+    if (not itemID) then
+        return false;
     end
 
-    return tonumber(itemID) or false, extra or nil;
+    return itemID;
 end
 
 --- Courtesy of Lantis and the team over at Core Loot Manager: https://github.com/CoreLootManager/CoreLootManager
