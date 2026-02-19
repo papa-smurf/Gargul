@@ -384,11 +384,11 @@ function GL:bugReport()
         LoadDetails = GL.DB.LoadDetails,
         Settings = Settings,
         ScriptErrors = C_CVar.GetCVar("scriptErrors"),
-        client = GL.clientUIinterface,
         dataSince = oldestTimestamp,
         guid = GL.User.id,
         name = GL.User.name,
         realm = GL.User.realm,
+        tocVersion = GL.tocVersion,
     };
 
     local LibDeflate = LibStub:GetLibrary("LibDeflate");
