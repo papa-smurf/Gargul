@@ -165,7 +165,8 @@ function GL:_init()
     GL:after(2, nil, function ()
         -- Show a welcome message
         if (self.Settings:get("welcomeMessage")) then
-            GL:message("|c00" .. self.Data.Constants.addonHexColor .. (L["v%s. Type |c00967FD2/gl|r or |c00967FD2/gargul|r to get started!"]):format(self.version));
+            local cc = self.Data.Constants.commandHexColor;
+            GL:message("|c00" .. self.Data.Constants.addonHexColor .. (L["Use |c00%s/gl|r to open Gargul. New to Gargul? Try |c00%s/gl start|r!"]):format(cc, cc));
         end
 
         if (GL.AutoRoll:enabled()) then
@@ -218,12 +219,9 @@ function GL:_init()
 
     -- GargulAutoRoll migration: if they have the addon but no Gargul auto roll rules, nudge them
     GL:after(8, "GargulAutoRollMigration", function ()
-        for i = 1, GL.GetNumAddOns() do
-            if (select(1, GL.GetAddOnInfo(i)) == "GargulAutoRoll") then
-                local color = GL.Data.Constants.addonHexColor;
-                GL:message(("|c00%s%s|r"):format(color, (L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"]):format(GL.Data.Constants.commandHexColor, GL.Data.Constants.commandHexColor)));
-                break;
-            end
+        if (GL.IsAddOnLoaded("GargulAutoRoll")) then
+            local color = GL.Data.Constants.addonHexColor;
+            GL:message(("|c00%s%s|r"):format(color, (L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"]):format(GL.Data.Constants.commandHexColor, GL.Data.Constants.commandHexColor)));
         end
     end);
 

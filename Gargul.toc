@@ -119,6 +119,7 @@ Interface/Award/Overview.lua
 Interface/Locale.lua
 Interface/Importer.lua
 Interface/BonusFeatures.lua
+Interface/Onboarding.lua
 Interface/GroupVersionCheck.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua

@@ -510,8 +510,15 @@ end
 function Interface:addCloseButton(Element)
     ---@type Button
     local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
-    Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
     Close:SetSize(30, 30);
+
+    if (GL.isRetail) then
+        Close:SetScale(.6);
+        Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 2, -2);
+    else
+        Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
+    end
+
     self:addTooltip(Close, L["Close"]);
 
     -- Override the default onclick since it taints in combat

@@ -39,6 +39,7 @@ GL.Commands = GL.Commands or {
         resetsettings = "Reset Gargul's settings. This can't be undone!",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         settings = "Open the settings menu",
+        start = "Open the quick start guide for GDKP, SoftRes, auto looting and auto roll",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
         thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
         tests = "Open the E2E test launcher to run or stop scenario tests (e.g. GDKP Multi-Auction E2E)",
@@ -132,6 +133,9 @@ GL.Commands = GL.Commands or {
         co = "settings",
         config = "settings",
 
+        -- start
+        go = "start",
+
         -- softreserves
         so = "softreserves",
         softres = "softreserves",
@@ -174,6 +178,11 @@ GL.Commands = GL.Commands or {
 
         -- Open the settings menu
         settings = function (...) Settings:draw(); end,
+
+        -- Open the onboarding / quick start guide
+        start = function ()
+            GL.Interface.Onboarding:open();
+        end,
 
         -- Award an item. This either awards it directly or opens the UI
         award = function (...)

@@ -10,12 +10,7 @@ local AceGUI = GL.AceGUI;
 
 ---@class WelcomeSettings
 GL.Interface.Settings.Welcome = {
-    description = ("\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00A79EFFTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00A79EFF%s|r. Award: |c00A79EFF%s|r. Disenchant: |c00A79EFF%s|r%s|r"):format(
-        GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
-        GL.Settings:get("ShortcutKeys.award"),
-        GL.Settings:get("ShortcutKeys.disenchant"),
-        GL.GDKPIsAllowed and "\n\n\nWant to host a GDKP session? Run |c00A79EFF/gdkp|r to get started!" or ""
-    ),
+    description = "\n|c00FFF569Welcome to Gargul!|r\n\nNew? Click |c00A79EFFStart here|r below for a quick tour of GDKP, SoftRes, auto looting and more.\n\nEverything can be tested without being in a raid!",
 };
 local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings
 
@@ -23,50 +18,14 @@ local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings
 function Welcome:draw(Parent)
     local HorizontalSpacer;
 
-    local OpenSoftRes = AceGUI:Create("Button");
-    OpenSoftRes:SetText("SoftRes");
-    OpenSoftRes:SetCallback("OnClick", function ()
+    local StartHere = AceGUI:Create("Button");
+    StartHere:SetText(L["Start here"]);
+    StartHere:SetCallback("OnClick", function ()
         GL.Settings:close();
-        GL.Commands:call("softreserves");
+        GL.Commands:call("start");
     end);
-    OpenSoftRes:SetWidth(120);
-    Parent:AddChild(OpenSoftRes);
-
-    local OpenTMB = AceGUI:Create("Button");
-    OpenTMB:SetText("TMB / DFT");
-    OpenTMB:SetCallback("OnClick", function ()
-        GL.Settings:close();
-        GL.Commands:call("tmb");
-    end);
-    OpenTMB:SetWidth(120);
-    Parent:AddChild(OpenTMB);
-
-    if (GL.GDKPIsAllowed) then
-        local OpenGDKP = GL.AceGUI:Create("Button");
-        OpenGDKP:SetText("GDKP");
-        OpenGDKP:SetCallback("OnClick", function ()
-            GL.Settings:close();
-            GL.Commands:call("gdkp");
-        end);
-        OpenGDKP:SetWidth(120);
-        Parent:AddChild(OpenGDKP);
-    end
-
-    local OpenPackMule = AceGUI:Create("Button");
-    OpenPackMule:SetText("Autolooting");
-    OpenPackMule:SetCallback("OnClick", function ()
-        GL.Settings:draw("PackMule");
-    end);
-    OpenPackMule:SetWidth(120);
-    Parent:AddChild(OpenPackMule);
-
-    local OpenAutoRoll = AceGUI:Create("Button");
-    OpenAutoRoll:SetText(L["Auto Roll"]);
-    OpenAutoRoll:SetCallback("OnClick", function ()
-        GL.Settings:draw("AutoRollRules");
-    end);
-    OpenAutoRoll:SetWidth(120);
-    Parent:AddChild(OpenAutoRoll);
+    StartHere:SetRelativeWidth(.5);
+    Parent:AddChild(StartHere);
 
     local OpenBonusFeatures = AceGUI:Create("Button");
     OpenBonusFeatures:SetText("Bonus Features");
@@ -74,7 +33,7 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Interface.BonusFeatures:open();
     end);
-    OpenBonusFeatures:SetFullWidth(true);
+    OpenBonusFeatures:SetRelativeWidth(.5);
     Parent:AddChild(OpenBonusFeatures);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
