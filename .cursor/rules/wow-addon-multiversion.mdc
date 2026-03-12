@@ -135,9 +135,9 @@ For tables: (1) The last entry must be followed by a trailing comma. (2) For sin
 - **REQUIRED:** `select(index, ...)` for varargs; `local` for variables
 - **Taint:** Use `hooksecurefunc`, never replace globals directly
 
-### WoW-injected globals
+### Table operations
 
-`tinsert` and `tsort` are WoW-injected aliases for `table.insert` and `table.sort`. They are available in all supported clients (Era, BCC, Wrath, Retail, etc.). **Use `tinsert` and `tsort`** instead of `table.insert` and `table.sort`.
+Use **`table.insert`** and **`table.sort`** (standard Lua). Do not rely on WoW-injected aliases such as `tinsert` or `tsort`, which may not exist in all environments.
 
 ## Documentation
 

@@ -900,43 +900,45 @@ function AutoRollRules:refreshRulesList(RulesList)
         tinsert(itemIDs, tonumber(itemID) or itemID);
     end
 
+    local actionOrder = { need = 1, greed = 2, pass = 3 };
+    local sorter = function (a, b)
+        local ao = actionOrder[rules[a.id] or rules[tostring(a.id)] or ""] or 99;
+        local bo = actionOrder[rules[b.id] or rules[tostring(b.id)] or ""] or 99;
+        if (ao ~= bo) then
+            return ao < bo;
+        end
+        local aq = a.quality or 0;
+        local bq = b.quality or 0;
+        if (aq ~= bq) then
+            return aq > bq;
+        end
+        return strlower(a.name or "") < strlower(b.name or "");
+    end;
+
     GL:onItemLoadDo(itemIDs, function (Details)
         if (not RulesList) then
             return;
         end
         RulesList:ReleaseChildren();
 
-        local detailsByID = {};
-        if (type(Details) == "table") then
-            if (Details.id) then
-                detailsByID[Details.id] = Details;
-            else
-                for _, d in pairs(Details) do
-                    if (d and d.id) then
-                        detailsByID[d.id] = d;
-                    end
-                end
-            end
+        local list = (type(Details) == "table" and Details.id) and { Details } or Details;
+        if (type(list) ~= "table") then
+            list = {};
         end
 
-        local shownIDs = {};
-        for itemID, action in pairs(rules) do
-            local ruleItemID = tonumber(itemID) or itemID;
-            -- SavedVariables can store numeric keys as strings; show one row per item ID
-            if (shownIDs[ruleItemID]) then
-                -- skip duplicate
+        for _, detail in ipairs(list) do
+            local ruleItemID = detail.id;
+            local action = rules[ruleItemID] or rules[tostring(ruleItemID)];
+            if (not action) then
+                -- Rule was removed or key mismatch; skip
             else
-                shownIDs[ruleItemID] = true;
                 local idForRemove = ruleItemID;
-                local itemDetails = detailsByID[ruleItemID] or detailsByID[itemID];
-                local itemLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("[%d]"):format(ruleItemID);
+                local itemLink = detail.link or select(2, GL.GetItemInfo(ruleItemID)) or ("[%d]"):format(ruleItemID);
                 if (type(itemLink) ~= "string" or GL:empty(itemLink)) then
                     itemLink = ("[%d]"):format(ruleItemID);
                 end
 
-                local tooltipLink = itemDetails and itemDetails.link or select(2, GL.GetItemInfo(ruleItemID)) or ("|Hitem:%d:0:0:0:0:0:0:0:0|h[%d]|h"):format(ruleItemID, ruleItemID);
-
-                -- Explicit capture per row to avoid closure capturing wrong item when switching profiles
+                local tooltipLink = detail.link or select(2, GL.GetItemInfo(ruleItemID)) or ("|Hitem:%d:0:0:0:0:0:0:0:0|h[%d]|h"):format(ruleItemID, ruleItemID);
                 local linkForTooltip = tooltipLink;
 
                 local Row = GL.AceGUI:Create("SimpleGroup");
@@ -983,5 +985,5 @@ function AutoRollRules:refreshRulesList(RulesList)
             RulesList:DoLayout();
         end
         self:refreshProfileUI(RulesList);
-    end);
+    end, false, sorter);
 end

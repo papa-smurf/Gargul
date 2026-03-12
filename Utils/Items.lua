@@ -565,7 +565,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         callbackCalled = true;
 
         if (type(sorter) == "function") then
-            tsort(ItemData, sorter);
+            table.sort(ItemData, sorter);
         end
 
         if (singleItemProvided) then
