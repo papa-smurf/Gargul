@@ -165,8 +165,8 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         tinsert(RollButtons, Button);
     end
 
-    -- Auto roll discovery hint: show when user has no rules in any profile (they're not yet aware of the module)
-    if (not GL.AutoRoll:hasAnyRulesInAnyProfile()) then
+    -- Auto roll discovery hint: show only for simple MS/OS roll (2 buttons), not when BR or other buttons are present
+    if (not GL.AutoRoll:hasAnyRulesInAnyProfile() and numberOfButtons == 2) then
         local AutoRollHint = Window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
         AutoRollHint:SetText(("|c00%s%s: |c00FFFFFF/gl autoroll|r"):format(GL.Data.Constants.addonHexColor, L["Auto Roll"]));
         AutoRollHint:SetPoint("RIGHT", Window, "TOPRIGHT", -58, -11);
