@@ -5,7 +5,7 @@
 [![Ko-fi](https://img.shields.io/badge/ko--fi-F16061?logo=ko-fi&logoColor=white)](https://ko-fi.com/gargul)
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/9e6bc422-b66b-4adc-9932-7c8e91b93dc3" alt="Gargul" />
+  <img width="350" height="350" alt="image" src="https://github.com/user-attachments/assets/356aafed-be20-4c9d-b5e7-896394faff79" />
 </p>
 
 # Gargul
