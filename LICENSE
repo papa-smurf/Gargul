@@ -1,8 +1,17 @@
 All Rights Reserved
 
-Copyright (c) 2020-now Gargul
+Copyright (c) 2020-present Gargul
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+All rights to this software and its associated documentation are reserved
+by the copyright holder. No part of this software may be modified,
+redistributed, sublicensed, or used to create derivative works without
+explicit written permission from the copyright holder.
+
+Forking or viewing this repository on GitHub does not grant any license
+to modify or redistribute the code. In the absence of a permissive license,
+all rights are reserved by default under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -10,25 +19,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-Modifying or distributing any part of this software or its documentation
-for any purpose, or providing guidance on how to do so, is explicitly denied,
-unless permission by the original author is granted.
+Distribution
 
-"But it's on GitHub, so I can do what I want!". No, you can't.
+This addon may only be distributed through the following official channels:
 
-The most common misconception about open-source projects is if a GitHub project
-has no license, then it’s okay to use. If a repository has no license, then
-all rights are reserved by law, and it is not open-source or free. You cannot modify
-or redistribute this code without explicit permission from the copyright holder.
+  - CurseForge: https://www.curseforge.com/wow/addons/gargul
+  - Wago: https://addons.wago.io/addons/gargul
 
-You can fork it, you can copy it, you can present it to others as-is, but you can't
-modify any of it in any way shape or form as per GitHub's ToS and this LICENSE.
-Want to contribute or apply modifications? Contact me on Discord (Zh0rax#1454)
+Redistribution through any other platform or channel requires explicit
+written permission from the copyright holder.
 
-This add-on may only be distributed through CurseForge (https://www.curseforge.com/wow/addons/gargul)
-and Wago (https://addons.wago.io/addons/gargul) unless permission by the original author
-is granted for other channels. You can download this add-on directly through curseforge.com
-and addons.wago.io or through the only official add-on manager: https://download.curseforge.com/
+Contributions
 
-This ensures file integrity and makes sure that no third party generates revenue
-off the backs of add-on developers who work hard to contribute to the community!
+Want to contribute? Contact the author on Discord (see the project README)
+or open a pull request on GitHub. Contributions are welcome, but all
+contributed code becomes subject to this license.
