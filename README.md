@@ -4,11 +4,11 @@
 [![Patreon](https://img.shields.io/badge/patreon-ff424d?logo=patreon&logoColor=white)](https://www.patreon.com/gargul)
 [![Ko-fi](https://img.shields.io/badge/ko--fi-F16061?logo=ko-fi&logoColor=white)](https://ko-fi.com/gargul)
 
-<p align="center">
-  <img width="350" height="350" alt="image" src="https://github.com/user-attachments/assets/356aafed-be20-4c9d-b5e7-896394faff79" />
-</p>
-
 # Gargul
+
+<p align="center">
+  <img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/356aafed-be20-4c9d-b5e7-896394faff79" />
+</p>
 
 The all-in-one loot addon for World of Warcraft. GDKP, SoftRes, auto looting, auto rolling, TMB, DFT, and more. Works on Retail, Classic Era, and every flavor in between.
 
