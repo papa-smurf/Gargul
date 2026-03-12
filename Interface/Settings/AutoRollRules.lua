@@ -836,7 +836,7 @@ function AutoRollRules:draw(Parent)
 
     local RulesHeaderRow = GL.AceGUI:Create("SimpleGroup");
     RulesHeaderRow:SetLayout("Table");
-    RulesHeaderRow:SetUserData("table", { columns = { 250, 80, 90 }, alignV = "middle" });
+    RulesHeaderRow:SetUserData("table", { columns = { 250, 120, 90 }, alignV = "middle" });
     RulesHeaderRow:SetFullWidth(true);
     RulesHeaderRow:SetHeight(28);
     Parent:AddChild(RulesHeaderRow);
@@ -850,7 +850,7 @@ function AutoRollRules:draw(Parent)
 
     local headerSpacer = GL.AceGUI:Create("Label");
     headerSpacer:SetText("");
-    headerSpacer:SetWidth(80);
+    headerSpacer:SetWidth(120);
     headerSpacer:SetHeight(20);
     RulesHeaderRow:AddChild(headerSpacer);
 
@@ -941,7 +941,7 @@ function AutoRollRules:refreshRulesList(RulesList)
 
                 local Row = GL.AceGUI:Create("SimpleGroup");
                 Row:SetLayout("Table");
-                Row:SetUserData("table", { columns = { 250, 80, 90 }, alignV = "middle" });
+                Row:SetUserData("table", { columns = { 250, 120, 90 }, alignV = "middle" });
                 Row:SetFullWidth(true);
                 Row:SetHeight(28);
                 RulesList:AddChild(Row);
@@ -953,17 +953,20 @@ function AutoRollRules:refreshRulesList(RulesList)
                 GL.Interface:addItemTooltipToCursor(ItemLabel, linkForTooltip);
                 Row:AddChild(ItemLabel);
 
-                local ActionLabel = GL.AceGUI:Create("Label");
-                ActionLabel:SetText(action == "need" and L["Need"] or action == "greed" and L["Greed"] or L["Pass"]);
-                ActionLabel:SetWidth(80);
-                ActionLabel:SetHeight(20);
-                -- Prevent stray item tooltips when hovering over action (e.g. from text overflow or frame overlap)
-                if (ActionLabel.frame) then
-                    ActionLabel.frame:SetScript("OnEnter", function ()
-                        GameTooltip:Hide();
-                    end);
-                end
-                Row:AddChild(ActionLabel);
+                local ActionDropdown = GL.AceGUI:Create("Dropdown");
+                ActionDropdown:SetLabel("");
+                ActionDropdown:SetWidth(120);
+                ActionDropdown:SetList({
+                    need = L["Need"],
+                    greed = L["Greed"],
+                    pass = L["Pass"],
+                });
+                ActionDropdown:SetValue(action);
+                ActionDropdown:SetText(action == "need" and L["Need"] or action == "greed" and L["Greed"] or L["Pass"]);
+                ActionDropdown:SetCallback("OnValueChanged", function (_, _, newValue)
+                    GL.AutoRoll:setRule(idForRemove, newValue);
+                end);
+                Row:AddChild(ActionDropdown);
 
                 local RemoveButton = GL.AceGUI:Create("Button");
                 RemoveButton:SetText(L["Remove"]);
