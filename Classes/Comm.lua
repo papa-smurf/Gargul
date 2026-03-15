@@ -18,6 +18,13 @@ local Comm = GL.Comm;
 ---@type Data
 local Actions = GL.Data.Constants.Comm.Actions or {};
 
+local WarnedOutdatedSenders = {};
+local OutdatedActionLabels = {
+    [Actions.startRollOff] = "Roll",
+    [Actions.startGDKPAuction] = "GDKP",
+    [Actions.startGDKPMultiAuction] = "GDKP",
+};
+
 Comm.Actions = {
     [Actions.awardItem] = function (Message)
         GL.AwardedLoot:processAwardedLoot(Message);
@@ -332,6 +339,17 @@ function Comm:listen(payload, distribution, playerName)
                 channel = Comm:whisperOrGroup(playerName),
                 recipient = playerName,
             }):send();
+
+            -- Warn the recipient once per sender per session for start actions
+            local label = OutdatedActionLabels[payload.action];
+            if (label and not WarnedOutdatedSenders[playerName]) then
+                WarnedOutdatedSenders[playerName] = true;
+                GL:warning((L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"]):format(
+                    GL:formatPlayerName(playerName),
+                    label
+                ));
+            end
+
             return;
         end
     end

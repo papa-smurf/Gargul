@@ -1100,6 +1100,7 @@ L["Offline:"] = "Disconnesso:";
 L["Outdated:"] = "obsoleto:";
 L["Up-to-date:"] = "Aggiornato:";
 L["Gargul is out of date and won't work until you update!"] = "Gargul non è aggiornato e non funzionerà finché non lo aggiorni!";
+L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"] = "%s sta cercando di avviare un'azione %s, ma il suo Gargul è troppo obsoleto. Chiedigli di aggiornare!";
 L["Invalid version string provided in Version:addRelease"] = "Stringa di versione non valida fornita in Version:addRelease";
 L["Update Gargul!"] = "Aggiorna Gargul!";
 L["|c00%sGargul is now updated to |c00%sv%s"] = "|c00%sGargul è ora aggiornato a |c00%sv%s";

@@ -1100,6 +1100,7 @@ L["Offline:"] = "오프라인:";
 L["Outdated:"] = "시대에 뒤쳐진:";
 L["Up-to-date:"] = "최신 정보:";
 L["Gargul is out of date and won't work until you update!"] = "Gargul은 최신 버전이 아니며 업데이트할 때까지 작동하지 않습니다!";
+L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"] = "%s이(가) %s 작업을 시작하려 하지만, Gargul이 너무 오래되었습니다. 업데이트를 요청하세요!";
 L["Invalid version string provided in Version:addRelease"] = "버전:addRelease에 잘못된 버전 문자열이 제공되었습니다.";
 L["Update Gargul!"] = "가르굴을 업데이트하세요!";
 L["|c00%sGargul is now updated to |c00%sv%s"] = "|c00%sGargul은 이제 |c00%sv%s로 업데이트되었습니다.";

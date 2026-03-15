@@ -1093,6 +1093,7 @@ L["Offline:"] = "离线：";
 L["Outdated:"] = "过时的：";
 L["Up-to-date:"] = "最新：";
 L["Gargul is out of date and won't work until you update!"] = "Gargul 已过时，更新后才能使用！";
+L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"] = "%s 正在尝试启动 %s 操作，但其 Gargul 版本过旧，请让对方更新！";
 L["Invalid version string provided in Version:addRelease"] = "Version:addRelease 中提供的版本字符串无效";
 L["Update Gargul!"] = "更新 Gargul！";
 L["|c00%sGargul is now updated to |c00%sv%s"] = "|c00%sGargul 现已更新至 |c00%sv%s";

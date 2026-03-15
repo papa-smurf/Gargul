@@ -1108,6 +1108,7 @@ L["Offline:"] = "Не в сети:";
 L["Outdated:"] = "Устарело:";
 L["Up-to-date:"] = "Последняя версия:";
 L["Gargul is out of date and won't work until you update!"] = "Гаргул устарел и не будет работать, пока вы не обновите его!";
+L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"] = "%s пытается начать действие %s, но его Gargul слишком устарел. Попросите обновиться!";
 L["Invalid version string provided in Version:addRelease"] = "В Version:addRelease указана неверная строка версии.";
 L["Update Gargul!"] = "Обновите Гаргул!";
 L["|c00%sGargul is now updated to |c00%sv%s"] = "|c00%sGargul теперь обновлён до |c00%sv%s";
