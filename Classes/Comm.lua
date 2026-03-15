@@ -345,7 +345,7 @@ function Comm:listen(payload, distribution, playerName)
             if (label and not WarnedOutdatedSenders[playerName]) then
                 WarnedOutdatedSenders[playerName] = true;
                 GL:warning((L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"]):format(
-                    GL:formatPlayerName(playerName),
+                    GL:formatPlayerName(playerName, { colorize = true, }),
                     label
                 ));
             end
