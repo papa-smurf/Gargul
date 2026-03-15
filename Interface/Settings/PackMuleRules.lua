@@ -4,6 +4,7 @@ local _, GL = ...;
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
+---@field _linkTargetEditBox table|nil
 GL.Interface.Settings.PackMuleRules = {
     description = [[For group loot use: |c00F7922EPASS|r, |c00F7922EGREED|r, |c00F7922ENEED|r, |c00F7922EIGNORE|r
     Note: group loot rules only work on items that are tradeable after picking them up. |c00F7922ENEED|r by default only works when you have lead/assist (see /gl pm settings)!
@@ -19,6 +20,8 @@ GL.Interface.Settings.PackMuleRules = {
     Example to send an item to the first player who's available in the raid by adding an exclamation mark: |c00F7922E!Player1,!Player2,SELF|r
     ]],
 
+    _linkTargetEditBox = nil,
+
     UIComponents = {
         Input = {
             SpecificItemRules = {},
@@ -26,6 +29,21 @@ GL.Interface.Settings.PackMuleRules = {
     },
 };
 local PackMuleRules = GL.Interface.Settings.PackMuleRules; ---@type PackMuleRulesSettings
+
+-- Hook HandleModifiedItemClick so shift-click works when a PackMule specific item editbox is focused.
+do
+    local orig = HandleModifiedItemClick;
+    function HandleModifiedItemClick(link, ...)
+        if (IsModifiedClick("CHATLINK") and link and type(link) == "string" and #link > 0) then
+            local editbox = PackMuleRules._linkTargetEditBox;
+            if (editbox) then
+                editbox:SetText(link);
+                return true;
+            end
+        end
+        return orig(link, ...);
+    end
+end
 
 ---@return nil
 function PackMuleRules:draw(Parent)
@@ -131,6 +149,15 @@ function PackMuleRules:drawSpecifItemRule(Frame, Rule)
     ItemName:SetText(Rule.item);
     Row:AddChild(ItemName);
 
+    ItemName.editbox:HookScript("OnEditFocusGained", function ()
+        PackMuleRules._linkTargetEditBox = ItemName.editbox;
+    end);
+    ItemName.editbox:HookScript("OnEditFocusLost", function ()
+        if (PackMuleRules._linkTargetEditBox == ItemName.editbox) then
+            PackMuleRules._linkTargetEditBox = nil;
+        end
+    end);
+
     -- Increase space between input and next label ("to")
     Overview:drawSpacer(Row, 8, 1);
 
@@ -159,6 +186,8 @@ end
 ---@return nil
 function PackMuleRules:onClose()
     GL:debug("PackMuleRules:onClose");
+
+    self._linkTargetEditBox = nil;
 
     local sanitizeTarget = function (target)
         target = target:gsub(",", " ");
