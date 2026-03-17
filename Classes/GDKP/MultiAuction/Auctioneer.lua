@@ -532,6 +532,11 @@ end
 ---@param precision number
 ---@return boolean
 function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
+    if (GL.Version.lastNotBackwardsCompatibleNotice > 0) then
+        GL:error((L["Your Gargul is too outdated to work with others. Update via CurseForge/Wago and |c00%s/reload|r!"]):format(GL.Data.Constants.commandHexColor));
+        return false;
+    end
+
     local serverTime = GetServerTime();
 
     -- We're still waiting for a MultiAuction to start

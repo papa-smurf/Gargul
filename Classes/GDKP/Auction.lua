@@ -1118,6 +1118,11 @@ end
 ---@param minimumIncrement number
 ---@return nil
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
+    if (GL.Version.lastNotBackwardsCompatibleNotice > 0) then
+        GL:error((L["Your Gargul is too outdated to work with others. Update via CurseForge/Wago and |c00%s/reload|r!"]):format(GL.Data.Constants.commandHexColor));
+        return;
+    end
+
     -- There's already an auction in progress
     if (self.inProgress) then
         return;

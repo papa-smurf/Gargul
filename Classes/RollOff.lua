@@ -38,6 +38,11 @@ local Events = GL.Events; ---@type Events
 ---@param note string|nil
 ---@return boolean
 function RollOff:announceStart(itemLink, time, note)
+    if (GL.Version.lastNotBackwardsCompatibleNotice > 0) then
+        GL:error((L["Your Gargul is too outdated to work with others. Update via CurseForge/Wago and |c00%s/reload|r!"]):format(GL.Data.Constants.commandHexColor));
+        return false;
+    end
+
     time = tonumber(time);
 
     if (not GL:isValidItemLink(itemLink)) then
