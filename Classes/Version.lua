@@ -242,9 +242,9 @@ end
 function Version:notBackwardsCompatibleNotice()
     local serverTime = GetServerTime();
 
-    if (not self.lastNotBackwardsCompatibleNotice) then
+    if (self.lastNotBackwardsCompatibleNotice == 0) then
         self.lastNotBackwardsCompatibleNotice = serverTime;
-        GL:error(L["Gargul is out of date and won't work until you update!"]);
+        GL:error((L["Your Gargul is too outdated to work with others. Update via CurseForge/Wago and |c00%s/reload|r!"]):format(GL.Data.Constants.commandHexColor));
     end
 end
 
@@ -262,7 +262,7 @@ function Version:notifyOfLatestVersion()
     self.lastUpdateNotice = GetServerTime();
 
     local notify = function ()
-        GL:warning((L["|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !"]):format(self.latest));
+        GL:warning((L["|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to |c00%s/reload|r!"]):format(self.latest, GL.Data.Constants.commandHexColor));
 
         -- Only show if the user didn't update for at least two trivial or one minor/major version
         if (self.versionDifference < 2) then

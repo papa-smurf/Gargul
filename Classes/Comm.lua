@@ -327,31 +327,9 @@ function Comm:listen(payload, distribution, playerName)
         end
     end
 
-    -- The version includes a version, see if it's one we can work with
+    -- Track the sender's version if provided
     if (payload.version and type(payload.version) == "string") then
         Version:addRelease(payload.version, true);
-
-        -- The person sending us the message has an old version that's not compatible with ours, let him know!
-        if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
-            -- This empty message will trigger an out-of-date error on the recipient's side
-            GL.CommMessage.new({
-                action = Actions.response,
-                channel = Comm:whisperOrGroup(playerName),
-                recipient = playerName,
-            }):send();
-
-            -- Warn the recipient once per sender per session for start actions
-            local label = OutdatedActionLabels[payload.action];
-            if (label and not WarnedOutdatedSenders[playerName]) then
-                WarnedOutdatedSenders[playerName] = true;
-                GL:warning((L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"]):format(
-                    GL:formatPlayerName(playerName, { colorize = true, }),
-                    label
-                ));
-            end
-
-            return;
-        end
     end
 
     if (not payload.senderFqn or not type(payload.senderFqn) == "string") then
@@ -369,6 +347,32 @@ function Comm:listen(payload, distribution, playerName)
     Sender.isSelf = GL:iEquals(Sender.id, GL.User.id)
         or GL:iEquals(playerName, GL.User.name)
         or GL:iEquals(Sender.name, GL.User.name);
+
+    -- The person sending us the message has an old version that's not compatible with ours, let him know!
+    if (not Sender.isSelf
+        and payload.version
+        and type(payload.version) == "string"
+        and not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)
+    ) then
+        -- This empty message will trigger an out-of-date error on the recipient's side
+        GL.CommMessage.new({
+            action = Actions.response,
+            channel = Comm:whisperOrGroup(playerName),
+            recipient = playerName,
+        }):send();
+
+        -- Warn the recipient once per sender per session for start actions
+        local label = OutdatedActionLabels[payload.action];
+        if (label and not WarnedOutdatedSenders[playerName]) then
+            WarnedOutdatedSenders[playerName] = true;
+            GL:warning((L["%s is trying to start a %s action, but their Gargul is too outdated. Ask them to update!"]):format(
+                GL:formatPlayerName(playerName, { colorize = true, }),
+                label
+            ));
+        end
+
+        return;
+    end
 
     -- The person sending us the message has a newer version that's not backwards compatible with ours
     -- If that's the case then we'll notify the user that his version is out of date (max once every 5 seconds)
