@@ -30,11 +30,8 @@ function AutoRoll:_init()
         if (AwardEntry and GL:iEquals(AwardEntry.awardedTo, GL.User.fqn)) then
             local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
             if (itemID) then
-                -- Only replace existing rules with "pass", don't create new ones
-                local existingRule = self:getRule(itemID);
-                if (existingRule) then
-                    self:setRule(itemID, "pass");
-                end
+                -- Remove the rule for the item since we won it
+                self:removeRule(itemID);
             end
         end
     end;
