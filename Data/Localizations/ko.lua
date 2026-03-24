@@ -1115,3 +1115,9 @@ L["You disabled GDKP queues"] = "GDKP 대기열을 비활성화했습니다.";
 L["0"] = "0";
 L["Unable to zlib compress the data. Contact support via https://discord.gg/D3mDhYPVzf"] = "zlib로 데이터를 압축할 수 없습니다. https://discord.gg/D3mDhYPVzf를 통해 지원팀에 문의하세요.";
 L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"] = "zlib로 데이터 압축을 풀 수 없습니다. 추가 문자나 공백을 추가하지 않고 있는 그대로 복사하여 붙여넣으세요!";
+
+L["Thank You"] = "Thank You";
+L["Gargul is free thanks to our amazing community.\nConsider joining them if you like what it has to offer."] = "Gargul is free thanks to our amazing community.\nConsider joining them if you like what it has to offer.";
+L["Thanks for considering supporting Gargul on Ko-fi!"] = "Thanks for considering supporting Gargul on Ko-fi!";
+L["Thanks for considering becoming a Patron of Gargul!"] = "Thanks for considering becoming a Patron of Gargul!";
+L["Join the Gargul community on Discord!"] = "Join the Gargul community on Discord!";

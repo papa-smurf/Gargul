@@ -181,11 +181,13 @@ local function buildSlide(Window, cfg)
     Subtitle:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -2);
     Subtitle:SetPoint("RIGHT", Slide, "RIGHT");
     Subtitle:SetFont(1.2, "");
+    Subtitle:SetWordWrap(true);
 
     --[[ MOCKUP ]]
     local MockupContainer = createMockupFrame(Slide, cfg.mockupHeight or 100);
-    MockupContainer:SetPoint("TOPLEFT", Slide, "TOPLEFT", 0, -52);
-    MockupContainer:SetPoint("TOPRIGHT", Slide, "TOPRIGHT", 0, -52);
+    local mockupOffsetY = cfg.mockupOffsetY or -52;
+    MockupContainer:SetPoint("TOPLEFT", Slide, "TOPLEFT", 0, mockupOffsetY);
+    MockupContainer:SetPoint("TOPRIGHT", Slide, "TOPRIGHT", 0, mockupOffsetY);
 
     if (cfg.buildMockup) then
         cfg.buildMockup(MockupContainer);
@@ -199,20 +201,22 @@ local function buildSlide(Window, cfg)
     end
 
     --[[ ACTION BUTTON ]]
-    local ActionBtn = Interface:dynamicPanelButton(Slide, cfg.buttonText);
-    ActionBtn:GetFontString():SetFont(1.2, "");
-    ActionBtn:SetText(cfg.buttonText);
-    ActionBtn:SetPoint("BOTTOM", Slide, "BOTTOM", 0, 0);
-    local btnWidth = ActionBtn:GetWidth();
-    if (btnWidth < 180) then
-        ActionBtn:SetWidth(180);
-    end
-    ActionBtn:SetScript("OnClick", function ()
-        if (cfg.action) then
-            cfg.action();
-            GL:message(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, (L["Type |c00%s/gl start|r to get back to the quick start guide"]):format(GL.Data.Constants.commandHexColor)));
+    if (cfg.buttonText) then
+        local ActionBtn = Interface:dynamicPanelButton(Slide, cfg.buttonText);
+        ActionBtn:GetFontString():SetFont(1.2, "");
+        ActionBtn:SetText(cfg.buttonText);
+        ActionBtn:SetPoint("BOTTOM", Slide, "BOTTOM", 0, 0);
+        local btnWidth = ActionBtn:GetWidth();
+        if (btnWidth < 180) then
+            ActionBtn:SetWidth(180);
         end
-    end);
+        ActionBtn:SetScript("OnClick", function ()
+            if (cfg.action) then
+                cfg.action();
+                GL:message(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, (L["Type |c00%s/gl start|r to get back to the quick start guide"]):format(GL.Data.Constants.commandHexColor)));
+            end
+        end);
+    end
 
     return Slide;
 end
@@ -410,6 +414,64 @@ local function buildHotkeysMockup(Parent)
     end
 end
 
+--- Sponsor mockup: ko-fi, patreon and discord logo + URL rows.
+--- Each row is a clickable button with a subtle hover highlight.
+---
+---@param Parent Frame
+---@return nil
+local function buildSponsorMockup(Parent)
+    local platforms = {
+        {
+            icon = "Interface/AddOns/Gargul/Assets/Icons/kofi",
+            url = "ko-fi.com/gargul",
+            description = L["Thanks for considering supporting Gargul on Ko-fi!"],
+        },
+        {
+            icon = "Interface/AddOns/Gargul/Assets/Icons/patreon",
+            url = "patreon.com/gargul",
+            description = L["Thanks for considering becoming a Patron of Gargul!"],
+        },
+        {
+            icon = "Interface/AddOns/Gargul/Assets/Icons/discord",
+            url = "discord.gg/D3mDhYPVzf",
+            description = L["Join the Gargul community on Discord!"],
+        },
+    };
+
+    local prevAnchor = Parent;
+    for i, platform in ipairs(platforms) do
+        local rowY = i == 1 and -8 or -4;
+
+        local Row = CreateFrame("Button", nil, Parent);
+        Row:SetHeight(28);
+        Row:SetPoint("TOPLEFT", prevAnchor, i == 1 and "TOPLEFT" or "BOTTOMLEFT", 0, rowY);
+        Row:SetPoint("RIGHT", Parent, "RIGHT", 0, 0);
+        Row:EnableMouse(true);
+
+        local HighlightTex = Row:CreateTexture(nil, "HIGHLIGHT");
+        HighlightTex:SetAllPoints();
+        HighlightTex:SetColorTexture(1, 1, 1, .06);
+
+        local Logo = Row:CreateTexture(nil, "ARTWORK");
+        Logo:SetSize(20, 20);
+        Logo:SetPoint("LEFT", Row, "LEFT", 14, 0);
+        Logo:SetTexture(platform.icon);
+
+        local URL = Interface:createFontString(Row, ("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, platform.url));
+        URL:SetPoint("LEFT", Logo, "RIGHT", 8, 0);
+        URL:SetFont(1.4, "");
+
+        Row:SetScript("OnClick", function ()
+            GL.Interface.Dialogs.HyperlinkDialog:open({
+                description = platform.description,
+                hyperlink = platform.url,
+            });
+        end);
+
+        prevAnchor = Row;
+    end
+end
+
 --[[ ============================
      BUILD
      ============================ ]]
@@ -533,6 +595,16 @@ function Onboarding:build()
             Onboarding:close();
             GL.Settings:draw("AutoRollRules");
         end,
+    });
+
+    table.insert(SlidesConfig, {
+        title = L["Thank You"],
+        subtitle = L["Gargul is free thanks to our amazing community.\nConsider joining them if you like what it has to offer."],
+        icon = "Interface/Icons/INV_Misc_Gift_01", -- (from memory, unverified) festive gift icon
+        mockupHeight = 108,
+        mockupOffsetY = -72,
+        buildMockup = buildSponsorMockup,
+        steps = {},
     });
 
     ---@type Frame

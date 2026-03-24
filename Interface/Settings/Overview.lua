@@ -209,27 +209,53 @@ function Overview:draw(section, onCloseCallback)
     ResetSettingsButton:SetWidth(136);
     SecondColumn:AddChild(ResetSettingsButton);
 
-    local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
-    PatreonButton:Show();
-    PatreonButton:SetSize(170, 43);
-    PatreonButton:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 16);
+    local SponsorContainer = CreateFrame("Frame", nil, Window.frame);
+    SponsorContainer:SetSize(180, 60);
+    SponsorContainer:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 4);
 
-    local HighlightTexture = PatreonButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
-    HighlightTexture:SetPoint("CENTER", PatreonButton, "CENTER", 0, 0);
-    HighlightTexture:SetSize(170, 43);
+    local sponsorPlatforms = {
+        {
+            icon = "Interface/AddOns/Gargul/Assets/Icons/kofi",
+            url = "ko-fi.com/gargul",
+            description = L["Thanks for considering supporting Gargul on Ko-fi!"],
+        },
+        {
+            icon = "Interface/AddOns/Gargul/Assets/Icons/patreon",
+            url = "patreon.com/gargul",
+            description = L["Thanks for considering becoming a Patron of Gargul!"],
+        },
+    };
 
-    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
-    PatreonButton:SetHighlightTexture(HighlightTexture);
+    local prevRow = SponsorContainer;
+    for i, platform in ipairs(sponsorPlatforms) do
+        local Row = CreateFrame("Button", nil, SponsorContainer);
+        Row:SetHeight(28);
+        Row:SetPoint("TOPLEFT", prevRow, i == 1 and "TOPLEFT" or "BOTTOMLEFT", 0, i == 1 and 0 or 3);
+        Row:SetPoint("RIGHT", SponsorContainer, "RIGHT", 0, 0);
+        Row:EnableMouse(true);
 
-    PatreonButton:SetScript("OnClick", function (_, button)
-        if (button == "LeftButton") then
+        local HighlightTex = Row:CreateTexture(nil, "HIGHLIGHT");
+        HighlightTex:SetAllPoints();
+        HighlightTex:SetColorTexture(1, 1, 1, .06);
+
+        local Logo = Row:CreateTexture(nil, "ARTWORK");
+        Logo:SetSize(20, 20);
+        Logo:SetPoint("LEFT", Row, "LEFT", 0, 0);
+        Logo:SetTexture(platform.icon);
+
+        local URLText = GL.Interface:createFontString(Row, ("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, platform.url));
+        URLText:SetPoint("LEFT", Logo, "RIGHT", 8, 0);
+        URLText:SetFont(1.4, "");
+
+        Row:SetScript("OnClick", function ()
             GL.Interface.Dialogs.HyperlinkDialog:open({
-                description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
-                hyperlink = "patreon.com/gargul",
+                description = platform.description,
+                hyperlink = platform.url,
             });
-        end
-    end);
+        end);
+
+        prevRow = Row;
+    end
 
     self:showSection(section);
 end

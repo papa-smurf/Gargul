@@ -1115,3 +1115,9 @@ L["You disabled GDKP queues"] = "Deshabilitaste las colas de GDKP";
 L["0"] = "0";
 L["Unable to zlib compress the data. Contact support via https://discord.gg/D3mDhYPVzf"] = "No se pueden comprimir los datos con zlib. Póngase en contacto con el soporte a través de https://discord.gg/D3mDhYPVzf";
 L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"] = "No se pueden descomprimir zlib los datos. ¡Asegúrese de copiarlo y pegarlo tal como está sin agregar caracteres ni espacios en blanco adicionales!";
+
+L["Thank You"] = "Thank You";
+L["Gargul is free thanks to our amazing community.\nConsider joining them if you like what it has to offer."] = "Gargul is free thanks to our amazing community.\nConsider joining them if you like what it has to offer.";
+L["Thanks for considering supporting Gargul on Ko-fi!"] = "Thanks for considering supporting Gargul on Ko-fi!";
+L["Thanks for considering becoming a Patron of Gargul!"] = "Thanks for considering becoming a Patron of Gargul!";
+L["Join the Gargul community on Discord!"] = "Join the Gargul community on Discord!";
