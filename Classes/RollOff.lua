@@ -920,8 +920,14 @@ function RollOff:refreshRollsTable()
                 if (numberOfReserves > 1) then
                     tinsert(rollNotes, ("|c00F48CBA" .. L["SR [%sx]"] .. "|r"):format(numberOfReserves));
                 else
-                    tinsert(rollNotes, ("|c00F48CBA%s|r"):format(L["SR"] ));
+                    tinsert(rollNotes, ("|c00F48CBA%s|r"):format(L["SR"]));
                 end
+            end
+
+            local Details = GL.SoftRes:getDetailsForPlayer(normalizedPlayerName);
+            local softResNote = Details.note or "";
+            if (not GL:empty(softResNote)) then
+                tinsert(rollNotes, ("|cFFDDDDDD%s|r"):format(strsub(softResNote, 1, 20)));
             end
         end
 

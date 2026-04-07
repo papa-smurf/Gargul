@@ -134,7 +134,7 @@ function MasterLooterUI:draw(itemLink)
     Window = AceGUI:Create("Frame", "GARGUL_MASTERLOOTERUI_WINDOW");
     Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
-    Window:SetWidth(460);
+    Window:SetWidth(520);
     Window:SetHeight(350);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
@@ -809,7 +809,7 @@ function MasterLooterUI:drawPlayersTable(parent)
     local Columns = self:tableColumns();
 
     local Table = ScrollingTable:CreateST(Columns, 8, 15, nil, parent);
-    Table:SetWidth(340);
+    Table:SetWidth(400);
     Table:EnableSelection(true);
 
     Table:RegisterEvents({
@@ -837,17 +837,35 @@ function MasterLooterUI:drawPlayersTable(parent)
                 roller = strsub(roller, 1, openingBracketPosition - 1);
             end
 
+            local softResNote = "";
+            local normalizedRoller = strlower(roller);
+            if (GL.SoftRes:itemIDIsReservedByPlayer(GL.RollOff.CurrentRollOff.itemID, normalizedRoller)) then
+                local Details = GL.SoftRes:getDetailsForPlayer(normalizedRoller);
+                local note = Details.note or "";
+                if (not GL:empty(note)) then
+                    softResNote = strsub(note, 1, 20);
+                end
+            end
+
             local ItemsWonByRollerInTheLast8Hours = GL.AwardedLoot:byWinner(GL:addRealm(roller), GetServerTime() - (8 * 60 * 60)) or {};
             local wonItems = not GL:empty(ItemsWonByRollerInTheLast8Hours);
             local showPlayerGroups = GL:count(GL.DB:get("TMB.RaidGroups", {})) > 1
                 and GL.Settings:get("TMB.showRaidGroup");
 
-            if (not wonItems and not showPlayerGroups) then
+            if (not wonItems and not showPlayerGroups and GL:empty(softResNote)) then
                 return;
             end
 
             GameTooltip:ClearLines();
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+
+            if (not GL:empty(softResNote)) then
+                GameTooltip:AddLine(("|cFFDDDDDD%s|r"):format(softResNote));
+
+                if (showPlayerGroups or wonItems) then
+                    GameTooltip:AddLine(" ");
+                end
+            end
 
             if (showPlayerGroups) then
                 local _, playerGroup = GL.TMB:groupByPlayerName(strlower(roller));
@@ -910,7 +928,7 @@ function MasterLooterUI:tableColumns()
         sortByPlusOne = sortByPlusOne == "ASC" and "ASC" or "DESC";
     end
 
-    -- Combined width of all columns should be 340
+    -- Combined width of all columns should be 400
     return {
         --[[ 1. Player name ]]
         {
@@ -968,7 +986,7 @@ function MasterLooterUI:tableColumns()
         --[[ 5. Reserved / TMB etc ]]
         {
             name = L["Note"],
-            width = 118,
+            width = 178,
             align = "LEFT",
             color = {
                 r = 0.5,
