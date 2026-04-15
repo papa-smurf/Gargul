@@ -418,7 +418,7 @@ function MasterLooterUI:draw(itemLink)
                 local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
                 if (not selected
-                    or not type(selected) == "table"
+                    or type(selected) ~= "table"
                 ) then
                     return GL:warning(L["You need to select a player first"]);
                 end
