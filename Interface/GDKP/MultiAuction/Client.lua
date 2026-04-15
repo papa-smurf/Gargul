@@ -17,7 +17,7 @@ local Client = GL.GDKP.MultiAuction.Client;
 
 ---@type Dialog
 local TerminateConfirmDialog = GL.Dialog.new("GDKP_MULTI_AUCTION_TERMINATE")
-    :setMessage(L["Remove all bidsl bids and close all auctions?"])
+    :setMessage(L["Remove all bids and close all auctions?"])
     :setPaddingBottom(0)
     :setButtons({
         {

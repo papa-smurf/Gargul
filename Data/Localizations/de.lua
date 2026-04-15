@@ -511,7 +511,7 @@ L["Show inactive"] = "Inaktive anzeigen";
 L["Show unusable"] = "Unbrauchbare anzeigen";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "Dieser Artikel wurde verkauft. Verwende das Register (|c00%s/gdkp), um Änderungen vorzunehmen!";
 L["Terminate"] = "Abbrechen";
-L["Remove all bidsl bids and close all auctions?"] = "Alle Gebote/Gebote entfernen und alle Auktionen schließen?";
+L["Remove all bids and close all auctions?"] = "Alle Gebote/Gebote entfernen und alle Auktionen schließen?";
 L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 Brich die Mehrfachauktionssitzung ab
 

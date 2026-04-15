@@ -513,7 +513,7 @@ L["Show inactive"] = "비활성 표시";
 L["Show unusable"] = "사용할 수 없음 표시";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "이 품목은 판매되었습니다. 변경하려면 원장(|c00%s/gdkp)을 사용하세요!";
 L["Terminate"] = "끝내다";
-L["Remove all bidsl bids and close all auctions?"] = "모든 입찰가를 삭제하고 모든 경매를 종료하시겠습니까?";
+L["Remove all bids and close all auctions?"] = "모든 입찰가를 삭제하고 모든 경매를 종료하시겠습니까?";
 L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 다중 경매 세션 종료
 

@@ -510,7 +510,7 @@ L["Show inactive"] = "显示非激活物品";
 L["Show unusable"] = "显示不可用物品";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "该商品已售出。使用分类帐（|c00%s/gdkp）进行更改！";
 L["Terminate"] = "终止";
-L["Remove all bidsl bids and close all auctions?"] = "删除所有 bidsl 出价并结束所有拍卖？";
+L["Remove all bids and close all auctions?"] = "删除所有 bidsl 出价并结束所有拍卖？";
 L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 终止批量拍卖
 

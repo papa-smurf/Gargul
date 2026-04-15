@@ -516,7 +516,7 @@ L["Show inactive"] = "顯示非活動狀態";
 L["Show unusable"] = "顯示不可用";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "該商品已售出。使用分類帳（|c00%s/gdkp）進行更改！";
 L["Terminate"] = "終止";
-L["Remove all bidsl bids and close all auctions?"] = "刪除所有 bidsl 出價並結束所有拍賣？";
+L["Remove all bids and close all auctions?"] = "刪除所有 bidsl 出價並結束所有拍賣？";
 L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 終止多重拍賣會話
 
