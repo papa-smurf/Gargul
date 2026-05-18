@@ -137,6 +137,7 @@ GL.Data.DefaultSettings = {
         notifyOnItemOfInterest = true,
         scale = 1,
         showRollOffWindow = true,
+        showRollTracker = true,
     },
     AutoRoll = {
         enabled = false,

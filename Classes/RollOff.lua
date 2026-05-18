@@ -349,6 +349,7 @@ function RollOff:start(CommMessage)
         end
 
         self.inProgress = true;
+        self:listenForRolls();
 
         if (self:startedByMe()) then
             self:postStartMessage(Details.link, time, content.note);
@@ -497,12 +498,12 @@ function RollOff:stop(CommMessage)
         if (GL.Settings:get("MasterLooting.announceRollEnd", true)) then
             GL:sendChatMessage(L.CHAT["Stop your rolls!"], "RAID_WARNING");
         end
-
-        -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-        self.rollListenerCancelTimerID = GL.Ace:ScheduleTimer(function ()
-            self:stopListeningForRolls();
-        end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
     end
+
+    -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
+    self.rollListenerCancelTimerID = GL.Ace:ScheduleTimer(function ()
+        self:stopListeningForRolls();
+    end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
 
     if (self.InitiateCountDownTimer) then
         GL.Ace:CancelTimer(self.InitiateCountDownTimer);
@@ -873,42 +874,32 @@ function RollOff:formatRollNotes(rollNotes)
     return table.concat(rollNotes, ", ");
 end
 
--- Whenever a new roll comes in we need to refresh
--- the rolls table to make sure it actually shows up
-function RollOff:refreshRollsTable()
-    local RollTableData = {};
+--- Build an enriched, priority-sorted array of roll entries.
+--- Used by both the MasterLooterUI table and the RollerUI roll tracker.
+---
+---@return table[] Array of { player, displayName, class, amount, plusOnes, plusOnesRaw, classification, sortPriority, rollNotes }
+function RollOff:buildSortedRollData()
     local Rolls = self.CurrentRollOff.Rolls;
-    local RollsTable = GL.Interface:get(GL.MasterLooterUI, "Table.Players");
     local NumberOfRollsPerPlayer = {};
+    local EnrichedRolls = {};
 
-    if (not RollsTable) then
-        return;
-    end
-
-    local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin(); -- These two go high > low whereas the rest goes low > high
+    local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin();
     local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
     local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
+    local sortByPlusOne = GL.Settings:get("RollTracking.sortByPlusOne");
 
     for _, Roll in pairs(Rolls) do
         local playerName = GL:disambiguateName(Roll.player);
 
-        -- Determine how many times this player rolled during the current rolloff
         NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] or 0;
         NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] + 1;
 
         local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[playerName];
-        local rollPriority = Roll.priority or 1;
-
-        -- This is used to free up priority slots for soft-reserved/wishlisted etc. items
-        -- Think of it as a z-index in CSS: nasty but necessary
-        rollPriority = rollPriority + 10000;
+        local rollPriority = (Roll.priority or 1) + 10000;
 
         local rollNotes = {};
-
-        -- If the player name is unique in the group then use their fqn to match against TMB/Softres entries
         local normalizedPlayerName = strlower(GL:disambiguateName(playerName));
 
-        -- Check if the player reserved the current item id
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
             if (GL.Settings:get("RollTracking.sortBySoftRes")) then
                 rollPriority = 1;
@@ -933,26 +924,22 @@ function RollOff:refreshRollsTable()
 
         local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, GL:formatPlayerName(playerName, { includeRealm = "always", decorator = strlower, }));
 
-        -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do
                 (function ()
-                    -- We don't have a #1 entry yet, so take this one
                     if (not TopEntry) then
                         TopEntry = Entry;
                         return;
                     end
 
-                    -- This entry is a wishlist entry, whereas TopEntry is a prio entry (aka more important)
                     if (TopEntry.type == GL.Data.Constants.tmbTypePrio
                         and Entry.type == GL.Data.Constants.tmbTypeWish
                     ) then
                         return;
                     end
 
-                    -- This entry is a prio entry, whereas TopEntry is a wishlist entry: override it
                     if (TopEntry.type == GL.Data.Constants.tmbTypeWish
                         and Entry.type == GL.Data.Constants.tmbTypePrio
                     ) then
@@ -960,7 +947,6 @@ function RollOff:refreshRollsTable()
                         return;
                     end
 
-                    -- This entry and TopEntry are of the same type, but this entry has better prio (aka more important)
                     if ((importedFromDFTOrRRobin and Entry.prio > TopEntry.prio)
                         or (not importedFromDFTOrRRobin and Entry.prio < TopEntry.prio)
                     ) then
@@ -970,14 +956,11 @@ function RollOff:refreshRollsTable()
                 end)();
             end
 
-            -- The roller has this item on one of his lists, add a note and change the roll sorting!
             if (TopEntry) then
-                -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
                     if (sortByTMBPrio) then
                         rollPriority = 2;
 
-                        -- Make sure rolls of identical list positions "clump" together
                         if (importedFromDFTOrRRobin) then
                             rollPriority = rollPriority - TopEntry.prio;
                         else
@@ -989,7 +972,7 @@ function RollOff:refreshRollsTable()
                 else
                     if (sortByTMBWishlist) then
                         rollPriority = 3;
-                        rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+                        rollPriority = rollPriority + TopEntry.prio;
                     end
 
                     tinsert(rollNotes, ("|c00FFFFFF" .. L["Wish [%s]"] .. "|r"):format(TopEntry.prio));
@@ -1000,33 +983,80 @@ function RollOff:refreshRollsTable()
         local class = Roll.class;
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
+        table.insert(EnrichedRolls, {
+            player = Roll.player,
+            displayName = self:formatRollerName(playerName, numberOfTimesRolledByPlayer),
+            class = class,
+            amount = Roll.amount,
+            plusOnes = plusOnes,
+            plusOnesRaw = plusOnes or 0,
+            classification = Roll.classification,
+            sortPriority = rollPriority,
+            rollNotes = rollNotes,
+        });
+    end
+
+    table.sort(EnrichedRolls, function (a, b)
+        if (a.sortPriority ~= b.sortPriority) then
+            return a.sortPriority < b.sortPriority;
+        end
+
+        if (sortByPlusOne and sortByPlusOne ~= 0) then
+            if (a.plusOnesRaw ~= b.plusOnesRaw) then
+                if (sortByPlusOne == "ASC") then
+                    return a.plusOnesRaw < b.plusOnesRaw;
+                else
+                    return a.plusOnesRaw > b.plusOnesRaw;
+                end
+            end
+        end
+
+        return a.amount > b.amount;
+    end);
+
+    return EnrichedRolls;
+end
+
+-- Whenever a new roll comes in we need to refresh
+-- the rolls table to make sure it actually shows up
+function RollOff:refreshRollsTable()
+    local RollsTable = GL.Interface:get(GL.MasterLooterUI, "Table.Players");
+
+    if (not RollsTable) then
+        return;
+    end
+
+    local EnrichedRolls = self:buildSortedRollData();
+    local RollTableData = {};
+
+    for _, Entry in pairs(EnrichedRolls) do
         local Row = {
             cols = {
                 {
-                    value = self:formatRollerName(playerName, numberOfTimesRolledByPlayer),
-                    color = GL:classRGBAColor(class),
+                    value = Entry.displayName,
+                    color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = Roll.amount,
-                    color = GL:classRGBAColor(class),
+                    value = Entry.amount,
+                    color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = GL:higherThanZero(plusOnes) and L["+"] .. plusOnes or "",
-                    color = GL:classRGBAColor(class),
+                    value = GL:higherThanZero(Entry.plusOnes) and L["+"] .. Entry.plusOnes or "",
+                    color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = Roll.classification,
-                    color = GL:classRGBAColor(class),
+                    value = Entry.classification,
+                    color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = self:formatRollNotes(rollNotes),
-                    color = GL:classRGBAColor(class),
+                    value = self:formatRollNotes(Entry.rollNotes),
+                    color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = rollPriority,
+                    value = Entry.sortPriority,
                 },
                 {
-                    value = plusOnes or 0,
+                    value = Entry.plusOnesRaw,
                 },
             },
         };

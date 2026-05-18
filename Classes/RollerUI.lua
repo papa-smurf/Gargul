@@ -6,8 +6,14 @@ local _, GL = ...;
 ---@class RollerUI
 GL.RollerUI = GL.RollerUI or {
     Window = nil,
+    RollTrackerFrame = nil,
+    rollTrackerExpanded = false,
+    rollTrackerScrollOffset = 0,
 };
 local RollerUI = GL.RollerUI; ---@type RollerUI
+
+local ROLL_TRACKER_ROW_HEIGHT = 16;
+local ROLL_TRACKER_MAX_VISIBLE = 3;
 
 ---@param showRollAccepted? boolean Show "Roll accepted!" when draw completes (e.g. after auto-roll)
 ---@return boolean
@@ -196,6 +202,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     end
 
     self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, rollerUIWidth);
+    self:drawRollTracker(rollerUIWidth);
 end
 
 --- Draw the countdown bar
@@ -312,6 +319,397 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 end
 
+--- Create a single roll row frame with 4 text columns
+---
+---@param parent Frame
+---@param width number
+---@return Frame
+function RollerUI:createRollRow(parent, width)
+    local Row = CreateFrame("Frame", nil, parent);
+    Row:SetSize(width, ROLL_TRACKER_ROW_HEIGHT);
+
+    local NameText = Row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    NameText:SetPoint("LEFT", Row, "LEFT", 1, 0);
+    NameText:SetWidth(100);
+    NameText:SetJustifyH("LEFT");
+
+    local RollText = Row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    RollText:SetPoint("LEFT", NameText, "RIGHT", 2, 0);
+    RollText:SetWidth(35);
+    RollText:SetJustifyH("LEFT");
+
+    local PlusOneText = Row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    PlusOneText:SetPoint("LEFT", RollText, "RIGHT", 2, 0);
+    PlusOneText:SetWidth(35);
+    PlusOneText:SetJustifyH("LEFT");
+
+    local TypeText = Row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    TypeText:SetPoint("LEFT", PlusOneText, "RIGHT", 2, 0);
+    TypeText:SetWidth(50);
+    TypeText:SetJustifyH("LEFT");
+
+    Row.NameText = NameText;
+    Row.RollText = RollText;
+    Row.PlusOneText = PlusOneText;
+    Row.TypeText = TypeText;
+
+    return Row;
+end
+
+--- Populate a row frame with roll data
+---
+---@param Row Frame
+---@param Entry table
+---@return nil
+function RollerUI:fillRollRow(Row, Entry)
+    local coloredName = GL:classColorize(Entry.displayName, Entry.class);
+    Row.NameText:SetText(coloredName);
+    Row.RollText:SetText(tostring(Entry.amount));
+    Row.RollText:SetTextColor(1, 1, 1);
+
+    if (GL:higherThanZero(Entry.plusOnes)) then
+        Row.PlusOneText:SetText("+" .. Entry.plusOnes);
+    else
+        Row.PlusOneText:SetText("");
+    end
+    Row.PlusOneText:SetTextColor(.8, .8, .8);
+
+    Row.TypeText:SetText(Entry.classification or "");
+    Row.TypeText:SetTextColor(.8, .8, .8);
+end
+
+--- Draw the roll tracker panel below the countdown bar
+---
+---@param width number
+---@return nil
+function RollerUI:drawRollTracker(width)
+    if (not self.Window) then
+        return;
+    end
+
+    if (not GL.Settings:get("Rolling.showRollTracker")) then
+        return;
+    end
+
+    self.rollTrackerScrollOffset = 0;
+
+    local Window = self.Window;
+    local Tracker = CreateFrame("Frame", nil, Window);
+    Tracker:SetSize(width, ROLL_TRACKER_ROW_HEIGHT);
+    Tracker:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 0, 0);
+    Tracker:Hide();
+
+    Tracker:EnableMouse(true);
+    Tracker:RegisterForDrag("LeftButton");
+    Tracker:SetScript("OnDragStart", function ()
+        Window:StartMoving();
+    end);
+    Tracker:SetScript("OnDragStop", function ()
+        Window:StopMovingOrSizing();
+        GL.Interface:storePosition(Window, "Roller");
+    end);
+
+    local TrackerBG = Tracker:CreateTexture(nil, "BACKGROUND");
+    TrackerBG:SetColorTexture(0, 0, 0, .5);
+    TrackerBG:SetAllPoints(Tracker);
+
+    self.RollTrackerFrame = Tracker;
+
+    -- Top row: shows the #1 roll, clickable to expand
+    local TopRow = CreateFrame("Button", nil, Tracker);
+    TopRow:SetSize(width, ROLL_TRACKER_ROW_HEIGHT);
+    TopRow:SetPoint("TOPLEFT", Tracker, "TOPLEFT", 0, 0);
+
+    local TopRowHL = TopRow:CreateTexture(nil, "HIGHLIGHT");
+    TopRowHL:SetColorTexture(1, 1, 1, .08);
+    TopRowHL:SetAllPoints(TopRow);
+
+    local NameText = TopRow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    NameText:SetPoint("LEFT", TopRow, "LEFT", 1, 0);
+    NameText:SetWidth(100);
+    NameText:SetJustifyH("LEFT");
+
+    local RollText = TopRow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    RollText:SetPoint("LEFT", NameText, "RIGHT", 2, 0);
+    RollText:SetWidth(35);
+    RollText:SetJustifyH("LEFT");
+
+    local PlusOneText = TopRow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    PlusOneText:SetPoint("LEFT", RollText, "RIGHT", 2, 0);
+    PlusOneText:SetWidth(35);
+    PlusOneText:SetJustifyH("LEFT");
+
+    local TypeText = TopRow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    TypeText:SetPoint("LEFT", PlusOneText, "RIGHT", 2, 0);
+    TypeText:SetWidth(50);
+    TypeText:SetJustifyH("LEFT");
+
+    ---@type Button
+    local InfoButton = CreateFrame("Button", nil, TopRow);
+    InfoButton:SetSize(12, 12);
+    InfoButton:SetPoint("RIGHT", TopRow, "RIGHT", -4, 0);
+
+    local InfoTexture = InfoButton:CreateTexture(nil, "BACKGROUND");
+    InfoTexture:SetTexture("interface/friendsframe/informationicon");
+    InfoTexture:SetAllPoints(InfoButton);
+
+    local InfoHighlight = InfoButton:CreateTexture(nil, "HIGHLIGHT");
+    InfoHighlight:SetAllPoints(InfoButton);
+    InfoHighlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight");
+    InfoHighlight:SetTexCoord(0, 1, .23, .77);
+    InfoHighlight:SetBlendMode("ADD");
+
+    GL.Interface:addTooltip(InfoButton, L["Roll sorting may differ from the master looter's view due to missing data (e.g. +1s)"]);
+
+    ---@type Button
+    local ToggleButton = CreateFrame("Button", nil, TopRow);
+    ToggleButton:SetSize(12, 12);
+    ToggleButton:SetPoint("RIGHT", InfoButton, "LEFT", -2, 0);
+    ToggleButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Up");
+    ToggleButton:SetHighlightTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight");
+    ToggleButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down");
+    ToggleButton:SetScript("OnEnter", function ()
+        GameTooltip:SetOwner(ToggleButton, "ANCHOR_TOP");
+        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide"] or L["Show all"]);
+        GameTooltip:Show();
+    end);
+    ToggleButton:SetScript("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
+    ToggleButton:SetScript("OnClick", function ()
+        self:toggleRollTracker();
+    end);
+
+    TopRow.NameText = NameText;
+    TopRow.RollText = RollText;
+    TopRow.PlusOneText = PlusOneText;
+    TopRow.TypeText = TypeText;
+    TopRow.ToggleButton = ToggleButton;
+    self.RollTrackerTopRow = TopRow;
+
+    TopRow:SetScript("OnClick", function ()
+        self:toggleRollTracker();
+    end);
+
+    -- Expanded area (hidden by default)
+    local ExpandedFrame = CreateFrame("Frame", nil, Tracker);
+    ExpandedFrame:SetPoint("TOPLEFT", TopRow, "BOTTOMLEFT", 0, 0);
+    ExpandedFrame:SetWidth(width);
+    ExpandedFrame:SetHeight(1);
+    ExpandedFrame:Hide();
+
+    local ExpandedBG = ExpandedFrame:CreateTexture(nil, "BACKGROUND");
+    ExpandedBG:SetColorTexture(0, 0, 0, .5);
+    ExpandedBG:SetAllPoints(ExpandedFrame);
+
+    local Separator = ExpandedFrame:CreateTexture(nil, "ARTWORK");
+    Separator:SetColorTexture(.5, .5, .5, .3);
+    Separator:SetSize(width - 8, 1);
+    Separator:SetPoint("TOPLEFT", ExpandedFrame, "TOPLEFT", 4, 0);
+
+    self.RollTrackerExpandedFrame = ExpandedFrame;
+
+    -- Pre-create row frames for the expanded view
+    local Rows = {};
+    for i = 1, ROLL_TRACKER_MAX_VISIBLE do
+        local Row = self:createRollRow(ExpandedFrame, width);
+        if (i == 1) then
+            Row:SetPoint("TOPLEFT", ExpandedFrame, "TOPLEFT", 0, -2);
+        else
+            Row:SetPoint("TOPLEFT", Rows[i - 1], "BOTTOMLEFT", 0, 0);
+        end
+        Row:Hide();
+        table.insert(Rows, Row);
+    end
+    self.RollTrackerRows = Rows;
+
+    -- Scroll indicator (thin track on the right, shown when scrollable)
+    local ScrollTrack = CreateFrame("Frame", nil, ExpandedFrame);
+    ScrollTrack:SetWidth(3);
+    ScrollTrack:SetPoint("TOPRIGHT", ExpandedFrame, "TOPRIGHT", -2, -4);
+    ScrollTrack:SetPoint("BOTTOMRIGHT", ExpandedFrame, "BOTTOMRIGHT", -2, 4);
+    ScrollTrack:Hide();
+
+    local ScrollTrackBG = ScrollTrack:CreateTexture(nil, "BACKGROUND");
+    ScrollTrackBG:SetColorTexture(1, 1, 1, .1);
+    ScrollTrackBG:SetAllPoints(ScrollTrack);
+
+    local ScrollThumb = ScrollTrack:CreateTexture(nil, "OVERLAY");
+    ScrollThumb:SetColorTexture(1, 1, 1, .3);
+    ScrollThumb:SetWidth(3);
+
+    self.RollTrackerScrollTrack = ScrollTrack;
+    self.RollTrackerScrollThumb = ScrollThumb;
+
+    -- Mousewheel on expanded area
+    ExpandedFrame:EnableMouseWheel(true);
+    ExpandedFrame:SetScript("OnMouseWheel", function (_, delta)
+        self:scrollRollTracker(-delta);
+    end);
+
+    -- Also allow mousewheel on top row when expanded
+    TopRow:EnableMouseWheel(true);
+    TopRow:SetScript("OnMouseWheel", function (_, delta)
+        if (self.rollTrackerExpanded) then
+            self:scrollRollTracker(-delta);
+        end
+    end);
+
+    GL.Events:register("RollerUIRollAcceptedListener", "GL.ROLLOFF_ROLL_ACCEPTED", function ()
+        GL:after(.05, "RollerUIRollTrackerRefresh", function ()
+            self:refreshRollTracker();
+        end);
+    end);
+
+    -- If the user previously expanded the tracker, restore that state
+    if (self.rollTrackerExpanded) then
+        self.RollTrackerExpandedFrame:Show();
+    end
+
+    -- Catch up with any rolls that arrived before the listener was registered
+    self:refreshRollTracker();
+end
+
+--- Refresh the roll tracker display with current data
+---
+---@return nil
+function RollerUI:refreshRollTracker()
+    if (not self.RollTrackerFrame or not self.RollTrackerTopRow) then
+        return;
+    end
+
+    local SortedRolls = GL.RollOff:buildSortedRollData();
+
+    if (#SortedRolls < 1) then
+        self.RollTrackerFrame:Hide();
+        return;
+    end
+
+    self.RollTrackerFrame:Show();
+    self.rollTrackerSortedData = SortedRolls;
+
+    -- Fill top row with #1 entry
+    local TopEntry = SortedRolls[1];
+    local TopRow = self.RollTrackerTopRow;
+    local coloredName = GL:classColorize(TopEntry.displayName, TopEntry.class);
+    TopRow.NameText:SetText(coloredName);
+    TopRow.RollText:SetText(tostring(TopEntry.amount));
+    TopRow.RollText:SetTextColor(1, 1, 1);
+
+    if (GL:higherThanZero(TopEntry.plusOnes)) then
+        TopRow.PlusOneText:SetText("+" .. TopEntry.plusOnes);
+    else
+        TopRow.PlusOneText:SetText("");
+    end
+    TopRow.PlusOneText:SetTextColor(.8, .8, .8);
+
+    TopRow.TypeText:SetText(TopEntry.classification or "");
+    TopRow.TypeText:SetTextColor(.8, .8, .8);
+
+    if (self.rollTrackerExpanded) then
+        self:refreshExpandedRows();
+    end
+end
+
+--- Fill the expanded rows based on scroll offset
+---
+---@return nil
+function RollerUI:refreshExpandedRows()
+    local SortedRolls = self.rollTrackerSortedData;
+
+    if (not SortedRolls) then
+        return;
+    end
+
+    -- Expanded rows show entries starting from index 2 (top row shows #1)
+    local expandedEntries = #SortedRolls - 1;
+    local maxOffset = math.max(0, expandedEntries - ROLL_TRACKER_MAX_VISIBLE);
+    self.rollTrackerScrollOffset = math.min(self.rollTrackerScrollOffset, maxOffset);
+
+    local visibleCount = math.min(expandedEntries, ROLL_TRACKER_MAX_VISIBLE);
+
+    for i = 1, ROLL_TRACKER_MAX_VISIBLE do
+        local Row = self.RollTrackerRows[i];
+        local dataIndex = i + self.rollTrackerScrollOffset + 1; -- +1 because top row is index 1
+
+        if (dataIndex <= #SortedRolls) then
+            self:fillRollRow(Row, SortedRolls[dataIndex]);
+            Row:Show();
+        else
+            Row:Hide();
+        end
+    end
+
+    -- Update expanded frame height
+    local expandedHeight = (visibleCount * ROLL_TRACKER_ROW_HEIGHT) + 2;
+    self.RollTrackerExpandedFrame:SetHeight(expandedHeight);
+
+    -- Update tracker frame total height
+    self.RollTrackerFrame:SetHeight(ROLL_TRACKER_ROW_HEIGHT + expandedHeight);
+
+    -- Update scroll indicator
+    if (expandedEntries > ROLL_TRACKER_MAX_VISIBLE) then
+        self.RollTrackerScrollTrack:Show();
+
+        local trackHeight = self.RollTrackerScrollTrack:GetHeight();
+        local thumbHeight = math.max(10, trackHeight * (ROLL_TRACKER_MAX_VISIBLE / expandedEntries));
+        self.RollTrackerScrollThumb:SetHeight(thumbHeight);
+
+        local scrollRange = trackHeight - thumbHeight;
+        local thumbOffset = maxOffset > 0 and (scrollRange * (self.rollTrackerScrollOffset / maxOffset)) or 0;
+        self.RollTrackerScrollThumb:ClearAllPoints();
+        self.RollTrackerScrollThumb:SetPoint("TOPLEFT", self.RollTrackerScrollTrack, "TOPLEFT", 0, -thumbOffset);
+    else
+        self.RollTrackerScrollTrack:Hide();
+    end
+end
+
+--- Toggle the expanded state of the roll tracker
+---
+---@return nil
+function RollerUI:toggleRollTracker()
+    if (not self.RollTrackerExpandedFrame) then
+        return;
+    end
+
+    self.rollTrackerExpanded = not self.rollTrackerExpanded;
+    self.rollTrackerScrollOffset = 0;
+
+    if (self.rollTrackerExpanded) then
+        self.RollTrackerExpandedFrame:Show();
+        self:refreshExpandedRows();
+    else
+        self.RollTrackerExpandedFrame:Hide();
+        self.RollTrackerFrame:SetHeight(ROLL_TRACKER_ROW_HEIGHT);
+    end
+
+    -- Refresh tooltip if the mouse is still over the toggle button
+    local ToggleButton = self.RollTrackerTopRow and self.RollTrackerTopRow.ToggleButton;
+    if (ToggleButton and GameTooltip:IsOwned(ToggleButton)) then
+        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide"] or L["Show all"]);
+    end
+end
+
+--- Scroll the expanded roll tracker by a number of rows
+---
+---@param direction number Positive = scroll down, negative = scroll up
+---@return nil
+function RollerUI:scrollRollTracker(direction)
+    if (not self.rollTrackerExpanded or not self.rollTrackerSortedData) then
+        return;
+    end
+
+    local expandedEntries = #self.rollTrackerSortedData - 1;
+    local maxOffset = math.max(0, expandedEntries - ROLL_TRACKER_MAX_VISIBLE);
+    local newOffset = self.rollTrackerScrollOffset + direction;
+    newOffset = math.max(0, math.min(maxOffset, newOffset));
+
+    if (newOffset ~= self.rollTrackerScrollOffset) then
+        self.rollTrackerScrollOffset = newOffset;
+        self:refreshExpandedRows();
+    end
+end
+
 --- Show "Roll accepted!" notification for 2 seconds. Can be used after manual roll or auto-roll.
 ---@param anchorFrame Frame|nil If provided, position above this frame. Else center of screen.
 ---@return nil
@@ -360,6 +758,8 @@ end
 ---@return nil
 function RollerUI:hide()
     GL.Events:unregister("RollerUIModifierStateChanged");
+    GL.Events:unregister("RollerUIRollAcceptedListener");
+    GL:cancelTimer("RollerUIRollTrackerRefresh");
 
     if (self.RollAcceptedTimer) then
         GL.Ace:CancelTimer(self.RollAcceptedTimer);
@@ -381,6 +781,15 @@ function RollerUI:hide()
         self.TimerBar:Stop();
         self.TimerBar = nil;
     end
+
+    self.RollTrackerFrame = nil;
+    self.RollTrackerTopRow = nil;
+    self.RollTrackerExpandedFrame = nil;
+    self.RollTrackerRows = nil;
+    self.RollTrackerScrollTrack = nil;
+    self.RollTrackerScrollThumb = nil;
+    self.rollTrackerSortedData = nil;
+    self.rollTrackerScrollOffset = 0;
 
     GL.Interface:release(self.Window);
     self.Window = nil;

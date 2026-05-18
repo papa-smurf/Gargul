@@ -36,6 +36,11 @@ function Rolling:draw(Parent)
             setting = "Rolling.dontShowOnUnusableItems",
         },
         {
+            label = "Show roll tracker",
+            description = "Show incoming rolls on the roll window so you can see who rolled what",
+            setting = "Rolling.showRollTracker",
+        },
+        {
             label = L["Notify with chat and alert when item of interest drops"],
             description = L["When an item drops that you reserved or have otherwise marked, a chat message and alert pop up"],
             setting = "Rolling.notifyOnItemOfInterest",
