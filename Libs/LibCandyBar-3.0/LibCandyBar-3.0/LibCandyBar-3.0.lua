@@ -21,7 +21,7 @@ local CreateFrame, error, setmetatable, UIParent = CreateFrame, error, setmetata
 if not LibStub then error("LibCandyBar-3.0 requires LibStub.") end
 local cbh = LibStub:GetLibrary("CallbackHandler-1.0")
 if not cbh then error("LibCandyBar-3.0 requires CallbackHandler-1.0") end
-local lib = LibStub:NewLibrary("LibCandyBarGargul-3.0", 100) -- Bump minor on changes
+local lib = LibStub:NewLibrary("LibCandyBarGargul-3.0", 110) -- Bump minor on changes
 if not lib then return end
 lib.callbacks = lib.callbacks or cbh:New(lib)
 local cb = lib.callbacks
@@ -48,16 +48,6 @@ local _fontShadowX, _fontShadowY = GameFontHighlightSmallOutline:GetShadowOffset
 local _fontShadowR, _fontShadowG, _fontShadowB, _fontShadowA = GameFontHighlightSmallOutline:GetShadowColor()
 local SetWidth, SetHeight, SetSize = lib.dummyFrame.SetWidth, lib.dummyFrame.SetHeight, lib.dummyFrame.SetSize
 
-local function stopBar(bar)
-	bar.updater:Stop()
-	bar.data = nil
-	bar.funcs = nil
-	bar.running = nil
-	bar.paused = nil
-	bar:Hide()
-	bar:SetParent(UIParent)
-end
-
 local tformat1 = "%d:%02d:%02d"
 local tformat2 = "%d:%02d"
 local tformat3 = "%.1f"
@@ -66,26 +56,66 @@ local function barUpdate(updater)
 	local bar = updater.parent
 	local t = GetTime()
 	if t >= bar.exp then
-		bar:Stop()
+		if bar.pauseWhenDone then
+			bar:Pause()
+			bar.candyBarBar:SetMinMaxValues(-1, 0)
+			bar.candyBarBar:SetValue(0)
+			bar:SetDuration(0)
+			bar:SetTimeVisibility(false)
+			if bar.maxPauseDuration then
+				bar.maxPauseDurationCallback = C_Timer.NewTimer(bar.maxPauseDuration, function()
+					bar.maxPauseDurationCallback = nil
+					bar:Stop()
+				end)
+			end
+		else
+			bar:Stop()
+		end
 	else
 		local time = bar.exp - t
 		bar.remaining = time
 
 		bar.candyBarBar:SetValue(bar.fill and (t-bar.start)+bar.gap or time)
 
-		if time > 3599.9 then -- > 1 hour
-			local h = floor(time/3600)
-			local m = floor((time - (h*3600))/60)
-			local s = (time - (m*60)) - (h*3600)
-			bar.candyBarDuration:SetFormattedText(tformat1, h, m, s)
-		elseif time > 59.9 then -- 1 minute to 1 hour
-			local m = floor(time/60)
-			local s = time - (m*60)
-			bar.candyBarDuration:SetFormattedText(tformat2, m, s)
-		elseif time < 10 then -- 0 to 10 seconds
-			bar.candyBarDuration:SetFormattedText(tformat3, time)
-		else -- 10 seconds to one minute
-			bar.candyBarDuration:SetFormattedText(tformat4, time)
+		if bar.showTime then
+			local floorTime
+			if time > 3599.9 then -- > 1 hour
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					local h = floor(time/3600)
+					local m = floor((time - (h*3600))/60)
+					local s = (time - (m*60)) - (h*3600)
+					bar.candyBarDuration:SetFormattedText(tformat1, h, m, s)
+				end
+			elseif time > 59.9 then -- 1 minute to 1 hour
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					local m = floor(time/60)
+					local s = time - (m*60)
+					bar.candyBarDuration:SetFormattedText(tformat2, m, s)
+				end
+			elseif time < 10 then -- 0 to 10 seconds
+				-- + .5 aligns the cache key with %.1f's round-half-away-from-zero
+				floorTime = floor(time * 10 + .5)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					bar.candyBarDuration:SetFormattedText(tformat3, time)
+				end
+			else -- 10 seconds to one minute
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					bar.candyBarDuration:SetFormattedText(tformat4, time)
+				end
+			end
+		end
+
+		if bar.timeCallback and time < bar.timeCallbackTrigger then
+			bar.timeCallbackTrigger = 0
+			bar.timeCallback(bar)
+			bar.timeCallback = nil
 		end
 
 		if bar.funcs then
@@ -104,26 +134,60 @@ local function barUpdateApprox(updater)
 	local bar = updater.parent
 	local t = GetTime()
 	if t >= bar.exp then
-		bar:Stop()
+		if bar.pauseWhenDone then
+			bar:Pause()
+			bar.candyBarBar:SetMinMaxValues(-1, 0)
+			bar.candyBarBar:SetValue(0)
+			bar:SetDuration(0)
+			bar:SetTimeVisibility(false)
+		else
+			bar:Stop()
+		end
 	else
 		local time = bar.exp - t
 		bar.remaining = time
 
 		bar.candyBarBar:SetValue(bar.fill and (t-bar.start)+bar.gap or time)
 
-		if time > 3599.9 then -- > 1 hour
-			local h = floor(time/3600)
-			local m = floor((time - (h*3600))/60)
-			local s = (time - (m*60)) - (h*3600)
-			bar.candyBarDuration:SetFormattedText(atformat1, h, m, s)
-		elseif time > 59.9 then -- 1 minute to 1 hour
-			local m = floor(time/60)
-			local s = time - (m*60)
-			bar.candyBarDuration:SetFormattedText(atformat2, m, s)
-		elseif time < 10 then -- 0 to 10 seconds
-			bar.candyBarDuration:SetFormattedText(atformat3, time)
-		else -- 10 seconds to one minute
-			bar.candyBarDuration:SetFormattedText(atformat4, time)
+		if bar.showTime then
+			local floorTime
+			if time > 3599.9 then -- > 1 hour
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					local h = floor(time/3600)
+					local m = floor((time - (h*3600))/60)
+					local s = (time - (m*60)) - (h*3600)
+					bar.candyBarDuration:SetFormattedText(atformat1, h, m, s)
+				end
+			elseif time > 59.9 then -- 1 minute to 1 hour
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					local m = floor(time/60)
+					local s = time - (m*60)
+					bar.candyBarDuration:SetFormattedText(atformat2, m, s)
+				end
+			elseif time < 10 then -- 0 to 10 seconds
+				-- + .5 aligns the cache key with %.1f's round-half-away-from-zero
+				floorTime = floor(time * 10 + .5)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					bar.candyBarDuration:SetFormattedText(atformat3, time)
+				end
+			else -- 10 seconds to one minute
+				floorTime = floor(time)
+				if floorTime ~= bar.lastFloorTime then
+					bar.lastFloorTime = floorTime
+					bar.candyBarDuration:SetFormattedText(atformat4, time)
+				end
+			end
+		end
+
+		if bar.timeCallback and time < bar.timeCallbackTrigger then
+			bar.timeCallbackTrigger = 0
+			bar.timeCallback(bar)
+			bar.timeCallback = nil
 		end
 
 		if bar.funcs then
@@ -197,13 +261,21 @@ function barPrototype:Set(key, data) if not self.data then self.data = {} end; s
 -- @param key Key to retrieve
 function barPrototype:Get(key) return self.data and self.data[key] end
 --- Sets the color of the bar.
--- This is basically a wrapper to SetStatusBarColor.
+-- This is basically a wrapper to candyBarBar:SetStatusBarColor.
 -- @paramsig r, g, b, a
 -- @param r Red component (0-1)
 -- @param g Green component (0-1)
 -- @param b Blue component (0-1)
 -- @param a Alpha (0-1)
 function barPrototype:SetColor(...) self.candyBarBar:SetStatusBarColor(...) end
+--- Sets the background color of the bar.
+-- This is basically a wrapper to candyBarBackground:SetVertexColor.
+-- @paramsig r, g, b, a
+-- @param r Red component (0-1)
+-- @param g Green component (0-1)
+-- @param b Blue component (0-1)
+-- @param a Alpha (0-1)
+function barPrototype:SetBackgroundColor(...) self.candyBarBackground:SetVertexColor(...) end
 --- Sets the color of the bar label and bar duration text.
 -- @paramsig r, g, b, a
 -- @param r Red component (0-1)
@@ -223,6 +295,21 @@ end
 function barPrototype:SetShadowColor(...)
 	self.candyBarLabel:SetShadowColor(...)
 	self.candyBarDuration:SetShadowColor(...)
+end
+--- Sets the shadow offset of the bar label and bar duration text.
+-- @number offsetX
+-- @number offsetY
+function barPrototype:SetShadowOffset(...)
+	self.candyBarLabel:SetShadowOffset(...)
+	self.candyBarDuration:SetShadowOffset(...)
+end
+--- Sets the font of the bar label and bar duration text.
+-- @string fontFile
+-- @number height
+-- @string flags
+function barPrototype:SetFont(...)
+	self.candyBarLabel:SetFont(...)
+	self.candyBarDuration:SetFont(...)
 end
 --- Sets the texture of the bar.
 -- This should only be needed on running bars that get changed on the fly.
@@ -294,6 +381,10 @@ function barPrototype:SetIconPosition(position)
 	self.iconPosition = position
 	restyleBar(self)
 end
+--- Returns the side of the bar where the icon should appear.
+function barPrototype:GetIconPosition()
+	return self.iconPosition
+end
 --- Sets wether or not the time indicator on the right of the bar should be shown.
 -- Time is shown by default.
 -- @param bool true to show the time, false/nil to hide the time.
@@ -315,6 +406,25 @@ function barPrototype:SetLabelVisibility(bool)
 	else
 		self.candyBarLabel:Hide()
 	end
+end
+--- Sets wether or not the bar should pause when its done.
+-- It will show as full and the time label will be hidden
+-- @param value Seconds to pause the bar when done or true for indefinitely
+function barPrototype:SetPauseWhenDone(value)
+	if type(value) == "number" then
+		self.maxPauseDuration = value
+		self.pauseWhenDone = true
+	else
+		self.maxPauseDuration = nil
+		self.pauseWhenDone = value or nil
+	end
+end
+--- Sets a one-time callback to fire after reaching a certain time remaining on the bar
+-- @param func The callback function to fire
+-- @number time The time the bar will have remaining when the callback triggers
+function barPrototype:SetTimeCallback(func, time)
+	self.timeCallback = func
+	self.timeCallbackTrigger = time
 end
 --- Sets the duration of the bar.
 -- This can also be used while the bar is running to adjust the time remaining, within the bounds of the original duration.
@@ -387,20 +497,41 @@ function barPrototype:Resume()
 		self.paused = nil
 	end
 end
---- Stops the bar.
--- This will stop the bar, fire the LibCandyBar_Stop callback, and recycle the bar into the candybar pool.
--- Note: make sure you remove all references to the bar in your addon upon receiving the LibCandyBar_Stop callback.
--- @usage
--- -- The example below shows the use of the LibCandyBar_Stop callback by printing the contents of the label in the chatframe
--- local function barstopped( callback, bar )
---   print( bar:GetLabel(), "stopped")
--- end
--- LibStub("LibCandyBar-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
--- @param ... Optional args to pass across in the LibCandyBar_Stop callback.
-function barPrototype:Stop(...)
-	cb:Fire("LibCandyBar_Stop", self, ...)
-	stopBar(self)
-	barCache[self] = true
+
+do
+	local function stopBar(bar)
+		bar.updater:Stop()
+		bar.data = nil
+		bar.funcs = nil
+		bar.running = nil
+		bar.paused = nil
+		bar.pauseWhenDone = nil
+		bar.maxPauseDuration = nil
+		if bar.maxPauseDurationCallback then
+			bar.maxPauseDurationCallback:Cancel()
+			bar.maxPauseDurationCallback = nil
+		end
+		bar.timeCallback = nil
+		bar.timeCallbackTrigger = nil
+		bar:Hide()
+		bar:SetParent(UIParent)
+	end
+
+	--- Stops the bar.
+	-- This will stop the bar, fire the LibCandyBar_Stop callback, and recycle the bar into the candybar pool.
+	-- Note: make sure you remove all references to the bar in your addon upon receiving the LibCandyBar_Stop callback.
+	-- @usage
+	-- -- The example below shows the use of the LibCandyBar_Stop callback by printing the contents of the label in the chatframe
+	-- local function barstopped( callback, bar )
+	--   print( bar:GetLabel(), "stopped")
+	-- end
+	-- LibStub("LibCandyBar-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
+	-- @param ... Optional args to pass across in the LibCandyBar_Stop callback.
+	function barPrototype:Stop(...)
+		cb:Fire("LibCandyBar_Stop", self, ...)
+		stopBar(self)
+		barCache[self] = true
+	end
 end
 
 -- ------------------------------------------------------------------------------
@@ -440,18 +571,13 @@ function lib:New(texture, width, height)
 		bar.candyBarBackdrop = backdrop
 
 		local iconBackdrop = CreateFrame("Frame", nil, bar, "BackdropTemplate") -- Used by bar stylers for backdrops
-		iconBackdrop:SetFrameLevel(0)
 		bar.candyBarIconFrameBackdrop = iconBackdrop
 
-		local duration = statusbar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
-		duration:SetPoint("TOPLEFT", statusbar, "TOPLEFT", 2, 0)
-		duration:SetPoint("BOTTOMRIGHT", statusbar, "BOTTOMRIGHT", -2, 0)
-		bar.candyBarDuration = duration
-
 		local label = statusbar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
-		label:SetPoint("TOPLEFT", statusbar, "TOPLEFT", 2, 0)
-		label:SetPoint("BOTTOMRIGHT", statusbar, "BOTTOMRIGHT", -2, 0)
 		bar.candyBarLabel = label
+
+		local duration = statusbar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
+		bar.candyBarDuration = duration
 
 		local updater = bar:CreateAnimationGroup()
 		updater:SetLooping("REPEAT")
@@ -462,6 +588,25 @@ function lib:New(texture, width, height)
 		bar.repeater = anim
 	else
 		barCache[bar] = nil
+
+		-- Clear secrets from icon textures
+		bar.candyBarIconFrame.icon = nil
+		if bar.candyBarIconFrame.SetToDefaults then
+			bar.candyBarIconFrame:SetToDefaults()
+		end
+		bar.candyBarIconFrame:ClearAllPoints()
+		bar.candyBarIconFrameBackdrop:ClearAllPoints()
+
+		-- Clear secrets from fontstrings
+		bar.candyBarLabel.text = nil
+		if bar.candyBarLabel.ClearText then
+			bar.candyBarLabel:ClearText()
+		end
+		bar.candyBarLabel:ClearAllPoints()
+		if bar.candyBarDuration.ClearText then
+			bar.candyBarDuration:ClearText()
+		end
+		bar.candyBarDuration:ClearAllPoints()
 	end
 
 	bar:SetFrameStrata("MEDIUM")
@@ -470,18 +615,24 @@ function lib:New(texture, width, height)
 	bar.candyBarBackground:SetTexture(texture)
 	bar.width = width
 	bar.height = height
+	bar.candyBarLabel:SetPoint("TOPLEFT", bar.candyBarBar, "TOPLEFT", 2, 0)
+	bar.candyBarLabel:SetPoint("BOTTOMRIGHT", bar.candyBarBar, "BOTTOMRIGHT", -2, 0)
+	bar.candyBarDuration:SetPoint("TOPLEFT", bar.candyBarBar, "TOPLEFT", 2, 0)
+	bar.candyBarDuration:SetPoint("BOTTOMRIGHT", bar.candyBarBar, "BOTTOMRIGHT", -2, 0)
 
 	-- RESET ALL THE THINGS!
 	bar.fill = nil
 	bar.showTime = true
 	bar.showLabel = true
 	bar.iconPosition = nil
+	bar.lastFloorTime = nil -- reset cache so recycled bars format on first tick
 	for i = 1, numScripts do -- Update if scripts table is changed, faster than doing #scripts
 		bar:SetScript(scripts[i], nil)
 	end
 
-	bar.candyBarBackground:SetVertexColor(0.5, 0.5, 0.5, 0.3)
-	bar.candyBarBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+	bar:SetBackgroundColor(0.5, 0.5, 0.5, 0.3)
+	bar:SetColor(0.5, 0.5, 0.5, 1)
+	bar:SetTextColor(1,1,1,1)
 	bar:ClearAllPoints()
 	SetWidth(bar, width)
 	SetHeight(bar, height)
@@ -490,21 +641,17 @@ function lib:New(texture, width, height)
 	bar:SetAlpha(1)
 	bar:SetClampedToScreen(false)
 	bar:EnableMouse(false)
+	bar:SetFont(_fontName, _fontSize)
+	bar:SetShadowOffset(_fontShadowX, _fontShadowY)
+	bar:SetShadowColor(_fontShadowR, _fontShadowG, _fontShadowB, _fontShadowA)
 
-	bar.candyBarLabel:SetTextColor(1,1,1,1)
+	bar.candyBarIconFrameBackdrop:SetFrameLevel(0)
+
 	bar.candyBarLabel:SetJustifyH("LEFT")
 	bar.candyBarLabel:SetJustifyV("MIDDLE")
-	bar.candyBarLabel:SetFont(_fontName, _fontSize)
-	bar.candyBarLabel:SetShadowOffset(_fontShadowX, _fontShadowY)
-	bar.candyBarLabel:SetShadowColor(_fontShadowR, _fontShadowG, _fontShadowB, _fontShadowA)
 
-	bar.candyBarDuration:SetTextColor(1,1,1,1)
 	bar.candyBarDuration:SetJustifyH("RIGHT")
 	bar.candyBarDuration:SetJustifyV("MIDDLE")
-	bar.candyBarDuration:SetFont(_fontName, _fontSize)
-	bar.candyBarDuration:SetShadowOffset(_fontShadowX, _fontShadowY)
-	bar.candyBarDuration:SetShadowColor(_fontShadowR, _fontShadowG, _fontShadowB, _fontShadowA)
-
 
 	bar:SetLabel()
 	bar:SetIcon()
@@ -512,4 +659,3 @@ function lib:New(texture, width, height)
 
 	return bar
 end
-

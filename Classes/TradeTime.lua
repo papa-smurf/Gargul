@@ -77,8 +77,8 @@ function TradeTime:process()
             measuredAt = GetServerTime(),
         };
 
-        -- Seems like we received a new item with a trade time remaining
-        if (not self.State.itemGUID) then
+        -- Seems like we received a new item with a trade time remaining.
+        if (not self.State[itemGUID]) then
             somethingChanged = true;
         end
     end);

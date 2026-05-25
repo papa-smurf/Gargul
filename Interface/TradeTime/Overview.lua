@@ -84,6 +84,17 @@ function Overview:_init()
         self:refresh();
     end);
 
+    Events:register({
+        { "TradeTimeOverviewSoftresImported", "GL.SOFTRES_IMPORTED", },
+        { "TradeTimeOverviewSoftresCleared",  "GL.SOFTRES_CLEARED", },
+        { "TradeTimeOverviewTMBImported",     "GL.TMB_IMPORTED", },
+        { "TradeTimeOverviewTMBCleared",      "GL.TMB_CLEARED", },
+    }, function ()
+        for _, Row in pairs(self.ItemRows) do
+            self:updateReservationDetails(Row);
+        end
+    end);
+
     -- Refresh every 60 seconds so that we can dynamically show
     -- items that meet the user's maximumTradeTimeLeft setting
     GL:after(10, "TradeTimeOverviewRefreshInterval", function ()
@@ -118,6 +129,7 @@ function Overview:open()
 
     self:setWindowHeight();
     Window:Show();
+    self:startColorTicker();
     return Window;
 end
 
@@ -131,7 +143,35 @@ function Overview:close()
         end
     end
 
+    GL:cancelTimer("TradeTimeOverviewColorTick");
+
     return _G[self.windowName] and _G[self.windowName]:Hide();
+end
+
+---@return nil
+function Overview:startColorTicker()
+    if (GL.Timers and GL.Timers["TradeTimeOverviewColorTick"]) then
+        return;
+    end
+
+    GL:interval(.5, "TradeTimeOverviewColorTick", function ()
+        local toRelease = {};
+        for itemGUID, Row in pairs(self.ItemRows) do
+            local CountDownBar = Row.CountDownBar;
+            if (CountDownBar and CountDownBar.running) then
+                if (CountDownBar.remaining and CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
+                    table.insert(toRelease, itemGUID);
+                else
+                    self:updateBarColor(Row);
+                end
+            end
+        end
+
+        for _, itemGUID in pairs(toRelease) do
+            self:releaseItemRow(self.ItemRows[itemGUID]);
+            self.ItemRows[itemGUID] = nil;
+        end
+    end);
 end
 
 ---@return Frame
@@ -346,8 +386,16 @@ function Overview:build()
     return Window;
 end
 
+--- Coalesces bursts of refresh requests into a single rebuild on the next frame.
 ---@return nil
 function Overview:refresh()
+    GL:after(0, "TradeTimeOverviewRefresh", function ()
+        self:refreshNow();
+    end);
+end
+
+---@return nil
+function Overview:refreshNow()
     local State = TradeTime:getState() or {};
 
     -- There's nothing to show!
@@ -384,24 +432,23 @@ function Overview:refresh()
         local awardedToSelf = awarded and not disenchanted and GL:iEquals(AwardDetails.awardedTo, GL.User.fqn);
         local itemIsTooNew = Details.secondsRemaining > MAXIMUM_TRADE_TIME_LEFT;
 
+        local shouldHide = itemIsTooNew
+            or (awarded and HIDE_AWARDED)
+            or (awardedToSelf and HIDE_AWARDED_TO_SELF)
+            or (disenchanted and HIDE_DISENCHANTED);
+
+        if (self.ItemRows[itemGUID] and shouldHide) then
+            self:releaseItemRow(self.ItemRows[itemGUID]);
+            self.ItemRows[itemGUID] = nil;
+        end
+
         if (not self.ItemRows[itemGUID]
             and not self.HiddenItems[itemGUID]
+            and not shouldHide
         ) then
             ---@type Frame
             local ItemRow = self:buildItemRow(Details, Window, ActionButtons);
             self.ItemRows[itemGUID] = ItemRow;
-        end
-
-        if (self.ItemRows[itemGUID] and (
-            itemIsTooNew
-            or (awarded and HIDE_AWARDED)
-            or (awardedToSelf and HIDE_AWARDED_TO_SELF)
-            or (disenchanted and HIDE_DISENCHANTED)
-        )) then
-            local Row = self.ItemRows[itemGUID];
-            self:releaseItemRow(Row);
-            self.ItemRows[itemGUID] = nil;
-            Row = nil;
         end
     end
 
@@ -523,17 +570,22 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
         ItemRow.awarded = false;
         ItemRow.disenchanted = false;
 
-        CountDownBar:SetIcon(Details.itemIcon);
+        local newIcon = Details.itemIcon;
         local AwardDetails = DB:get("RecentlyAwardedItems." .. Details.itemGUID);
 
         if (AwardDetails) then
             if (AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier) then
-                CountDownBar:SetIcon("Interface/AddOns/Gargul/Assets/Icons/disenchant");
+                newIcon = "Interface/AddOns/Gargul/Assets/Icons/disenchant";
                 ItemRow.awarded = true;
             else
-                CountDownBar:SetIcon("Interface/AddOns/Gargul/Assets/Icons/trophy");
+                newIcon = "Interface/AddOns/Gargul/Assets/Icons/trophy";
                 ItemRow.disenchanted = true;
             end
+        end
+
+        if (newIcon ~= ItemRow.iconKey) then
+            ItemRow.iconKey = newIcon;
+            CountDownBar:SetIcon(newIcon);
         end
     end
     ItemRow.updateIcon();
@@ -574,62 +626,8 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
         end);
     end);
 
-    local itemIsHardReserved, itemIsSoftReserved, itemIsWishListed, itemIsPrioritized;
-    local updateReservationDetails = function ()
-        -- Check if this item is reserved
-        itemIsHardReserved = SoftRes:linkIsHardReserved(Details.itemLink);
-        itemIsSoftReserved = not itemIsHardReserved and SoftRes:linkIsReserved(Details.itemLink);
-
-        -- Check if this item is on TMB
-        itemIsWishListed, itemIsPrioritized = false, false;
-        local TMBInfo = GL.TMB:byItemLink(Details.itemLink) or {};
-        for _, Entry in pairs(TMBInfo or {}) do
-            itemIsWishListed = true;
-
-            if (Entry.type == Constants.tmbTypePrio) then
-                itemIsPrioritized = true;
-                break;
-            end
-        end
-        itemIsWishListed = not itemIsPrioritized and itemIsWishListed;
-    end
-
-    Events:register({
-        { "TradeTimeOverviewSoftresImported" .. Details.itemGUID, "GL.SOFTRES_IMPORTED" },
-        { "TradeTimeOverviewSoftresCleared" .. Details.itemGUID, "GL.SOFTRES_CLEARED" },
-        { "TradeTimeOverviewTMBImported" .. Details.itemGUID, "GL.TMB_IMPORTED" },
-        { "TradeTimeOverviewTMBCleared" .. Details.itemGUID, "GL.TMB_CLEARED" },
-    }, updateReservationDetails);
-    updateReservationDetails();
-
-    -- Make the bar turn green/yellow/red based on time left
-    CountDownBar:AddUpdateFunction(function (Bar)
-        if (CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
-            self:releaseItemRow(self.ItemRows[Details.itemGUID]);
-
-            return;
-        end
-
-        local percentageLeft = (CountDownBar.remaining / 7200) * 100;
-
-        if (itemIsHardReserved) then
-            Bar:SetColor(.77, .12, .23, 1);
-        elseif (itemIsSoftReserved) then
-            Bar:SetColor(.95686, .5490, .72941, 1);
-        elseif (itemIsPrioritized) then
-            Bar:SetColor(1, .48627, .0392, 1);
-        elseif (itemIsWishListed) then
-            Bar:SetColor(1, 1, 1, 1);
-        elseif (ItemRow.awarded or ItemRow.disenchanted) then
-            Bar:SetColor(0, 0, 0, .6);
-        elseif (percentageLeft >= 60) then
-            Bar:SetColor(0, 1, 0, .3);
-        elseif (percentageLeft >= 30) then
-            Bar:SetColor(1, 1, 0, .3);
-        else
-            Bar:SetColor(1, 0, 0, .3);
-        end
-    end);
+    ItemRow.Details = Details;
+    self:updateReservationDetails(ItemRow);
 
     CandyBar.RegisterCallback(GL.Ace, "LibCandyBar_Stop", function (_, Bar)
         if (Bar
@@ -650,6 +648,8 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     CountDownBar:Start(7200); -- Default trade duration is two hours
     ItemRow.CountDownBar = CountDownBar;
 
+    self:updateBarColor(ItemRow);
+
     return ItemRow;
 end
 
@@ -659,6 +659,95 @@ function Overview:hideItemRow(itemGUID)
     self.HiddenItems[itemGUID] = true;
 
     self:refresh();
+end
+
+--- Populate/refresh the reservation and TMB priority flags on a row.
+---
+---@param Row Frame
+---@return nil
+function Overview:updateReservationDetails(Row)
+    local Details = Row.Details;
+    if (not Details) then
+        return;
+    end
+
+    Row.itemIsHardReserved = SoftRes:linkIsHardReserved(Details.itemLink);
+    Row.itemIsSoftReserved = not Row.itemIsHardReserved and SoftRes:linkIsReserved(Details.itemLink);
+    Row.itemIsWishListed = false;
+    Row.itemIsPrioritized = false;
+
+    local TMBInfo = GL.TMB:byItemLink(Details.itemLink) or {};
+    for _, Entry in pairs(TMBInfo) do
+        Row.itemIsWishListed = true;
+
+        if (Entry.type == Constants.tmbTypePrio) then
+            Row.itemIsPrioritized = true;
+            break;
+        end
+    end
+
+    Row.itemIsWishListed = not Row.itemIsPrioritized and Row.itemIsWishListed;
+
+    -- Force the next updateBarColor call to re-apply, since reservation state
+    -- changes can flip which color bucket the bar belongs to
+    Row.colorKey = nil;
+end
+
+--- Apply the bar color that matches the row's current reservation/time state.
+---
+---@param Row Frame
+---@return nil
+function Overview:updateBarColor(Row)
+    local CountDownBar = Row.CountDownBar;
+    if (not CountDownBar or not CountDownBar.remaining) then
+        return;
+    end
+
+    local colorKey;
+    if (Row.itemIsHardReserved) then
+        colorKey = "hard";
+    elseif (Row.itemIsSoftReserved) then
+        colorKey = "soft";
+    elseif (Row.itemIsPrioritized) then
+        colorKey = "prio";
+    elseif (Row.itemIsWishListed) then
+        colorKey = "wish";
+    elseif (Row.awarded or Row.disenchanted) then
+        colorKey = "awarded";
+    else
+        local percentageLeft = (CountDownBar.remaining / 7200) * 100;
+        if (percentageLeft >= 60) then
+            colorKey = "green";
+        elseif (percentageLeft >= 30) then
+            colorKey = "yellow";
+        else
+            colorKey = "red";
+        end
+    end
+
+    if (Row.colorKey == colorKey) then
+        return;
+    end
+
+    Row.colorKey = colorKey;
+
+    if (colorKey == "hard") then
+        CountDownBar:SetColor(.77, .12, .23, 1);
+    elseif (colorKey == "soft") then
+        CountDownBar:SetColor(.95686, .5490, .72941, 1);
+    elseif (colorKey == "prio") then
+        CountDownBar:SetColor(1, .48627, .0392, 1);
+    elseif (colorKey == "wish") then
+        CountDownBar:SetColor(1, 1, 1, 1);
+    elseif (colorKey == "awarded") then
+        CountDownBar:SetColor(0, 0, 0, .6);
+    elseif (colorKey == "green") then
+        CountDownBar:SetColor(0, 1, 0, .3);
+    elseif (colorKey == "yellow") then
+        CountDownBar:SetColor(1, 1, 0, .3);
+    elseif (colorKey == "red") then
+        CountDownBar:SetColor(1, 0, 0, .3);
+    end
 end
 
 --- Release an ItemRow (aka remove it, hide it, take care of the countdown bar it holds)
