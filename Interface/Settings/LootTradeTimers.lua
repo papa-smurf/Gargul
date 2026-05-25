@@ -16,6 +16,8 @@ Interface.Settings.LootTradeTimers = {
 };
 local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
 
+local TRADE_TIMER_LIMIT = 50;
+
 ---@return nil
 function LootTradeTimers:draw(Parent)
     GL:debug("LootTradeTimers:draw");
@@ -24,13 +26,13 @@ function LootTradeTimers:draw(Parent)
     NumberOfTimerBars:SetLabel("Maximum number of active countdown bars");
     NumberOfTimerBars.label:SetTextColor(1, .95686, .40784);
     NumberOfTimerBars:SetFullWidth(true);
-    NumberOfTimerBars:SetValue(min(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 12), 12));
-    NumberOfTimerBars:SetSliderValues(1, 12, 1);
+    NumberOfTimerBars:SetValue(min(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", TRADE_TIMER_LIMIT)));
+    NumberOfTimerBars:SetSliderValues(1, TRADE_TIMER_LIMIT, 1);
     NumberOfTimerBars:SetCallback("OnValueChanged", function (Slider)
         local value = tonumber(Slider:GetValue());
 
         if (type(value) ~= nil) then
-            GL.Settings:set("LootTradeTimers.maximumNumberOfBars", min(value, 12));
+            GL.Settings:set("LootTradeTimers.maximumNumberOfBars", min(value, TRADE_TIMER_LIMIT));
             Interface.TradeTime.Overview:refresh();
         end
     end);
@@ -52,7 +54,7 @@ function LootTradeTimers:draw(Parent)
         local value = tonumber(Slider:GetValue());
 
         if (type(value) ~= nil) then
-            GL.Settings:set("LootTradeTimers.maximumTradeTimeLeft", value);
+            GL.Settings:set("LootTradeTimers.maximumTradeTimeLeft", min(value, TRADE_TIMER_LIMIT));
             Interface.TradeTime.Overview:refresh();
         end
     end);
