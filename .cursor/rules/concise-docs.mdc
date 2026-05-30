@@ -1,0 +1,37 @@
+---
+description: Keep code comments and doc-comments short and plain
+alwaysApply: true
+---
+
+# Concise Docs
+
+Write comments and doc-comments as short and plain as possible. Explain intent, not mechanics. Prefer one line. Trust the reader to read the code.
+
+## Rules
+
+1. **Default to one line.** Only add more when a non-obvious decision genuinely needs it.
+2. **No narration.** Don't restate what the code plainly does.
+3. **No essays.** Drop the multi-paragraph rationale, edge-case enumerations, and "why this is correct" justifications. If a caveat matters, state it in a few words.
+4. **Plain words.** Avoid academic/scientific phrasing ("nondeterministic", "irreducible", "collapse into a single notification"). Say it like you'd say it to a teammate.
+5. **Function headers:** one line on what it does (+ intent if not obvious). Keep `---@param`/`---@return`.
+
+## Examples
+
+```lua
+-- ❌ BAD
+-- Fallback for silent failures: only reports when NO categorized error and NO
+-- slot-clear resolved this hand-out. The check is slot-specific (this hand-out's
+-- own index must still hold its itemID), so duplicate stacks of the same item
+-- resolve independently and a successful hand-out's now-empty slot reads as done.
+
+-- ✅ GOOD
+-- If nothing resolved this hand-out, report it only if its slot still holds the item.
+```
+
+```lua
+-- ❌ BAD: "Flush (don't drop) pending loot-error reports so failures captured in
+--         the final moments before the window closed still surface to the master
+--         looter, then wipe the buckets (including their suppression sets)..."
+-- ✅ GOOD
+-- Flush any pending error reports before wiping them for the next window.
+```

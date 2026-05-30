@@ -19,6 +19,9 @@ local _, GL = ...;
 ---@field LootChangedTimer number|nil
 ---@field Rules table
 ---@field RoundRobinItems table
+---@field LootErrors table
+---@field PendingHandouts table
+---@field handoutSequence number
 local PackMule = {
     _initialized = false,
     disenchanter = false,
@@ -38,6 +41,8 @@ local PackMule = {
     playerIsInHeroicInstance = false,
 
     LootChangedTimer = nil,
+    LootErrors = {},
+    PendingHandouts = {},
     Rules = {},
     RoundRobinItems = {},
 };
@@ -164,6 +169,37 @@ function PackMule:_init()
         end
     end);
 
+    -- Shared listeners for master-loot hand-out outcomes. Registered once (not
+    -- per hand-out) so concurrent hand-outs can't claim each other's events. See giveMasterLoot.
+    GL.Events:register("PackMuleMasterLootClearedListener", "LOOT_SLOT_CLEARED", function (_, slot)
+        -- A slot clearing is a definitive success for the hand-out that targeted it
+        for _, Handout in pairs(self.PendingHandouts) do
+            if (Handout.itemIndex == slot) then
+                self:resolveHandout(Handout.handoutID);
+                return;
+            end
+        end
+    end);
+
+    GL.Events:register("PackMuleMasterLootErrorListener", "UI_ERROR_MESSAGE", function (_, errorType)
+        if (GL:empty(self.PendingHandouts)) then
+            return;
+        end
+
+        local category = self:categorizeLootError(errorType);
+        if (not category) then
+            return;
+        end
+
+        local Handout = self:oldestPendingHandout();
+        if (not Handout) then
+            return;
+        end
+
+        self:resolveHandout(Handout.handoutID);
+        self:reportLootError(Handout.playerName, category, Handout.itemLink);
+    end);
+
     -- Make sure we stop checking the loot window after the player is done looting
     GL.Events:register("PackMuleLootClosedListener", "LOOT_CLOSED", function ()
         if (self.LootChangedTimer) then
@@ -172,6 +208,21 @@ function PackMule:_init()
             GL.Ace:CancelTimer(self.LootChangedTimer);
             self.LootChangedTimer = nil;
         end
+
+        -- Cancel in-flight hand-out timers so a closed window can't report a false failure.
+        local pendingHandoutIDs = GL:tableKeys(self.PendingHandouts);
+        self.PendingHandouts = {};
+        for _, handoutID in pairs(pendingHandoutIDs) do
+            GL:cancelTimer("PackMule.Handout." .. handoutID);
+        end
+
+        -- Flush any pending error reports before wiping them for the next window.
+        local pendingErrorKeys = GL:tableKeys(self.LootErrors);
+        for _, key in pairs(pendingErrorKeys) do
+            self:flushLootError(key);
+        end
+
+        self.LootErrors = {};
     end);
 end
 
@@ -371,6 +422,195 @@ function PackMule:zoneChanged()
     self.playerIsInHeroicInstance = GL:inTable({ 2, 174, }, difficultyID);
 end
 
+---@param itemIndex number
+---@param itemID number
+---@return boolean
+function PackMule:lootSlotStillHoldsItem(itemIndex, itemID)
+    local slotLink = GetLootSlotLink(itemIndex);
+    return slotLink ~= nil and GL:getItemIDFromLink(slotLink) == itemID;
+end
+
+--- Record a failed hand-out for reporting. Failures for the same player and reason
+--- are grouped together so the player only gets one message, not one per item or
+--- per retry.
+---
+---@param playerName string
+---@param reasonCategory "bagsFull"|"unique"|"outOfRange"|"notEligible"|"other"|"stillInWindow"
+---@param itemLink string
+---@return nil
+function PackMule:reportLootError(playerName, reasonCategory, itemLink)
+    local key = playerName .. "-" .. reasonCategory;
+    local Entry = self.LootErrors[key];
+
+    if (not Entry) then
+        Entry = {
+            playerName = playerName,
+            reasonCategory = reasonCategory,
+            ItemLinks = {},
+            Reported = {},
+        };
+        self.LootErrors[key] = Entry;
+    end
+
+    -- Already surfaced this exact item for this player+reason: stay quiet until
+    -- LOOT_CLOSED so LootChangedTimer retries don't re-report the same failure.
+    if (Entry.Reported[itemLink]
+        or GL:inTable(Entry.ItemLinks, itemLink)
+    ) then
+        return;
+    end
+
+    -- Arm a single debounced flush when the batch goes from empty to non-empty.
+    -- Repeated failures within the .5s window collapse into this one flush.
+    if (GL:empty(Entry.ItemLinks)) then
+        GL:after(.5, "PackMule.LootError." .. key, function ()
+            self:flushLootError(key);
+        end);
+    end
+
+    table.insert(Entry.ItemLinks, itemLink);
+end
+
+---@param key string
+---@return nil
+function PackMule:flushLootError(key)
+    local Entry = self.LootErrors[key];
+    if (not Entry
+        or GL:empty(Entry.ItemLinks)
+    ) then
+        return;
+    end
+
+    GL:cancelTimer("PackMule.LootError." .. key);
+
+    local name = GL:disambiguateName(Entry.playerName);
+    local links = table.concat(Entry.ItemLinks, ", ");
+
+    -- Suppress these items on future retries, then clear the pending batch
+    for _, link in ipairs(Entry.ItemLinks) do
+        Entry.Reported[link] = true;
+    end
+    Entry.ItemLinks = {};
+
+    GL.Interface.Alerts:fire("GargulNotification", {
+        message = ("|c00BE3333%s|r"):format(L["Loot error!"]),
+    });
+
+    if (Entry.reasonCategory == "bagsFull") then
+        GL:error((L["%s's bags are full (%s)"]):format(name, links));
+    elseif (Entry.reasonCategory == "unique") then
+        GL:error((L["%s already has the maximum number of: %s"]):format(name, links));
+    elseif (Entry.reasonCategory == "outOfRange") then
+        GL:error((L["%s is out of range (%s)"]):format(name, links));
+    elseif (Entry.reasonCategory == "notEligible") then
+        GL:error((L["%s is no longer eligible for: %s"]):format(name, links));
+    elseif (Entry.reasonCategory == "stillInWindow") then
+        GL:error((L["Could not give %s to %s"]):format(links, name));
+    else
+        GL:error((L["Could not give %s to %s"]):format(links, name));
+    end
+end
+
+---@param errorType number
+---@return "bagsFull"|"unique"|"outOfRange"|"notEligible"|"other"|nil
+function PackMule:categorizeLootError(errorType)
+    if (GL:isGameMessageID("ERR_LOOT_MASTER_INV_FULL", errorType)) then
+        return "bagsFull";
+    end
+
+    if (GL:isGameMessageID("ERR_LOOT_MASTER_UNIQUE_ITEM", errorType)
+        or GL:isGameMessageID("ERR_ITEM_MAX_COUNT", errorType)
+        or GL:isGameMessageID("ERR_ITEM_MAX_COUNT_EQUIPPED_SOCKETED", errorType)
+        or GL:isGameMessageID("ERR_ITEM_MAX_COUNT_SOCKETED", errorType)
+    ) then
+        return "unique";
+    end
+
+    if (GL:isGameMessageID("ERR_LOOT_TOO_FAR", errorType)
+        or GL:isGameMessageID("ERR_TOO_FAR_TO_INTERACT", errorType)
+    ) then
+        return "outOfRange";
+    end
+
+    if (GL:isGameMessageID("ERR_LOOT_PLAYER_NOT_FOUND", errorType)) then
+        return "notEligible";
+    end
+
+    if (GL:isGameMessageID("ERR_LOOT_MASTER_OTHER", errorType)) then
+        return "other";
+    end
+
+    return nil;
+end
+
+--- Resolve (and stop tracking) a single in-flight hand-out.
+---
+---@param handoutID string
+---@return nil
+function PackMule:resolveHandout(handoutID)
+    GL:cancelTimer("PackMule.Handout." .. handoutID);
+    self.PendingHandouts[handoutID] = nil;
+end
+
+--- Wrapper around GiveMasterLoot that detects and reports failed hand-outs.
+---
+--- Flow: success = LOOT_SLOT_CLEARED, failure = a known error, silent failure = the
+--- 1.5s fallback (re-checks the slot), aborted = LOOT_CLOSED.
+---
+---@param itemIndex number
+---@param playerIndex number
+---@param itemLink string
+---@param playerName string
+---@return nil
+function PackMule:giveMasterLoot(itemIndex, playerIndex, itemLink, playerName)
+    itemLink = itemLink or GetLootSlotLink(itemIndex) or "";
+    local itemID = GL:getItemIDFromLink(itemLink);
+
+    self.handoutSequence = (self.handoutSequence or 0) + 1;
+    local handoutID = GL:uuid();
+
+    self.PendingHandouts[handoutID] = {
+        handoutID = handoutID,
+        order = self.handoutSequence,
+        playerName = playerName,
+        itemLink = itemLink,
+        itemID = itemID,
+        itemIndex = itemIndex,
+    };
+
+    GiveMasterLoot(itemIndex, playerIndex);
+
+    -- If nothing resolved this hand-out, report it only if its slot still holds the item.
+    GL:after(1.5, "PackMule.Handout." .. handoutID, function ()
+        local Handout = self.PendingHandouts[handoutID];
+
+        -- Drops the registry entry AND clears this hand-out's unique timer from
+        -- GL.Timers (it never gets reused, so it'd otherwise linger as a dead entry).
+        self:resolveHandout(handoutID);
+
+        if (not Handout
+            or not Handout.itemID
+            or not self:lootSlotStillHoldsItem(Handout.itemIndex, Handout.itemID)
+        ) then
+            return;
+        end
+
+        self:reportLootError(Handout.playerName, "stillInWindow", Handout.itemLink);
+    end);
+end
+
+---@return table|nil
+function PackMule:oldestPendingHandout()
+    local Oldest;
+    for _, Handout in pairs(self.PendingHandouts) do
+        if (not Oldest or Handout.order < Oldest.order) then
+            Oldest = Handout;
+        end
+    end
+
+    return Oldest;
+end
+
 --- Check all loot and implement applicable rules
 ---@return nil
 function PackMule:lootReady()
@@ -428,7 +668,7 @@ function PackMule:lootReady()
                 target = GL:formatPlayerName(target);
                 for playerIndex = 1, GetNumGroupMembers() do
                     if (GL:iEquals(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
-                        GiveMasterLoot(itemIndex, playerIndex);
+                        self:giveMasterLoot(itemIndex, playerIndex, itemLink, target);
                         return;
                     end
                 end
@@ -1073,7 +1313,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     end);
 
     -- Assign the item to the winner
-    GiveMasterLoot(itemIndex, playerIndex);
+    self:giveMasterLoot(itemIndex, playerIndex, GetLootSlotLink(itemIndex), playerName);
 
     -- Make sure the event listener doesn't linger
     GL.Ace:ScheduleTimer(function ()
