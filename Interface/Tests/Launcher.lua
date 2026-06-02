@@ -28,6 +28,7 @@ local NEXT_SCENARIO_TIMER_ID = "GargulTestsLauncher.NextScenario";
 
 --- List of E2E scenarios: key in GL.Tests.E2E, display label. Scenario ref resolved at open.
 local E2E_SCENARIOS = {
+    { key = "PackMule", label = "PackMule E2E", checked = false, },
     { key = "GDKPMultiAuction", label = "GDKP Multi-Auction E2E", },
     { key = "GDKPAuction", label = "GDKP Auction E2E", },
 };
@@ -249,7 +250,7 @@ function Launcher:open()
         local Checkbox = Interface:createCheckbox({
             Parent = Window,
             name = "GargulTestsLauncher_" .. entry.key,
-            checked = true,
+            checked = entry.checked ~= false,
             label = entry.label,
             callback = function ()
                 self:refreshButtons();

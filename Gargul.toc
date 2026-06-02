@@ -228,6 +228,8 @@ Interface/Tests/Runner.lua
 Interface/Tests/Launcher.lua
 Test.lua
 Tests/Base.lua
+Tests/Fakes/Loot.lua
 Tests/E2E/Base.lua
+Tests/E2E/PackMule.lua
 Tests/E2E/GDKPMultiAuction.lua
 Tests/E2E/GDKPAuction.lua
