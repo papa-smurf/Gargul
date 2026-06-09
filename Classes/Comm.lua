@@ -150,36 +150,6 @@ function Comm:_init()
     self._initialized = true;
 end
 
---- Sending cross-realm/cross-faction addon messages via whisper doesn't work currently
---- This instead forces the message to be sent on a valid group chat (party/raid) if possible
----
----@param playerName string
----@return string
-function Comm:whisperOrGroup(playerName)
-    -- According to Meorawr, this was fixed in 10.2.7, see https://github.com/Stanzilla/WoWUIBugs/issues/535
-    if (true) then
-        return "WHISPER";
-    end
-
-    local distribution = "WHISPER";
-
-    if (not GL:isCrossRealm()) then
-        return distribution;
-    end
-
-    local _, realm = GL:stripRealm(playerName);
-    if (GL.User.isInGroup
-        and (
-            (realm and not GL:iEquals(GL.User.realm, realm))
-            or UnitFactionGroup(playerName) ~= UnitFactionGroup("player")
-        )
-    ) then
-        distribution = GL.User.isInRaid and "RAID" or "PARTY";
-    end
-
-    return distribution;
-end
-
 --- Send a CommMessage object
 ---
 ---@param CommMessage CommMessage
@@ -190,10 +160,6 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
     local action = CommMessage.action;
-
-    if (distribution == "WHISPER") then
-        distribution = Comm:whisperOrGroup(recipient);
-    end
 
     local compressedMessage = "";
 
@@ -357,7 +323,7 @@ function Comm:listen(payload, distribution, playerName)
         -- This empty message will trigger an out-of-date error on the recipient's side
         GL.CommMessage.new({
             action = Actions.response,
-            channel = Comm:whisperOrGroup(playerName),
+            channel = "WHISPER",
             recipient = playerName,
         }):send();
 

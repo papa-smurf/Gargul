@@ -237,12 +237,6 @@ function CommMessage:compress(Message)
 
     local FQN = Message.senderFqn;
 
-    if (Message.channel == "WHISPER"
-        and Message.recipient
-    ) then
-        Message.channel = GL.Comm:whisperOrGroup(Message.recipient);
-    end
-
     local Payload = {
         a = Message.action, -- Action
         b = Message.content, -- Content
