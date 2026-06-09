@@ -385,7 +385,7 @@ L.CHAT = {
 
         --[[ BOOSTED ROLLS ]]
         ["Your %s roll is /rnd %d-%d%s"] = "Votre lancer %s est /rnd %d-%d%s",
-        ["Player %s's %s roll is /rnd %d-%d%s"] = "Le lancer %s du joueur %s est /rnd %d-%d%s", --TODO:PLACEHOLDER POSITION CHANGE (2<->1)
+        ["Player %s's %s roll is /rnd %d-%d%s"] = "Le joueur %s a un lancer %s : /rnd %d-%d%s",
         ["(default)"] = "(par défaut)",
 
         --[[ PLUS ONES ]]
