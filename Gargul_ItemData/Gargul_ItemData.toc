@@ -1,10 +1,10 @@
-## Interface: 120000, 120001
+## Interface: 120005, 120007
 ## Interface-Classic: 11508
 ## Interface-BCC: 20505
 ## Interface-Wrath: 30405
-## Interface-Titan: 38000
+## Interface-Titan: 38001
 ## Interface-Cata: 40402
-## Interface-Mists: 50503
+## Interface-Mists: 50503, 50504
 ## Title: Gargul |cffffffffItem Data|r
 ## Notes: Optional item cache for Gargul. Enables players to search for items.
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap

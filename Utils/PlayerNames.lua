@@ -240,12 +240,10 @@ function GL:playerClassByName(name, default)
 end
 
 --- Check if player is on a cross-realm / connected realm
+--- Everything is considered crossrealm now, keeping func for backwards compatibility
 ---
 ---@return boolean
 function GL:isCrossRealm()
-    -- With almost everything being connected nowadays we're doing a trial
-    -- run with always assuming that we're on a connected realm
-    ---@TODO: REMOVE IN >= 7.7.0
     if (true) then
         return true;
     end
