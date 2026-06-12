@@ -36,9 +36,12 @@ GL.Interface.GDKP.LedgerList = {
 local LedgerList = GL.Interface.GDKP.LedgerList;
 
 --[[ CONSTANTS ]]
-local TABLE_ROWS = 40;
+-- 42 rows at 15px tall occupy ~630px, slightly less than the old 40 rows at 16px
+-- (~640px), so a full 40-man roster (plus a couple) fits in the same vertical space
+-- without the table growing taller and clipping off the screen.
+local TABLE_ROWS = 42;
 local DEFAULT_PLAYER_COLUMN_WIDTH = 90;
-local HEIGHT_PER_ROW = 16;
+local HEIGHT_PER_ROW = 15;
 
 local PLAYERS_TABLE_COLUMNS = {
     { name = L["Player"], width = DEFAULT_PLAYER_COLUMN_WIDTH, },
@@ -324,6 +327,14 @@ function LedgerList:refresh()
 
         table.sort(PlayerNames, function (a, b)
             if (a and b) then
+                -- Sort real cuts before zero cuts, alphabetical within each group,
+                -- so zero-cut players are the ones clipped off a too-long screenshot
+                local aHasCut = (Cuts[a] or 0) > 0;
+                local bHasCut = (Cuts[b] or 0) > 0;
+                if (aHasCut ~= bHasCut) then
+                    return aHasCut;
+                end
+
                 return a < b;
             end
 
