@@ -16,6 +16,7 @@ local Test = {
         Items = {},
     },
     PackMule = {},
+    ItemLinks = {},
 };
 
 GL.Test = Test;
@@ -912,4 +913,84 @@ function Test.DroppedLoot:bonusLoot()
     end
 
     GL.isClassic = oldIsClassic;
+end
+
+-- Multiple variants (different upgrade/spec bonus IDs) of the same item IDs
+Test.ItemLinks.Links = {
+    "|cnIQ4:|Hitem:249343::::::::10:1451::6:1:3524:1:28:3605:::::|h[Gaze of the Alnseer]|h|r",
+    "|cnIQ4:|Hitem:249343::::::::10:1451::3:1:3524:1:28:3607:::::|h[Gaze of the Alnseer]|h|r",
+    "|cnIQ4:|Hitem:249343::::::::10:1451::5:1:3524:1:28:3606:::::|h[Gaze of the Alnseer]|h|r",
+    "|cnIQ4:|Hitem:249343::::::::10:1451::4:1:3524:1:28:3608:::::|h[Gaze of the Alnseer]|h|r",
+    "|cnIQ4:|Hitem:249350::::::::10:1451::6:1:3524:1:28:3605:::::|h[Alnforged Riftbloom]|h|r",
+    "|cnIQ4:|Hitem:249350::::::::10:1451::3:1:3524:1:28:3607:::::|h[Alnforged Riftbloom]|h|r",
+    "|cnIQ4:|Hitem:249350::::::::10:1451::5:1:3524:1:28:3606:::::|h[Alnforged Riftbloom]|h|r",
+    "|cnIQ4:|Hitem:249350::::::::10:1451::4:1:3524:1:28:3608:::::|h[Alnforged Riftbloom]|h|r",
+    "|cnIQ4:|Hitem:249381::::::::10:1451::5:1:3524:1:28:3606:::::|h[Greaves of the Unformed]|h|r",
+    "|cnIQ4:|Hitem:249381::::::::10:1451::4:1:3524:1:28:3608:::::|h[Greaves of the Unformed]|h|r",
+    "|cnIQ4:|Hitem:249381::::::::10:1451::3:1:3524:1:28:3607:::::|h[Greaves of the Unformed]|h|r",
+    "|cnIQ4:|Hitem:249381::::::::10:1451::6:1:3524:1:28:3605:::::|h[Greaves of the Unformed]|h|r",
+    "|cnIQ4:|Hitem:256656::::::::10:1451::6:1:3524:1:28:3605:::::|h[Pattern: World Tender's Barkclasp]|h|r",
+    "|cnIQ4:|Hitem:256656::::::::10:1451::4:1:3524:1:28:3608:::::|h[Pattern: World Tender's Barkclasp]|h|r",
+    "|cnIQ4:|Hitem:256656::::::::10:1451::5:1:3524:1:28:3606:::::|h[Pattern: World Tender's Barkclasp]|h|r",
+    "|cnIQ4:|Hitem:256656::::::::10:1451::3:1:3524:1:28:3607:::::|h[Pattern: World Tender's Barkclasp]|h|r",
+    "|cnIQ3:|Hitem:256750::::::::10:1451::5:1:3524:1:28:3606:::::|h[Formula: Enchant Weapon - Worldsoul Cradle]|h|r",
+    "|cnIQ3:|Hitem:256750::::::::10:1451::3:1:3524:1:28:3607:::::|h[Formula: Enchant Weapon - Worldsoul Cradle]|h|r",
+    "|cnIQ3:|Hitem:256750::::::::10:1451::4:1:3524:1:28:3608:::::|h[Formula: Enchant Weapon - Worldsoul Cradle]|h|r",
+    "|cnIQ3:|Hitem:256750::::::::10:1451::6:1:3524:1:28:3605:::::|h[Formula: Enchant Weapon - Worldsoul Cradle]|h|r",
+    "|cnIQ3:|Hitem:264246::::::::10:1451::4:1:3524:1:28:3608:::::|h[Eerie Iridescent Riftshroom]|h|r",
+    "|cnIQ3:|Hitem:264246::::::::10:1451::5:1:3524:1:28:3606:::::|h[Eerie Iridescent Riftshroom]|h|r",
+    "|cnIQ3:|Hitem:264246::::::::10:1451::6:1:3524:1:28:3605:::::|h[Eerie Iridescent Riftshroom]|h|r",
+    "|cnIQ3:|Hitem:264246::::::::10:1451::3:1:3524:1:28:3607:::::|h[Eerie Iridescent Riftshroom]|h|r",
+    "|cnIQ4:|Hitem:265950::::::::10:1451::6:1:3524:1:28:3605:::::|h[Dreamrift Vanquisher's Aureate Trophy]|h|r",
+    "|cnIQ4:|Hitem:265950::::::::10:1451::5:1:3524:1:28:3606:::::|h[Dreamrift Vanquisher's Aureate Trophy]|h|r",
+    "|cnIQ4:|Hitem:266886::::::::10:1451::6:1:3524:1:28:3605:::::|h[Dreamrift Vanquisher's Gleaming Trophy]|h|r",
+    "|cnIQ4:|Hitem:267645::::::::10:1451::3:1:3524:1:28:3607:::::|h[Dreamrift Vanquisher's Argent Trophy]|h|r",
+    "|cnIQ4:|Hitem:267645::::::::10:1451::4:1:3524:1:28:3608:::::|h[Dreamrift Vanquisher's Argent Trophy]|h|r",
+    "|cnIQ4:|Hitem:267645::::::::10:1451::6:1:3524:1:28:3605:::::|h[Dreamrift Vanquisher's Argent Trophy]|h|r",
+    "|cnIQ4:|Hitem:267645::::::::10:1451::5:1:3524:1:28:3606:::::|h[Dreamrift Vanquisher's Argent Trophy]|h|r",
+};
+
+--- Round-trip every test link: dehydrate -> hydrate -> dehydrate must be stable.
+---
+---@return nil
+---@test /script _G.Gargul.Test.ItemLinks:roundTrip()
+function Test.ItemLinks:roundTrip()
+    local total = #self.Links;
+    local completed = 0;
+    local failures = 0;
+
+    GL:xd(("[ItemLinks] Running %d round-trips..."):format(total));
+
+    for _, link in pairs(self.Links) do
+        local dehydrated = GL:dehydrateItemLink(link);
+
+        GL:hydrateItemLink(dehydrated, function (hydrated)
+            completed = completed + 1;
+
+            -- The only stable equivalence is at the item-string layer: WoW normalizes
+            -- the full link (drops trailing colons, may reshuffle the color prefix)
+            local stable = hydrated and GL:dehydrateItemLink(hydrated) == dehydrated;
+
+            if (not stable) then
+                failures = failures + 1;
+                GL:xd({
+                    event = "Test.ItemLinks:roundTrip.fail",
+                    link = link,
+                    dehydrated = dehydrated,
+                    hydrated = hydrated,
+                });
+            end
+
+            if (completed >= total) then
+                GL:xd(("[ItemLinks] Done: %d/%d passed, %d failed."):format(total - failures, total, failures));
+            end
+        end);
+    end
+
+    -- Safety net in case a hydrate callback never fires (item failed to load)
+    GL:after(5, "Test.ItemLinks.timeout", function ()
+        if (completed < total) then
+            GL:xd(("[ItemLinks] TIMEOUT: only %d/%d resolved."):format(completed, total));
+        end
+    end);
 end

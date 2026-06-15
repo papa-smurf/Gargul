@@ -84,6 +84,79 @@ function GL:buildItemLink(itemID, extra, callback)
     end);
 end
 
+--- Strip an item link down to the essentials. Feed the result to GL:hydrateItemLink.
+---
+---@param itemLink string
+---@return string|boolean The minified item string (e.g. "item:19019"), or false when invalid
+---
+---@test /dump _G.Gargul:dehydrateItemLink("|cffa335ee|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r");
+---@test /script _G.Gargul.Test.ItemLinks:roundTrip()
+function GL:dehydrateItemLink(itemLink)
+    if (type(itemLink) ~= "string"
+        or itemLink == ""
+    ) then
+        return false;
+    end
+
+    -- Grab the hyperlink body, falling back to a bare item string if one was passed
+    local itemString = strmatch(itemLink, "|H(item[:%d%-]+)") or strmatch(itemLink, "^(item[:%d%-]+)$");
+    if (not itemString) then
+        return false;
+    end
+
+    -- Trailing empty fields carry no information, drop them
+    return (itemString:gsub(":+$", ""));
+end
+
+--- Rebuild a full item link from a value produced by GL:dehydrateItemLink.
+---
+--- Returns the link immediately when the item is already cached. Otherwise the item
+--- is loaded first and the optional callback receives the link once it's ready.
+---
+---@param shortLink string|number A minified item string, an item ID, or a full link
+---@param callback? fun(itemLink:string|boolean)
+---@return string|boolean The full item link, or false when not (yet) available
+---
+---@test /dump _G.Gargul:hydrateItemLink("item:19019");
+---@test /script _G.Gargul.Test.ItemLinks:roundTrip()
+function GL:hydrateItemLink(shortLink, callback)
+    callback = type(callback) == "function" and callback or function () end;
+
+    if (GL:empty(shortLink)) then
+        callback(false);
+        return false;
+    end
+
+    -- Normalize the input into a proper item string
+    local itemString = tostring(shortLink);
+    if (strmatch(itemString, "^%d+$")) then
+        itemString = "item:" .. itemString;
+    elseif (strmatch(itemString, "|H(item[:%d%-]+)")) then
+        itemString = strmatch(itemString, "|H(item[:%d%-]+)");
+    end
+
+    -- GetItemInfo hands back the fully-formed link (color + name) as its 2nd return
+    -- value, preserving any modifiers encoded in the item string
+    local itemLink = select(2, GL.GetItemInfo(itemString));
+    if (itemLink) then
+        callback(itemLink);
+        return itemLink;
+    end
+
+    local itemID = tonumber(strmatch(itemString, "item:(%d+)"));
+    if (not itemID) then
+        callback(false);
+        return false;
+    end
+
+    -- Load the item, then rebuild the link with its modifiers intact
+    GL:onItemLoadDo(itemID, function (Details)
+        callback(select(2, GL.GetItemInfo(itemString)) or (Details and Details.link) or false);
+    end);
+
+    return false;
+end
+
 -- Used mainly for shorting the 'extra' string from getItemIDFromLink
 --
 ---@param str string
