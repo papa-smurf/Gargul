@@ -1160,22 +1160,43 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
+--- Value may be a numeric itemID (legacy) or a dehydrated item link string.
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local itemID = data[realrow].cols[column].value;
-    local _, _, _, _, icon = GL.GetItemInfoInstant(itemID or 0);
-    if (icon) then
-        frame:SetNormalTexture(icon);
+    local value = data[realrow].cols[column].value;
+    local isLink = type(value) == "string";
+    local itemID = isLink and GL:itemIDFromDehydratedLink(value) or tonumber(value);
+
+    if (not itemID or itemID == 0) then
+        frame:Hide();
+        return;
+    end
+
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details or not frame) then
+            frame:Hide();
+            return;
+        end
+
+        frame:SetNormalTexture(Details.icon);
         frame:Show();
+
         frame:SetScript("OnEnter", function ()
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
-            GameTooltip:SetHyperlink("item:" .. tostring(itemID));
-            GameTooltip:Show();
-        end)
+            if (isLink) then
+                GL:hydrateItemLink(value, function (itemLink)
+                    if (itemLink) then
+                        GameTooltip:SetHyperlink(itemLink);
+                        GameTooltip:Show();
+                    end
+                end);
+            else
+                GameTooltip:SetHyperlink("item:" .. tostring(itemID));
+                GameTooltip:Show();
+            end
+        end);
 
-        frame:SetScript("OnLeave", function () GameTooltip:Hide() end);
-    else
-        frame:Hide();
-    end
+        frame:SetScript("OnLeave", function () GameTooltip:Hide(); end);
+    end);
 end
 
 function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)

@@ -428,7 +428,7 @@ function LedgerList:refresh()
 
             tinsert(TableData, {
                 cols = {
-                    { value = Auction.itemID, },
+                    { value = Auction.itemLink, },
                     { value = mutation and mutation or Auction.itemLink, },
                     {
                         value = ("|c00%s%s|r"):format(
