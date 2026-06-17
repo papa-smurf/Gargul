@@ -22,6 +22,14 @@ GL.RollOff = GL.RollOff or {
         note = nil, -- The note displayed on the progress bar
         Rolls = {}, -- Player rolls
     },
+    EquippedGearByPlayer = {},
+    gearSessionID = math.random(1, 2147483647),
+    initiatorSessionIDs = {},
+    GearCache = {
+        hash = nil,
+        initiator = nil,
+        sessionID = nil,
+    },
     InitiateCountDownTimer = nil;
     StopRollOffTimer = nil,
     rollListenerCancelTimerID = nil,
@@ -336,6 +344,9 @@ function RollOff:start(CommMessage)
                 note = content.note,
             };
 
+            self.EquippedGearByPlayer = {};
+            self.GearCache = { hash = nil, initiator = nil, sessionID = nil, };
+
             -- Note: the auctioneer already did this on his end
             if (not CommMessage.Sender.isSelf) then
                 self.CurrentRollOff.Rolls = {};
@@ -343,9 +354,10 @@ function RollOff:start(CommMessage)
                 self.CurrentRollOff.Rolls = KnownRolls;
             end
         else
-            -- If we roll the same item again we do need to make
-            -- sure that we update the roll timer
+            -- Same item re-roll: update timer and reset gear cache so senders re-evaluate
             self.CurrentRollOff.time = time;
+            self.EquippedGearByPlayer = {};
+            self.GearCache = { hash = nil, initiator = nil, sessionID = nil, };
         end
 
         self.inProgress = true;
@@ -846,6 +858,12 @@ function RollOff:processRoll(message)
 
     tinsert(self.CurrentRollOff.Rolls, Roll);
 
+    if (GL:iEquals(Roll.player, GL.User.fqn)
+        or GL:iEquals(Roll.player, GL.User.name)
+    ) then
+        self:sendEquippedGearIfNeeded(self.CurrentRollOff.initiator);
+    end
+
     GL.Events:fire("GL.ROLLOFF_ROLL_ACCEPTED");
 
     self:refreshRollsTable();
@@ -872,6 +890,163 @@ end
 ---@return string
 function RollOff:formatRollNotes(rollNotes)
     return table.concat(rollNotes, ", ");
+end
+
+--- Hash equipped gear (slot + dehydrated link) for comm deduplication.
+---
+---@param gear table<number, string>
+---@return string
+function RollOff:gearHash(gear)
+    local Parts = {};
+
+    for slot, link in pairs(gear) do
+        table.insert(Parts, slot .. "=" .. link);
+    end
+
+    table.sort(Parts);
+
+    return table.concat(Parts, ";");
+end
+
+--- Player key for EquippedGearByPlayer; nil when name-only and not unique in group.
+---
+---@param player string
+---@return string|nil
+function RollOff:gearPlayerKey(player)
+    if (GL:empty(player)) then
+        return nil;
+    end
+
+    if (not strfind(player, "-")
+        and not GL:nameIsUnique(player)
+    ) then
+        return nil;
+    end
+
+    return GL:formatPlayerName(player, { includeRealm = "always", });
+end
+
+--- Send worn gear when it changed or the roll initiator changed.
+---
+---@param initiatorID string
+---@return nil
+function RollOff:sendEquippedGearIfNeeded(initiatorID)
+    if (not initiatorID) then
+        return;
+    end
+
+    local gear = GL:getEquippedGear(true, true);
+    local hash = self:gearHash(gear);
+    local knownSessionID = self.initiatorSessionIDs[initiatorID];
+
+    -- Re-send when gear, initiator, or initiator's session changed
+    local sessionChanged = knownSessionID ~= nil and knownSessionID ~= self.GearCache.sessionID;
+    if (not sessionChanged
+        and self.GearCache.hash == hash
+        and self.GearCache.initiator == initiatorID
+    ) then
+        return;
+    end
+
+    GL.CommMessage.new({
+        action = CommActions.broadcastEquippedGear,
+        content = { s = gear, },
+        channel = "GROUP",
+    }):send();
+
+    self.GearCache.hash = hash;
+    self.GearCache.initiator = initiatorID;
+    self.GearCache.sessionID = knownSessionID;
+end
+
+--- Store a player's worn gear from addon comm.
+---
+---@param CommMessage CommMessage
+---@return nil
+function RollOff:receiveEquippedGear(CommMessage)
+    local gear = CommMessage.content and CommMessage.content.s;
+
+    if (type(gear) ~= "table") then
+        return;
+    end
+
+    local playerKey = self:gearPlayerKey(CommMessage.Sender.fqn);
+    if (not playerKey) then
+        return;
+    end
+
+    self.EquippedGearByPlayer[playerKey] = gear;
+
+    GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", CommMessage.Sender.fqn);
+end
+
+--- Store the sessionID broadcast by an initiator so senders can detect a reload.
+---
+---@param CommMessage CommMessage
+---@return nil
+function RollOff:receiveGearSessionID(CommMessage)
+    local sessionID = CommMessage.content;
+
+    if (type(sessionID) ~= "number") then
+        return;
+    end
+
+    self.initiatorSessionIDs[CommMessage.Sender.fqn] = sessionID;
+end
+
+--- Broadcast our session nonce to the group so players re-send gear after our reload.
+---
+---@return nil
+function RollOff:broadcastGearSessionID()
+    GL.CommMessage.new({
+        action = CommActions.broadcastGearSessionID,
+        content = self.gearSessionID,
+        channel = "GROUP",
+    }):send();
+end
+
+--- Up to two worn items relevant to the item being rolled off.
+---
+---@param player string
+---@param itemLink string
+---@return table<number, string|nil>
+function RollOff:getRelevantGearForPlayer(player, itemLink)
+    local relevantGear = {};
+    local playerKey = self:gearPlayerKey(player);
+    local gear = playerKey and self.EquippedGearByPlayer[playerKey];
+
+    if (not gear) then
+        return relevantGear;
+    end
+
+    local itemID = GL:getItemIDFromLink(itemLink) or GL:itemIDFromDehydratedLink(itemLink);
+    if (not itemID) then
+        return relevantGear;
+    end
+
+    local _, _, _, inventoryType = GL.GetItemInfoInstant(itemID);
+    if (not inventoryType) then
+        return relevantGear;
+    end
+
+    local slots = GL.Data.Constants.ItemSlotTable[inventoryType];
+    if (not slots) then
+        return relevantGear;
+    end
+
+    -- For any weapon-slot item always show both mainhand and offhand
+    for _, s in ipairs(slots) do
+        if (s == 16 or s == 17) then
+            slots = { 16, 17, };
+            break;
+        end
+    end
+
+    for i = 1, math.min(2, #slots) do
+        relevantGear[i] = gear[slots[i]];
+    end
+
+    return relevantGear;
 end
 
 --- Build an enriched, priority-sorted array of roll entries.
@@ -993,6 +1168,7 @@ function RollOff:buildSortedRollData()
             classification = Roll.classification,
             sortPriority = rollPriority,
             rollNotes = rollNotes,
+            relevantGear = self:getRelevantGearForPlayer(Roll.player, self.CurrentRollOff.itemLink),
         });
     end
 
@@ -1030,6 +1206,16 @@ function RollOff:refreshRollsTable()
     local RollTableData = {};
 
     for _, Entry in pairs(EnrichedRolls) do
+        local gearLink1 = Entry.relevantGear and Entry.relevantGear[1];
+        local gearLink2 = Entry.relevantGear and Entry.relevantGear[2];
+        -- Single item: show in the right slot (col 9) so it sits next to ">>"
+        if (gearLink1 and not gearLink2) then
+            gearLink1, gearLink2 = nil, gearLink1;
+        end
+        local playerKey = self:gearPlayerKey(Entry.player);
+        local playerGear = playerKey and self.EquippedGearByPlayer[playerKey];
+        local hasGear = playerGear and next(playerGear);
+
         local Row = {
             cols = {
                 {
@@ -1057,6 +1243,17 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = Entry.plusOnesRaw,
+                },
+                {
+                    value = gearLink1,
+                },
+                {
+                    value = gearLink2,
+                },
+                {
+                    value = hasGear and ">>" or "",
+                    _tooltip = L["Show all worn items"],
+                    _playerFQN = hasGear and Entry.player or nil,
                 },
             },
         };

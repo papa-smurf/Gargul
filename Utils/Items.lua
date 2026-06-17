@@ -1,6 +1,7 @@
 ---@type GL
 local _, GL = ...;
 
+local L = Gargul_L;
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 local Constants = GL.Data.Constants;
 
@@ -150,6 +151,7 @@ function GL:hydrateItemLink(shortLink, callback)
     end
 
     -- Load the item, then rebuild the link with its modifiers intact
+    -- after the item is cached and getiteminfo works as inteded
     GL:onItemLoadDo(itemID, function (Details)
         callback(select(2, GL.GetItemInfo(itemString)) or (Details and Details.link) or false);
     end);
@@ -363,6 +365,51 @@ function GL:getCachedItem(itemLinkOrID)
     end
 
     return NormalizedItem;
+end
+
+--- Item ID from a dehydrated link (item:ID) or full item link.
+---
+---@param link string|nil
+---@return number|false
+function GL:itemIDFromDehydratedLink(link)
+    if (GL:empty(link)) then
+        return false;
+    end
+
+    local itemID = tonumber(strmatch(tostring(link), "item:(%d+)"));
+    if (itemID) then
+        return itemID;
+    end
+
+    return GL:getItemIDFromLink(link);
+end
+
+--- Return the player's worn gear as a sparse slot table of dehydrated links.
+--- Slot 0 = ammo (Classic only), 4 = shirt, 19 = tabard.
+---
+---@param skipCosmetic boolean|nil Exclude shirt (4) and tabard (19)
+---@param skipAmmo boolean|nil Exclude ammo slot (0, Classic only)
+---@return table<number, string>
+function GL:getEquippedGear(skipCosmetic, skipAmmo)
+    skipCosmetic = skipCosmetic == true;
+    skipAmmo = skipAmmo == true;
+
+    local cosmeticSlots = { [4] = true, [19] = true, };
+    local gear = {};
+
+    for slot = 0, 19 do
+        if (not (skipCosmetic and cosmeticSlots[slot]) and not (skipAmmo and slot == 0)) then
+            local itemLink = GetInventoryItemLink("player", slot);
+            if (itemLink) then
+                local dehydrated = GL:dehydrateItemLink(itemLink);
+                if (dehydrated) then
+                    gear[slot] = dehydrated;
+                end
+            end
+        end
+    end
+
+    return gear;
 end
 
 ---@param itemLinkOrID string|number
@@ -1217,4 +1264,31 @@ function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, 
     end
 
     return true;
+end
+
+--- Arrow cell for opening a player's worn-gear panel in the rolls table.
+---@return nil
+function GL.LibStGearArrowCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local cellData = data[realrow] and data[realrow].cols[column];
+
+    if (not fShow
+        or type(cellData) ~= "table"
+        or GL:empty(cellData._playerFQN)
+    ) then
+        frame:Hide();
+        return;
+    end
+
+    frame.text:SetText(cellData.value or ">>");
+    frame:Show();
+
+    frame:SetScript("OnEnter", function ()
+        GameTooltip:SetOwner(frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(cellData._tooltip or L["Show all worn items"]);
+        GameTooltip:Show();
+    end);
+
+    frame:SetScript("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
 end

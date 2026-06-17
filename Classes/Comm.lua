@@ -129,7 +129,13 @@ Comm.Actions = {
     end,
     [Actions.broadcastPlusOnesMutation] = function (Message)
         GL.PlusOnes:receiveUpdate(Message);
-    end
+    end,
+    [Actions.broadcastEquippedGear] = function (Message)
+        GL.RollOff:receiveEquippedGear(Message);
+    end,
+    [Actions.broadcastGearSessionID] = function (Message)
+        GL.RollOff:receiveGearSessionID(Message);
+    end,
 };
 
 function Comm:_init()
