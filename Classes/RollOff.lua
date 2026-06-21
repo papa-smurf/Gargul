@@ -23,6 +23,7 @@ GL.RollOff = GL.RollOff or {
         Rolls = {}, -- Player rolls
     },
     EquippedGearByPlayer = {},
+    GearWasInspectedByPlayer = {},
     gearSessionID = math.random(1, 2147483647),
     initiatorSessionIDs = {},
     GearCache = {
@@ -30,6 +31,13 @@ GL.RollOff = GL.RollOff or {
         initiator = nil,
         sessionID = nil,
     },
+    inspectQueue = {},
+    inspecting = nil,
+    inspectUnit = nil,
+    inspectingPlayerFQN = nil,
+    inspectTimerID = nil,
+    inspectDelayTimerByPlayerKey = {},
+    inspectListenerRegistered = false,
     InitiateCountDownTimer = nil;
     StopRollOffTimer = nil,
     rollListenerCancelTimerID = nil,
@@ -109,6 +117,7 @@ function RollOff:announceStart(itemLink, time, note)
             time = time,
             note = note,
             bth = GL.User:bth(),
+            g = self.gearSessionID,
             SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
             BoostedRollData = BoostedRolls,
         },
@@ -306,6 +315,16 @@ function RollOff:start(CommMessage)
 
         local time = math.floor(tonumber(content.time));
         local SupportedRolls = content.SupportedRolls or {};
+        local gearSessionID = tonumber(content.g);
+        if (gearSessionID) then
+            if (CommMessage.Sender.id) then
+                self.initiatorSessionIDs[CommMessage.Sender.id] = gearSessionID;
+            end
+
+            if (CommMessage.Sender.fqn) then
+                self.initiatorSessionIDs[CommMessage.Sender.fqn] = gearSessionID;
+            end
+        end
 
         -- Add BoostedRolls to the list of SupportedRolls if data is available
         if (type(content.BoostedRollData) == "table"
@@ -344,8 +363,7 @@ function RollOff:start(CommMessage)
                 note = content.note,
             };
 
-            self.EquippedGearByPlayer = {};
-            self.GearCache = { hash = nil, initiator = nil, sessionID = nil, };
+            self:resetInspectState();
 
             -- Note: the auctioneer already did this on his end
             if (not CommMessage.Sender.isSelf) then
@@ -354,10 +372,9 @@ function RollOff:start(CommMessage)
                 self.CurrentRollOff.Rolls = KnownRolls;
             end
         else
-            -- Same item re-roll: update timer and reset gear cache so senders re-evaluate
+            -- Same item re-roll: update timer and inspect state, keep rolls until reset/new item
             self.CurrentRollOff.time = time;
-            self.EquippedGearByPlayer = {};
-            self.GearCache = { hash = nil, initiator = nil, sessionID = nil, };
+            self:resetInspectState();
         end
 
         self.inProgress = true;
@@ -465,6 +482,8 @@ function RollOff:start(CommMessage)
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
+
+        self:refreshRollsTable();
 
         -- Let the application know that a rolloff has started
         GL.Events:fire("GL.ROLLOFF_STARTED");
@@ -864,6 +883,11 @@ function RollOff:processRoll(message)
         self:sendEquippedGearIfNeeded(self.CurrentRollOff.initiator);
     end
 
+    local playerKey = self:gearPlayerKey(Roll.player);
+    if (playerKey and self.EquippedGearByPlayer[playerKey] == nil) then
+        self:queueInspectIfNeeded(Roll.player);
+    end
+
     GL.Events:fire("GL.ROLLOFF_ROLL_ACCEPTED");
 
     self:refreshRollsTable();
@@ -976,33 +1000,327 @@ function RollOff:receiveEquippedGear(CommMessage)
     end
 
     self.EquippedGearByPlayer[playerKey] = gear;
+    self.GearWasInspectedByPlayer[playerKey] = nil;
+    self:cancelInspectDelay(playerKey);
+
+    if (self.inspecting == playerKey) then
+        if (self.inspectTimerID) then
+            GL:cancelTimer(self.inspectTimerID);
+            self.inspectTimerID = nil;
+        end
+
+        if (ClearInspectPlayer) then
+            ClearInspectPlayer();
+        end
+
+        self.inspecting = nil;
+        self.inspectUnit = nil;
+        self.inspectingPlayerFQN = nil;
+        self:processInspectQueue();
+    end
 
     GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", CommMessage.Sender.fqn);
 end
 
---- Store the sessionID broadcast by an initiator so senders can detect a reload.
----
----@param CommMessage CommMessage
----@return nil
-function RollOff:receiveGearSessionID(CommMessage)
-    local sessionID = CommMessage.content;
 
-    if (type(sessionID) ~= "number") then
+--- Wipe inspect queue state (e.g. on rolloff start).
+---@return nil
+function RollOff:resetInspectState()
+    if (self.inspectTimerID) then
+        GL:cancelTimer(self.inspectTimerID);
+        self.inspectTimerID = nil;
+    end
+
+    if (self.inspecting and ClearInspectPlayer) then
+        ClearInspectPlayer();
+    end
+
+    self.inspectQueue = {};
+    self.inspecting = nil;
+    self.inspectUnit = nil;
+    self.inspectingPlayerFQN = nil;
+
+    for _, timerID in pairs(self.inspectDelayTimerByPlayerKey) do
+        GL:cancelTimer(timerID);
+    end
+    self.inspectDelayTimerByPlayerKey = {};
+end
+
+--- Cancel a pending inspect delay for a player (comm arrived first).
+---
+---@param playerKey string
+---@return nil
+function RollOff:cancelInspectDelay(playerKey)
+    local timerID = self.inspectDelayTimerByPlayerKey[playerKey];
+    if (not timerID) then
         return;
     end
 
-    self.initiatorSessionIDs[CommMessage.Sender.fqn] = sessionID;
+    GL:cancelTimer(timerID);
+    self.inspectDelayTimerByPlayerKey[playerKey] = nil;
 end
 
---- Broadcast our session nonce to the group so players re-send gear after our reload.
----
+--- Register INSPECT_READY once.
 ---@return nil
-function RollOff:broadcastGearSessionID()
-    GL.CommMessage.new({
-        action = CommActions.broadcastGearSessionID,
-        content = self.gearSessionID,
-        channel = "GROUP",
-    }):send();
+function RollOff:registerInspectListener()
+    if (self.inspectListenerRegistered) then
+        return;
+    end
+
+    self.inspectListenerRegistered = GL.Events:register("RollOffInspectReady", "INSPECT_READY", function (_, guid)
+        GL.RollOff:onInspectReady(guid);
+    end);
+end
+
+--- Read worn gear from a unit into dehydrated slot links (skips shirt, tabard, ammo).
+---
+---@param unit string
+---@return table<number, string>
+function RollOff:readGearFromUnit(unit)
+    local cosmeticSlots = { [4] = true, [19] = true, };
+    local gear = {};
+
+    if (not unit
+        or (UnitExists and not UnitExists(unit))
+    ) then
+        return gear;
+    end
+
+    for slot = 0, 19 do
+        if (slot ~= 0 and not cosmeticSlots[slot]) then
+            local itemLink = GetInventoryItemLink(unit, slot);
+            if (itemLink) then
+                local dehydrated = GL:dehydrateItemLink(itemLink);
+                if (dehydrated) then
+                    gear[slot] = dehydrated;
+                end
+            end
+        end
+    end
+
+    return gear;
+end
+
+--- Resolve a group unit token for inspect, or "player" for self.
+---
+---@param playerFQN string
+---@return string|nil
+function RollOff:inspectUnitForPlayer(playerFQN)
+    if (GL:iEquals(playerFQN, GL.User.fqn)
+        or GL:iEquals(playerFQN, GL.User.name)
+    ) then
+        return "player";
+    end
+
+    local playerKey = self:gearPlayerKey(playerFQN);
+    if (not playerKey) then
+        return nil;
+    end
+
+    if (IsInRaid()) then
+        for i = 1, GetNumGroupMembers() do
+            local unit = "raid" .. i;
+            local name, realm = UnitName(unit);
+
+            if (name) then
+                local fqn = GL:addRealm(name, realm);
+                if (self:gearPlayerKey(fqn) == playerKey) then
+                    if (UnitIsVisible(unit) and UnitIsConnected(unit)) then
+                        return unit;
+                    end
+
+                    return nil;
+                end
+            end
+        end
+    else
+        for i = 1, GetNumGroupMembers() - 1 do
+            local unit = "party" .. i;
+            local name, realm = UnitName(unit);
+
+            if (name) then
+                local fqn = GL:addRealm(name, realm);
+                if (self:gearPlayerKey(fqn) == playerKey) then
+                    if (UnitIsVisible(unit) and UnitIsConnected(unit)) then
+                        return unit;
+                    end
+
+                    return nil;
+                end
+            end
+        end
+    end
+
+    return nil;
+end
+
+--- Queue inspect when comm gear is missing (non-Gargul rollers).
+--- Waits briefly so Gargul comm can arrive first.
+---
+---@param playerFQN string
+---@return nil
+function RollOff:queueInspectIfNeeded(playerFQN)
+    self:registerInspectListener();
+
+    local playerKey = self:gearPlayerKey(playerFQN);
+    if (not playerKey or self.EquippedGearByPlayer[playerKey] ~= nil) then
+        return;
+    end
+
+    if (self.inspecting == playerKey) then
+        return;
+    end
+
+    for _, queuedFQN in ipairs(self.inspectQueue) do
+        if (self:gearPlayerKey(queuedFQN) == playerKey) then
+            return;
+        end
+    end
+
+    if (self.inspectDelayTimerByPlayerKey[playerKey]) then
+        return;
+    end
+
+    local timerID = ("RollOff.inspectDelay.%s"):format(playerKey);
+    self.inspectDelayTimerByPlayerKey[playerKey] = timerID;
+
+    GL:after(2, timerID, function ()
+        self.inspectDelayTimerByPlayerKey[playerKey] = nil;
+
+        if (self.EquippedGearByPlayer[playerKey] ~= nil) then
+            return;
+        end
+
+        for _, queuedFQN in ipairs(self.inspectQueue) do
+            if (self:gearPlayerKey(queuedFQN) == playerKey) then
+                return;
+            end
+        end
+
+        table.insert(self.inspectQueue, playerFQN);
+        self:processInspectQueue();
+    end);
+end
+
+--- Mark inspect failed and continue the queue.
+---
+---@param playerKey string
+---@param playerFQN string
+---@return nil
+function RollOff:finishInspectUnavailable(playerKey, playerFQN)
+    self.EquippedGearByPlayer[playerKey] = {};
+
+    if (self.inspecting == playerKey) then
+        if (self.inspectTimerID) then
+            GL:cancelTimer(self.inspectTimerID);
+            self.inspectTimerID = nil;
+        end
+
+        if (ClearInspectPlayer) then
+            ClearInspectPlayer();
+        end
+        self.inspecting = nil;
+        self.inspectUnit = nil;
+        self.inspectingPlayerFQN = nil;
+    end
+
+    GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerFQN);
+    self:processInspectQueue();
+end
+
+--- Process the next player in the inspect queue.
+---@return nil
+function RollOff:processInspectQueue()
+    if (self.inspecting) then
+        return;
+    end
+
+    local playerFQN = table.remove(self.inspectQueue, 1);
+    if (not playerFQN) then
+        return;
+    end
+
+    local playerKey = self:gearPlayerKey(playerFQN);
+    if (not playerKey or self.EquippedGearByPlayer[playerKey] ~= nil) then
+        self:processInspectQueue();
+        return;
+    end
+
+    local unit = self:inspectUnitForPlayer(playerFQN);
+    if (not unit) then
+        self:finishInspectUnavailable(playerKey, playerFQN);
+        return;
+    end
+
+    -- Own gear: read directly, no inspect API
+    if (unit == "player") then
+        self.EquippedGearByPlayer[playerKey] = self:readGearFromUnit("player");
+        self.GearWasInspectedByPlayer[playerKey] = true;
+        GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerFQN);
+        self:processInspectQueue();
+        return;
+    end
+
+    if (not CanInspect
+        or not NotifyInspect
+        or not ClearInspectPlayer
+        or not CanInspect(unit)
+    ) then
+        self:finishInspectUnavailable(playerKey, playerFQN);
+        return;
+    end
+
+    self.inspecting = playerKey;
+    self.inspectUnit = unit;
+    self.inspectingPlayerFQN = playerFQN;
+    self.inspectTimerID = ("RollOff.inspectTimeout.%s"):format(playerKey);
+
+    NotifyInspect(unit);
+
+    GL:after(3, self.inspectTimerID, function ()
+        if (self.inspecting ~= playerKey) then
+            return;
+        end
+
+        self:finishInspectUnavailable(playerKey, playerFQN);
+    end);
+end
+
+--- Store gear from a completed inspect.
+---
+---@param guid string
+---@return nil
+function RollOff:onInspectReady(guid)
+    if (not self.inspecting or not self.inspectUnit) then
+        return;
+    end
+
+    if (UnitGUID(self.inspectUnit) ~= guid) then
+        return;
+    end
+
+    local playerKey = self.inspecting;
+    local playerFQN = self.inspectingPlayerFQN;
+
+    if (self.inspectTimerID) then
+        GL:cancelTimer(self.inspectTimerID);
+        self.inspectTimerID = nil;
+    end
+
+    if (self.EquippedGearByPlayer[playerKey] == nil) then
+        self.EquippedGearByPlayer[playerKey] = self:readGearFromUnit(self.inspectUnit);
+        self.GearWasInspectedByPlayer[playerKey] = true;
+        GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerFQN);
+    end
+
+    if (ClearInspectPlayer) then
+        ClearInspectPlayer();
+    end
+    self.inspecting = nil;
+    self.inspectUnit = nil;
+    self.inspectingPlayerFQN = nil;
+
+    self:processInspectQueue();
 end
 
 --- Up to two worn items relevant to the item being rolled off.
@@ -1214,7 +1532,16 @@ function RollOff:refreshRollsTable()
         end
         local playerKey = self:gearPlayerKey(Entry.player);
         local playerGear = playerKey and self.EquippedGearByPlayer[playerKey];
-        local hasGear = playerGear and next(playerGear);
+        local gearIconAlpha = playerKey and self.GearWasInspectedByPlayer[playerKey] and .6 or 1;
+        local hasGear = false;
+        if (type(playerGear) == "table") then
+            for _, link in pairs(playerGear) do
+                if (not GL:empty(link)) then
+                    hasGear = true;
+                    break;
+                end
+            end
+        end
 
         local Row = {
             cols = {
@@ -1246,9 +1573,11 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = gearLink1,
+                    _alpha = gearIconAlpha,
                 },
                 {
                     value = gearLink2,
+                    _alpha = gearIconAlpha,
                 },
                 {
                     value = hasGear and ">>" or "",

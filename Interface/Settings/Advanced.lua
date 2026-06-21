@@ -19,6 +19,11 @@ function Advanced:draw(Parent)
             setting = "debugModeEnabled",
         },
         {
+            label = "Experimental: comm debug mode",
+            description = "Enable comm debug output, showing add-on message traffic info in your chatbox.",
+            setting = "commDebugEnabled",
+        },
+        {
             label = "Experimental: addon usage",
             description = "Show add-on memory usage. Warning: may cause FPS drop!",
             setting = "profilerEnabled",

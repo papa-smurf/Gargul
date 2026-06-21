@@ -116,9 +116,6 @@ function MasterLooterUI:draw(itemLink)
         return;
     end
 
-    -- Let players know our session nonce so they re-send gear if we reloaded
-    GL.RollOff:broadcastGearSessionID();
-
     -- Make sure the table sorting details get updated
     -- when the user changes their settings
     GL.Events:register("MasterLooterUISortByPlusOneChanged", "GL.SETTING_CHANGED.RollTracking.sortByPlusOne", function ()
@@ -1137,7 +1134,22 @@ function MasterLooterUI:drawGearPanel(playerKey)
         Panel.Rows = {};
         Panel.NameLabel = Panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
         Panel.NameLabel:SetPoint("TOPLEFT", Panel, "TOPLEFT", 8, -14);
-        Panel.NameLabel:SetWidth(168);
+        Panel.NameLabel:SetWidth(148);
+        Panel.InspectWarning = CreateFrame("Frame", nil, Panel);
+        Panel.InspectWarning:SetSize(14, 14);
+        Panel.InspectWarning:SetPoint("TOPLEFT", Panel, "TOPLEFT", 10, -12);
+        Panel.InspectWarning.Icon = Panel.InspectWarning:CreateTexture(nil, "ARTWORK");
+        Panel.InspectWarning.Icon:SetAllPoints(Panel.InspectWarning);
+        Panel.InspectWarning.Icon:SetTexture("Interface/DialogFrame/UI-Dialog-Icon-AlertNew");
+        Panel.InspectWarning:SetScript("OnEnter", function ()
+            GameTooltip:SetOwner(Panel.InspectWarning, "ANCHOR_RIGHT");
+            GameTooltip:SetText(L["Inspected gear: less reliable because this player doesn't have Gargul"]);
+            GameTooltip:Show();
+        end);
+        Panel.InspectWarning:SetScript("OnLeave", function ()
+            GameTooltip:Hide();
+        end);
+        Panel.InspectWarning:Hide();
         GL.Interface:addCloseButton(Panel);
         Panel.CloseButton:SetFrameLevel(Panel:GetFrameLevel() + 10);
         Panel.CloseButton:SetScript("OnClick", function ()
@@ -1173,6 +1185,11 @@ function MasterLooterUI:drawGearPanel(playerKey)
     local colorizedName = ("|cFF%02X%02X%02X%s|r"):format(C.r * 255, C.g * 255, C.b * 255, baseName);
 
     Panel.NameLabel:SetText(colorizedName);
+    if (GL.RollOff.GearWasInspectedByPlayer[playerKey]) then
+        Panel.InspectWarning:Show();
+    else
+        Panel.InspectWarning:Hide();
+    end
 
     local rowHeight = 20;
     local yOffset = -30;

@@ -1209,22 +1209,30 @@ end
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
 --- Value may be a numeric itemID (legacy) or a dehydrated item link string.
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local value = data[realrow].cols[column].value;
+    local cellData = data[realrow] and data[realrow].cols[column];
+    local value = cellData and cellData.value;
     local isLink = type(value) == "string";
     local itemID = isLink and GL:itemIDFromDehydratedLink(value) or tonumber(value);
+    local alpha = (cellData and tonumber(cellData._alpha)) or 1;
+
+    frame._itemCellValue = value;
 
     if (not itemID or itemID == 0) then
+        frame:SetAlpha(1);
+        frame:SetScript("OnEnter", nil);
+        frame:SetScript("OnLeave", nil);
         frame:Hide();
         return;
     end
 
     GL:onItemLoadDo(itemID, function (Details)
-        if (not Details or not frame) then
+        if (not Details or not frame or frame._itemCellValue ~= value) then
             frame:Hide();
             return;
         end
 
         frame:SetNormalTexture(Details.icon);
+        frame:SetAlpha(alpha);
         frame:Show();
 
         frame:SetScript("OnEnter", function ()
@@ -1274,7 +1282,11 @@ function GL.LibStGearArrowCellUpdate (rowFrame, frame, data, cols, row, realrow,
     if (not fShow
         or type(cellData) ~= "table"
         or GL:empty(cellData._playerFQN)
+        or GL:empty(cellData.value)
     ) then
+        frame.text:SetText("");
+        frame:SetScript("OnEnter", nil);
+        frame:SetScript("OnLeave", nil);
         frame:Hide();
         return;
     end
