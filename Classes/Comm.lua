@@ -133,9 +133,6 @@ Comm.Actions = {
     [Actions.broadcastEquippedGear] = function (Message)
         GL.RollOff:receiveEquippedGear(Message);
     end,
-    [Actions.broadcastGearSessionID] = function (Message)
-        GL.RollOff:receiveGearSessionID(Message);
-    end,
 };
 
 function Comm:_init()
@@ -205,7 +202,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     end
 
     -- Make sure we can keep an eye on comm behavior
-    if (GL.User:isDev()) then
+    if (GL.Settings:get("commDebugEnabled", false)) then
         local ActionsByID = GL:tableFlip(Actions);
         if (action == Actions.response) then
             GL:xd(("Respond | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
@@ -397,7 +394,7 @@ function Comm:dispatch(CommMessage, stringLength)
 
     if (Comm.Actions[action]) then
         -- Make sure we can keep an eye on comm behavior
-        if (GL.User:isDev()) then
+        if (GL.Settings:get("commDebugEnabled", false)) then
             local ActionsByID = GL:tableFlip(Actions);
             if (action == Actions.response) then
                 local actionID = CommMessage.Box[CommMessage.correspondenceID] and CommMessage.Box[CommMessage.correspondenceID].action or Actions.respond;

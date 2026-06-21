@@ -202,7 +202,7 @@ function CommMessage:confirm()
         return false;
     end
 
-    if (GL.User:isDev()) then
+    if (GL.Settings:get("commDebugEnabled", false)) then
         GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceID) or 0, "N"));
     end
 

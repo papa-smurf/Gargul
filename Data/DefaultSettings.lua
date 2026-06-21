@@ -7,6 +7,7 @@ local _, GL = ...;
 GL.Data.DefaultSettings = {
     autoOpenCommandHelp = true,
     changeLog = true,
+    commDebugEnabled = false,
     debugModeEnabled = false,
     fontSize = 11,
     highlightsEnabled = true,
