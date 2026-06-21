@@ -19,6 +19,7 @@ local Events = GL.Events;
 local Constants = GL.Data.Constants;
 local CommActions = Constants.Comm.Actions;
 
+local slurredSpeechPattern = _G.SLURRED_SPEECH and ("^" .. GL:createPattern(_G.SLURRED_SPEECH) .. "$");
 local SecondsAnnounced = {};
 
 ---@type GDKPAuctioneerInterface
@@ -2012,6 +2013,10 @@ end
 ---@return number
 function Auction:messageToBid(message, minBid)
     message = message:gsub("%,", ".");
+
+    if (slurredSpeechPattern) then
+        message = message:match(slurredSpeechPattern) or message;
+    end
 
     local match = message:match("(%d*%.?%d+)");
 
