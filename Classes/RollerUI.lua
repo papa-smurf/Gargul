@@ -227,7 +227,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
 
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("BOTTOM", self.Window, "BOTTOM");
-    TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE");
+    TimerBar.candyBarLabel:SetFont(GL.FONT, 12, "OUTLINE");
 
     -- Make the bar turn green/yellow/red based on time left
     TimerBar:AddUpdateFunction(function (Bar)

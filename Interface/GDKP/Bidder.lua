@@ -370,7 +370,7 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     );
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("TOP", self.Window);
-    TimerBar.candyBarLabel:SetFont("Fonts/ARIALN.ttf", 13, "OUTLINE");
+    TimerBar.candyBarLabel:SetFont(GL.FONT, 13, "OUTLINE");
 
     -- Make the bar turn green/yellow/red based on time left
     TimerBar:AddUpdateFunction(function (Bar)
