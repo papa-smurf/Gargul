@@ -994,3 +994,151 @@ function Test.ItemLinks:roundTrip()
         end
     end);
 end
+
+--- Populate the active GDKP session with 45 fake players and 90 sales so the
+--- LedgerList adaptive layout can be visually tested.
+--- @test /run Gargul.Test:gdkpTestFixture()
+---@return nil
+function Test:gdkpTestFixture()
+    local GDKPPot = GL.GDKP.Pot;
+    local GDKPSession = GL.GDKP.Session;
+
+    local Session = GDKPSession:getActive();
+    if (not Session) then
+        GL:error("No active GDKP session — create and activate one first.");
+        return;
+    end
+
+    local BASE = GL.Data.Constants.GDKP.baseMutatorIdentifier;
+    local ADJUST = GL.Data.Constants.GDKP.adjustMutatorIdentifier;
+    local realm = GL.User.realm;
+
+    local NAMES = {
+        "Aranthon", "Brelindal", "Calmindra", "Draeveth", "Elarion",
+        "Falindra", "Galyndros", "Halveth", "Ilyndra", "Jaranthis",
+        "Kaelidar", "Lorindra", "Maelveth", "Norindal", "Orvindra",
+        "Phaeliveth", "Quindral", "Ralindra", "Selyndros", "Thalindra",
+        "Urindros", "Velindra", "Wyndros", "Xalindra", "Yhalindra",
+        "Zevindra", "Amindral", "Belyndra", "Cylindral", "Drelveth",
+        "Elindros", "Faelveth", "Garyndra", "Halvindra", "Ilindros",
+        "Jalyndra", "Kaliveth", "Loryndral", "Mavindra", "Nylindra",
+        "Orvindros", "Pelindra", "Qalindros", "Rarindra", "Salyveth",
+    };
+
+    local CLASSES = {
+        "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST",
+        "SHAMAN", "MAGE", "WARLOCK", "DRUID", "DEATHKNIGHT",
+        "MONK", "DEMONHUNTER",
+    };
+
+    -- Flat gold adjustments for a handful of players (positive = bonus, negative = dock).
+    local FLAT_ADJUSTMENTS = {
+        [3] = 500, [7] = 500, [12] = 500,
+        [18] = -200, [24] = -200, [30] = -200,
+        [35] = 1000, [40] = -500,
+    };
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+
+    local playerGUIDs = {};
+    for i, name in pairs(NAMES) do
+        local guid = strlower(name .. "-" .. realm);
+        table.insert(playerGUIDs, guid);
+        local Details = { [BASE] = true, };
+        if (FLAT_ADJUSTMENTS[i]) then
+            Details[ADJUST] = FLAT_ADJUSTMENTS[i];
+        end
+        Session.Pot.DistributionDetails[guid] = Details;
+    end
+
+    -- Collect real item links from NormalModeHardModeLinks.
+    -- GetItemInfo only returns a link for items already in the client cache.
+    local Items = {};
+    local checked = 0;
+    for itemID in pairs(GL.Data.NormalModeHardModeLinks or {}) do
+        checked = checked + 1;
+        if (checked > 2000) then break; end
+        local _, itemLink = GetItemInfo(itemID);
+        if (itemLink) then
+            table.insert(Items, { id = itemID, link = itemLink, });
+            if (#Items >= 120) then break; end
+        end
+    end
+
+    -- Top-fill from ItemLinks for variety if the pool is still thin.
+    if (#Items < 90) then
+        for itemIDStr in pairs(GL.Data.ItemLinks or {}) do
+            local itemID = tonumber(itemIDStr);
+            if (itemID) then
+                local _, itemLink = GetItemInfo(itemID);
+                if (itemLink) then
+                    table.insert(Items, { id = itemID, link = itemLink, });
+                    if (#Items >= 120) then break; end
+                end
+            end
+        end
+    end
+
+    -- Fallback: solid gold coin — ensures the fixture always runs on a cold cache.
+    if (#Items == 0) then
+        table.insert(Items, { id = 45978, link = nil, });
+    end
+
+    Session.Auctions = Session.Auctions or {};
+    local now = GetServerTime();
+    local createdByClass = GL.User.class or "WARRIOR";
+    local createdByRace = GL.User.race or "Human";
+    local createdByGuild = (GL.User.Guild and GL.User.Guild.name) or "";
+
+    for i = 1, 90 do
+        -- First 45: one item per player (guaranteed spread).
+        -- Remaining 45: random extras for a realistic pileup.
+        local winnerGUID;
+        if (i <= 45) then
+            winnerGUID = playerGUIDs[i];
+        else
+            winnerGUID = playerGUIDs[math.random(#playerGUIDs)];
+        end
+
+        local winnerName = winnerGUID:match("^([^-]+)");
+        winnerName = winnerName:sub(1, 1):upper() .. winnerName:sub(2);
+        local winnerClass = CLASSES[((i - 1) % #CLASSES) + 1];
+
+        local Item = Items[((i - 1) % #Items) + 1];
+        local price = 500 + math.random(0, 150) * 100;
+        local checksum = "GDKP_TESTFIXTURE_" .. i;
+
+        Session.Auctions[checksum] = {
+            ID = checksum,
+            price = price,
+            itemID = Item.id,
+            itemLink = Item.link,
+            createdAt = now - 90 + i,
+            CreatedBy = {
+                class = createdByClass,
+                guild = createdByGuild,
+                name = GL.User.name,
+                race = createdByRace,
+                realm = realm,
+                uuid = GL.User.id,
+            },
+            Bids = {},
+            Winner = {
+                class = winnerClass,
+                guild = "",
+                name = winnerName,
+                race = "Human",
+                realm = realm,
+                uuid = checksum,
+                guid = winnerGUID,
+            },
+        };
+    end
+
+    GDKPPot:calculateCuts(Session.ID);
+
+    GL:success((
+        "Test fixture loaded: 45 players, 90 sales (%d unique items) in '%s'."
+    ):format(#Items, Session.title));
+end

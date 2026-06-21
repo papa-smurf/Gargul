@@ -29,16 +29,21 @@ GL.Interface.GDKP.LedgerList = {
     sessionID = nil,
     windowName = "Gargul.Interface.GDKP.LedgerList.Window",
 
+    PlayersTables = {},
     SalesTables = {},
 };
 
 ---@type GDKPLedgerList
 local LedgerList = GL.Interface.GDKP.LedgerList;
 
---[[ CONSTANTS ]]
-local TABLE_ROWS = 40;
 local DEFAULT_PLAYER_COLUMN_WIDTH = 90;
-local HEIGHT_PER_ROW = 16;
+local HEIGHT_PER_ROW = 15;
+-- Space above the tables (title, session/pot, legend)
+local HEADER_HEIGHT = 110;
+-- lib-st header row + frame padding
+local TABLE_OVERHEAD = HEIGHT_PER_ROW + 10;
+local MAX_PLAYER_COLS = 3;
+local PLAYER_COL_MARGIN = 6;
 
 local PLAYERS_TABLE_COLUMNS = {
     { name = L["Player"], width = DEFAULT_PLAYER_COLUMN_WIDTH, },
@@ -62,30 +67,65 @@ local SALES_TABLE_COLUMNS = {
     { width = 60, align = "RIGHT", }, -- Price
 };
 
+--- Tear down the current window for a fresh build
+---@return nil
+function LedgerList:destroy()
+    local Window = self._currentWindow;
+    self._currentWindow = nil;
+
+    if (Window) then
+        Window:SetScript("OnHide", nil);
+        Window:Hide();
+
+        -- Drop stale _G and UISpecialFrames entries
+        local name = Window:GetName();
+        if (name) then
+            _G[name] = nil;
+            for i = #UISpecialFrames, 1, -1 do
+                if (UISpecialFrames[i] == name) then
+                    table.remove(UISpecialFrames, i);
+                    break;
+                end
+            end
+        end
+    end
+
+    _G[self.windowName] = nil;
+    self.PlayersTable = nil;
+    self.PlayersTables = {};
+    self.SalesTables = {};
+    self.PotDetails = nil;
+    self.SessionDetails = nil;
+    self.PlayerOverflow = nil;
+    self.SalesOverflow = nil;
+end
+
 ---@return table
 function LedgerList:open(sessionID)
+    self:destroy();
     self.sessionID = sessionID;
 
-    local Window = _G[self.windowName] or self:build();
+    local Window = self:build();
 
     self:refresh();
 
     Window:SetFrameLevel(5000);
     Window:Show();
 
-    -- This is to make sure this window is always on top
+    -- Keep the window on top
     Window:SetMovable(true);
     Window:StartMoving();
     Window:StopMovingOrSizing();
     Window:SetMovable(false);
 
+    self._currentWindow = Window;
     return Window;
 end
 
 ---@return nil
 function LedgerList:close()
-    if (_G[self.windowName]) then
-        _G[self.windowName]:Hide();
+    if (self._currentWindow) then
+        self._currentWindow:Hide();
     end
 
     GL.Interface.GDKP.Overview:open();
@@ -93,18 +133,36 @@ end
 
 ---@return table
 function LedgerList:build()
-    if (_G[self.windowName]) then
-        return _G[self.windowName];
+    -- Unique frame name per build
+    self._buildCount = (self._buildCount or 0) + 1;
+    local windowName = self.windowName .. "." .. self._buildCount;
+
+    -- Row count fits below HEADER_HEIGHT and TABLE_OVERHEAD
+    local tableRows = math.max(10, math.floor((UIParent:GetHeight() - HEADER_HEIGHT - TABLE_OVERHEAD) / HEIGHT_PER_ROW));
+    self.tableRows = tableRows;
+
+    -- Count players so we can pre-build the right number of player columns
+    local Session = GDKPSession:byID(self.sessionID);
+    local playerCount = 0;
+    if (Session) then
+        local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
+        for player in pairs(Cuts) do
+            if (GL:tableGet(Session, "Pot.DistributionDetails." .. player)) then
+                playerCount = playerCount + 1;
+            end
+        end
     end
+    local numPlayerCols = math.min(MAX_PLAYER_COLS, math.max(1, math.ceil(playerCount / tableRows)));
 
     ---@type Frame
     local Window = Interface:createWindow({
-        name = self.windowName,
+        name = windowName,
         width = 1,
         height = 1,
         hideMinimizeButton = true,
         hideMoveButton = true,
         hideResizeButton = true,
+        hideWatermark = true,
         OnClose = function ()
             self:close();
         end,
@@ -113,32 +171,39 @@ function LedgerList:build()
     Window:SetClampedToScreen(false);
     Window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2, 2);
     Window:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 2, -2);
-    Window.Watermark:SetFont(1.75, "OUTLINE");
 
-    --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
-    Interface:addWindowOptions(Window, {
-        {text = L["Window"], isTitle = true, notCheckable = true },
-        {text = L["Adjust Scale"], notCheckable = true, func = function ()
-            Interface:openScaler(Window);
-            CloseMenus();
-        end},
-    });
+    ---@type FontString
+    local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version);
+    Watermark:SetFont(2, "OUTLINE");
+    Watermark:SetColor("GRAY");
+    Watermark:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -30, -30);
 
-    local PlayersTable = GL.ScrollingTable:CreateST(PLAYERS_TABLE_COLUMNS, TABLE_ROWS, HEIGHT_PER_ROW, nil, Window);
-    PlayersTable:EnableSelection(false);
-    GL:LibStRemoveScrollBar(PlayersTable);
-    self.PlayersTable = PlayersTable;
 
-    --[[ GENERATE AS MANY SALES TABLES AS POSSIBLE ]]
-    local widthLeft = UIParent:GetWidth() - PlayersTable.frame:GetWidth();
-    local LastTable = PlayersTable;
+    self.PlayersTables = {};
+    for i = 1, numPlayerCols do
+        local T = GL.ScrollingTable:CreateST(PLAYERS_TABLE_COLUMNS, tableRows, HEIGHT_PER_ROW, nil, Window);
+        T:EnableSelection(false);
+        GL:LibStRemoveScrollBar(T);
+        if (i > 1) then
+            T.head:Hide();
+            T.frame:SetPoint("TOPLEFT", self.PlayersTables[i - 1].frame, "TOPRIGHT", PLAYER_COL_MARGIN, 0);
+        end
+        tinsert(self.PlayersTables, T);
+    end
+    self.PlayersTable = self.PlayersTables[1];
+
+    local playerColWidth = self.PlayersTables[1].frame:GetWidth();
+    local totalPlayerWidth = playerColWidth * numPlayerCols + PLAYER_COL_MARGIN * (numPlayerCols - 1);
+    local widthLeft = UIParent:GetWidth() - totalPlayerWidth;
+    local LastTable = self.PlayersTables[numPlayerCols];
+
     local count = 0;
-    while(true) do
+    while (true) do
         count = count + 1;
         local marginLeft = 6;
-        local Table = GL.ScrollingTable:CreateST(SALES_TABLE_COLUMNS, TABLE_ROWS, HEIGHT_PER_ROW, nil, Window);
+        local Table = GL.ScrollingTable:CreateST(SALES_TABLE_COLUMNS, tableRows, HEIGHT_PER_ROW, nil, Window);
         Table:EnableSelection(false);
-        Table.head:Hide(); -- Remove the table header
+        Table.head:Hide();
         Table.frame:SetPoint("TOPLEFT", LastTable.frame, "TOPRIGHT", marginLeft, 0);
         local tableWidth = Table.frame:GetWidth();
 
@@ -148,7 +213,6 @@ function LedgerList:build()
             break;
         end
 
-        --[[ JUST IN CASE WE RUN INTO SOME WEIRD ENDLESS LOOP TYPE OF SITUATION ]]
         if (count > 10) then
             break;
         end
@@ -160,8 +224,10 @@ function LedgerList:build()
         tinsert(self.SalesTables, Table);
     end
 
-    PlayersTable.frame:SetPoint("TOP", Window, "TOP", 0, (Window:GetHeight() - PlayersTable.frame:GetHeight()) / 2 * -1 - 30);
-    PlayersTable.frame:SetPoint("LEFT", Window, "LEFT", widthLeft / 2, 0);
+    self.PlayersTables[1].frame:SetPoint("TOP", Window, "TOP", 0, -HEADER_HEIGHT);
+    self.PlayersTables[1].frame:SetPoint("LEFT", Window, "LEFT", widthLeft / 2, 0);
+
+    local PlayersTable = self.PlayersTable;
 
     ---@type FontString
     local PotDetails = Interface:createFontString(Window, "");
@@ -176,14 +242,13 @@ function LedgerList:build()
 
     local colorizedUser = GL:formatPlayerName(GL.User.name, { class = GL.User.class, colorize = true, });
 
-    --[[ DRAW LEGEND ]]
     ---@type FontString
     local Paid = Interface:createFontString(Window, (L["Gold paid to %s"]):format(
         colorizedUser
     ));
     Paid:SetPoint("BOTTOMLEFT", PlayersTable.frame, "TOPLEFT", 0, 40);
 
-    do --[[ PAID LINES ]]
+    do
         local Line = Window:CreateLine();
         Line:SetThickness(2);
         Line:SetColorTexture(.6, .5, .82, 1);
@@ -203,7 +268,7 @@ function LedgerList:build()
     ));
     Received:SetPoint("TOPLEFT", Paid, "TOPRIGHT", 20, 0);
 
-    do --[[ RECEIVED LINES ]]
+    do
         local Line = Window:CreateLine();
         Line:SetThickness(2);
         Line:SetColorTexture(.6, .5, .82, 1);
@@ -223,7 +288,7 @@ function LedgerList:build()
     ));
     Mailed:SetPoint("TOPLEFT", Received, "TOPRIGHT", 20, 0);
 
-    do --[[ MAILED LINES ]]
+    do
         local Line = Window:CreateLine();
         Line:SetThickness(2);
         Line:SetColorTexture(.6, .5, .82, 1);
@@ -244,7 +309,7 @@ function LedgerList:build()
     ));
     Balance:SetPoint("TOPLEFT", Mailed, "TOPRIGHT", 20, 0);
 
-    do --[[ BALANCE LINES ]]
+    do
         local Line = Window:CreateLine();
         Line:SetThickness(2);
         Line:SetColorTexture(.6, .5, .82, 1);
@@ -265,14 +330,23 @@ function LedgerList:build()
         Line:SetEndPoint("BOTTOM", Balance, 0, -4);
     end
 
-    --[[ SHOW THE IDENTITY OF THE ORGANIZER ]]
-    -- Determine which identity to activate
-    local Identity = Interface.Identity:buildForLedger(GL.User:bth());
-    Identity:SetParent(Window);
-    Identity:SetPoint("CENTER", Balance, "CENTER");
-    Identity:SetPoint("LEFT", Balance, "RIGHT", 60, 0);
+    local LastPlayerTable = self.PlayersTables[numPlayerCols];
+    local PlayerOverflow = Interface:createFontString(Window, "");
+    PlayerOverflow:SetPoint("TOPLEFT", LastPlayerTable.frame, "BOTTOMLEFT", 0, -4);
+    PlayerOverflow:Hide();
+    self.PlayerOverflow = PlayerOverflow;
 
+    if (self.SalesTables[1]) then
+        local LastSalesTable = self.SalesTables[#self.SalesTables];
+        local SalesOverflow = Interface:createFontString(Window, "");
+        SalesOverflow:SetPoint("TOPLEFT", LastSalesTable.frame, "BOTTOMLEFT", 0, -4);
+        SalesOverflow:Hide();
+        self.SalesOverflow = SalesOverflow;
+    end
+
+    -- Global alias for tests
     _G[self.windowName] = Window;
+
     return Window;
 end
 
@@ -283,6 +357,8 @@ function LedgerList:refresh()
     if (type(Session) ~= "table") then
         return;
     end
+
+    local tableRows = self.tableRows;
 
     local totalPot = GDKPPot:total(Session.ID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
@@ -306,13 +382,13 @@ function LedgerList:refresh()
         date(L["%Y-%m-%d"], Session.createdAt)
     ));
 
-    -- Clear all table data
-    self.PlayersTable:SetData({}, true);
+    for _, T in pairs(self.PlayersTables or {}) do
+        T:SetData({}, true);
+    end
     for _, Table in pairs(self.SalesTables or {}) do
         Table:SetData({}, true);
     end
 
-    -- We can't work with this session since there are no auctions attached
     local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
     if (type(Cuts) == "table") then
         local PlayerNames = {};
@@ -322,16 +398,8 @@ function LedgerList:refresh()
             end
         end
 
-        table.sort(PlayerNames, function (a, b)
-            if (a and b) then
-                return a < b;
-            end
-
-            return false;
-        end);
-
         local PlayerData = {};
-        for _, player in pairs(PlayerNames or {}) do
+        for _, player in pairs(PlayerNames) do
             local playerGUID = GDKP:playerGUID(player);
             local _, copperReceived, copperTraded, copperMailed = GDKPSession:goldTradedWithPlayer(playerGUID, Session.ID);
             local spent = GDKPSession:goldSpentByPlayer(player, self.sessionID);
@@ -364,8 +432,26 @@ function LedgerList:refresh()
             });
         end
 
+        -- Active players first, then alpha
+        table.sort(PlayerData, function (a, b)
+            local aActive = (a.cut or 0) > 0
+                or (a.spent or 0) > 0
+                or (a.given or 0) > 0
+                or (a.received or 0) > 0
+                or (a.mailed or 0) > 0;
+            local bActive = (b.cut or 0) > 0
+                or (b.spent or 0) > 0
+                or (b.given or 0) > 0
+                or (b.received or 0) > 0
+                or (b.mailed or 0) > 0;
+            if (aActive ~= bActive) then
+                return aActive;
+            end
+            return a.name < b.name;
+        end);
+
         local TableData = {};
-        for _, Player in pairs(PlayerData or {}) do
+        for _, Player in pairs(PlayerData) do
             tinsert(TableData, {
                 cols = {
                     { value = GL:disambiguateName(Player.name, { colorize = true, }), },
@@ -380,10 +466,26 @@ function LedgerList:refresh()
             });
         end
 
-        self.PlayersTable:SetData(TableData);
+        for i, T in pairs(self.PlayersTables) do
+            local startIdx = (i - 1) * tableRows + 1;
+            local chunk = {};
+            for j = startIdx, math.min(startIdx + tableRows - 1, #TableData) do
+                tinsert(chunk, TableData[j]);
+            end
+            T:SetData(chunk);
+        end
+
+        if (self.PlayerOverflow) then
+            local maxPlayers = #self.PlayersTables * tableRows;
+            if (#TableData > maxPlayers) then
+                self.PlayerOverflow:SetText(("|c00BE3333+%d not shown|r"):format(#TableData - maxPlayers));
+                self.PlayerOverflow:Show();
+            else
+                self.PlayerOverflow:Hide();
+            end
+        end
     end
 
-    -- There are no sales
     if (type(Session.Auctions) ~= "table") then
         return;
     end
@@ -400,16 +502,16 @@ function LedgerList:refresh()
         return false;
     end);
 
-    local SalesData = {}, {};
-    local count = 0;
+    local SalesData = {};
+    local saleCount = 0;
     for _, Auction in pairs(Auctions) do
         if (type(Auction) == "table"
             and type(Auction.Winner) == "table"
             and type(Auction.itemID) == "number"
         ) then
-            count = count + 1;
+            saleCount = saleCount + 1;
 
-            local jar = math.ceil(count / TABLE_ROWS);
+            local jar = math.ceil(saleCount / tableRows);
 
             if (self.SalesTables[jar]) then
                 SalesData[jar] = SalesData[jar] or {};
@@ -448,9 +550,19 @@ function LedgerList:refresh()
         Table:SetData(TableData);
     end
 
-    for jar, Sales in pairs(SalesData or {}) do
+    for jar, Sales in pairs(SalesData) do
         if (self.SalesTables[jar]) then
             setTableData(self.SalesTables[jar], Sales);
+        end
+    end
+
+    if (self.SalesOverflow) then
+        local maxSales = #self.SalesTables * tableRows;
+        if (saleCount > maxSales) then
+            self.SalesOverflow:SetText(("|c00BE3333+%d not shown|r"):format(saleCount - maxSales));
+            self.SalesOverflow:Show();
+        else
+            self.SalesOverflow:Hide();
         end
     end
 end
