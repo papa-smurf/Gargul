@@ -422,6 +422,7 @@ function LedgerList:refresh()
 
             tinsert(PlayerData, {
                 balance = balanceText,
+                balanceCopper = copperToGive,
                 bid = bid,
                 cut = Cuts[player],
                 given = copperTraded / 10000,
@@ -432,18 +433,19 @@ function LedgerList:refresh()
             });
         end
 
-        -- Active players first, then alpha
+        local function playerHasLedgerActivity(Player)
+            return (Player.cut or 0) ~= 0
+                or (Player.spent or 0) ~= 0
+                or (Player.given or 0) ~= 0
+                or (Player.received or 0) ~= 0
+                or (Player.mailed or 0) ~= 0
+                or (Player.balanceCopper or 0) ~= 0;
+        end
+
+        -- Players with ledger activity first, then alpha within each group.
         table.sort(PlayerData, function (a, b)
-            local aActive = (a.cut or 0) > 0
-                or (a.spent or 0) > 0
-                or (a.given or 0) > 0
-                or (a.received or 0) > 0
-                or (a.mailed or 0) > 0;
-            local bActive = (b.cut or 0) > 0
-                or (b.spent or 0) > 0
-                or (b.given or 0) > 0
-                or (b.received or 0) > 0
-                or (b.mailed or 0) > 0;
+            local aActive = playerHasLedgerActivity(a);
+            local bActive = playerHasLedgerActivity(b);
             if (aActive ~= bActive) then
                 return aActive;
             end
