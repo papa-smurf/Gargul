@@ -46,7 +46,7 @@ function AwardedLoot:_init()
     end);
 
     -- Bind a item successfully assigned (masterlooted) to the winner to the tradeCompleted method
-    Events:register("AwardedLootTradeCompletedListener", "GL.ITEM_MASTER_LOOTED", function (_, player, itemID)
+    Events:register("AwardedLootItemMasterLootedListener", "GL.ITEM_MASTER_LOOTED", function (_, player, itemID)
         -- Mimic the GL.TRADE_COMPLETED payload so we can reuse the tradeCompleted method!
         self:tradeCompleted({
             partner = player,
