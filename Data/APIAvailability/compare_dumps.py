@@ -146,7 +146,7 @@ def main():
     result = "".join(output)
 
     # Write to file
-    out_path = Path(__file__).parent.parent.parent / ".cursor" / "rules" / "wow-api-diffs.mdc"
+    out_path = Path(__file__).parent.parent.parent / ".agents" / "rules" / "wow-api-diffs.mdc"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("---\n")

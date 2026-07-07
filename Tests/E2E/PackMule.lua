@@ -371,6 +371,18 @@ function E2E:step2_OpenHappyLoot()
     if (not self.isRunning) then return; end
 
     self:log("Step 2: Opening six-item loot window...");
+
+    -- On first run, warm the item cache before opening so uncached IDs don't
+    -- get silently skipped by Loot:open. Re-runs this step once all items load.
+    if (self.retryCount == 0) then
+        self.retryCount = 1;
+        GL:onItemLoadDo(ITEM_IDS, function ()
+            self:runStep(self.runnerStep);
+        end);
+        return;
+    end
+
+    self.retryCount = 0;
     Loot:open(buildItems(ITEM_IDS));
 
     if (#Loot:visibleSlots() ~= 4) then

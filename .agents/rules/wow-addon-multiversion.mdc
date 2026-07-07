@@ -141,7 +141,7 @@ Use **`table.insert`** and **`table.sort`** (standard Lua). Do not rely on WoW-i
 
 ## Documentation
 
-**Before using any WoW global**, check `.cursor/rules/wow-api-diffs.mdc` for availability by client. See `wow-api-availability.mdc` for the dump/compare workflow.
+**Before using any WoW global**, check `.agents/rules/wow-api-diffs.mdc` for availability by client. See `wow-api-availability.mdc` for the dump/compare workflow.
 
 Additional sources:
 - [warcraft.wiki.gg](https://warcraft.wiki.gg/wiki/World_of_Warcraft_API) — API availability per patch

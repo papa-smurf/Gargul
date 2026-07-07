@@ -6,7 +6,7 @@ alwaysApply: true
 
 # WoW API Availability
 
-**Before using any WoW global**, check `.cursor/rules/wow-api-diffs.mdc` — it lists which globals exist in which clients (Classic, TBC, Wrath+, Retail).
+**Before using any WoW global**, check `.agents/rules/wow-api-diffs.mdc` — it lists which globals exist in which clients (Classic, TBC, Wrath+, Retail).
 
 ## Workflow
 

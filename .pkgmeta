@@ -2,7 +2,7 @@ ignore:
   - _ide_helper.lua
   - automations
   - build.sh
-  - .cursor
+  - .agents
   - Data/APIAvailability
 
 changelog-title: Gargul

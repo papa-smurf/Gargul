@@ -6,9 +6,12 @@ local _, GL = ...;
 ---@type TMB
 local TMB = GL.TMB;
 
+local ROLL_START_WATCHDOG_SECONDS = 5;
+
 ---@class RollOff
 GL.RollOff = GL.RollOff or {
     inProgress = false,
+    pendingStart = false,
     listeningForRolls = false,
     rollPattern = GL:createPattern(RANDOM_ROLL_RESULT), -- This pattern is used to validate incoming rules
     CountDownTimer = nil,
@@ -126,7 +129,30 @@ function RollOff:announceStart(itemLink, time, note)
 
     GL.Settings:set("UI.RollOff.timer", time);
 
+    self:armStartWatchdog();
+
     return true;
+end
+
+--- Arm a watchdog that fires GL.ROLLOFF_START_FAILED if GL.ROLLOFF_STARTED
+--- doesn't arrive within a few seconds. Prevents the UI from getting stuck in
+--- a permanently-greyed state when the comm echo is dropped or delayed.
+---@return nil
+function RollOff:armStartWatchdog()
+    local timerID = "RollOff.startWatchdog";
+
+    self.pendingStart = true;
+
+    GL:after(ROLL_START_WATCHDOG_SECONDS, timerID, function ()
+        if (self.StopRollOffTimer) then
+            self.pendingStart = false;
+            return;
+        end
+
+        self.inProgress = false;
+        self.pendingStart = false;
+        GL.Events:fire("GL.ROLLOFF_START_FAILED");
+    end);
 end
 
 ---@param itemLink string
@@ -378,6 +404,8 @@ function RollOff:start(CommMessage)
         end
 
         self.inProgress = true;
+        self.pendingStart = false;
+        GL:cancelTimer("RollOff.startWatchdog");
         self:listenForRolls();
 
         if (self:startedByMe()) then

@@ -4,4 +4,4 @@ Data/APIAvailability/dumps/*
 .DS_Store
 .idea
 .vscode
-.cursor/plans
+.agents/plans

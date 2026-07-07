@@ -11,8 +11,6 @@ local Dialog = GL.Dialog;
 local AceGUI = GL.AceGUI;
 local ScrollingTable = GL.ScrollingTable;
 
-local ROLL_START_WATCHDOG_SECONDS = 5;
-
 ---@class MasterLooterUI
 local MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
@@ -142,6 +140,15 @@ function MasterLooterUI:draw(itemLink)
 
     GL.Events:register("MasterLooterUIRollStartedGearPanelListener", "GL.ROLLOFF_STARTED", function ()
         self:hideGearPanel();
+        self:updateWidgets();
+    end);
+
+    GL.Events:register("MasterLooterUIRollStartFailedListener", "GL.ROLLOFF_START_FAILED", function ()
+        GL:warning(L["Couldn't start the roll, please try again"]);
+
+        if (GL.Interface:get(MasterLooterUI, "Button.Start")) then
+            MasterLooterUI:updateWidgets();
+        end
     end);
 
     local HorizonalSpacer, VerticalSpacer;
@@ -266,7 +273,6 @@ function MasterLooterUI:draw(itemLink)
                     GL.Interface:get(self, "EditBox.ItemNote"):GetText()
                 )) then
                     GL.RollOff.inProgress = true;
-                    self:armStartRollOffWatchdog();
 
                     if (GL.Settings:get("UI.RollOff.closeOnStart")) then
                         self:close();
@@ -1414,40 +1420,6 @@ function MasterLooterUI:reset(keepItem)
     MasterLooterUI:updateWidgets();
 end
 
---- Arm a watchdog that resets inProgress if GL.ROLLOFF_STARTED doesn't fire within a few seconds
----@return nil
-function MasterLooterUI:armStartRollOffWatchdog()
-    local timerID = "MasterLooterUI.startRollOffWatchdog";
-    local listenerID = "MasterLooterUIStartRollOffWatchdog";
-
-    GL.Events:unregister(listenerID);
-
-    GL.Events:register(listenerID, "GL.ROLLOFF_STARTED", function ()
-        if (not GL.RollOff:startedByMe()) then
-            return;
-        end
-
-        GL:cancelTimer(timerID);
-        GL.Events:unregister(listenerID);
-    end);
-
-    GL:after(ROLL_START_WATCHDOG_SECONDS, timerID, function ()
-        GL.Events:unregister(listenerID);
-
-        if (GL.RollOff.StopRollOffTimer) then
-            return;
-        end
-
-        GL.RollOff.inProgress = false;
-        GL:warning(L["Couldn't start the roll, please try again"]);
-
-        local StartButton = GL.Interface:get(MasterLooterUI, "Button.Start");
-        if (StartButton) then
-            MasterLooterUI:updateWidgets();
-        end
-    end);
-end
-
 -- Update the widgets based on the current state of the roll off
 function MasterLooterUI:updateWidgets()
     -- If the itembox doesn't hold a valid item link then:
@@ -1480,6 +1452,16 @@ function MasterLooterUI:updateWidgets()
         GL.Interface:get(self, "Button.Disenchant"):SetDisabled(false);
         GL.Interface:get(self, "Button.Clear"):SetDisabled(false);
         GL.Interface:get(self, "EditBox.Item"):SetDisabled(false);
+
+    -- Start was clicked but the comm echo hasn't landed yet: keep Stop locked
+    -- so the user can't send a spurious stopRollOff before the roll is live.
+    elseif (GL.RollOff.pendingStart) then
+        GL.Interface:get(self, "Button.Start"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Stop"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Clear"):SetDisabled(true);
+        GL.Interface:get(self, "EditBox.Item"):SetDisabled(true);
 
     -- If a roll off is currently in progress then:
     --   The start button should not be available
