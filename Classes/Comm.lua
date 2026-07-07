@@ -25,6 +25,13 @@ local OutdatedActionLabels = {
     [Actions.startGDKPMultiAuction] = "GDKP",
 };
 
+-- Action-specific comm priorities
+-- Everything else defaults to "BULK".
+local PriorityByAction = {
+    [Actions.startRollOff] = "NORMAL",
+    [Actions.stopRollOff] = "NORMAL",
+};
+
 Comm.Actions = {
     [Actions.awardItem] = function (Message)
         GL.AwardedLoot:processAwardedLoot(Message);
@@ -211,7 +218,8 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
         end
     end
 
-    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
+    local priority = PriorityByAction[action] or "BULK";
+    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, priority, function (_, sent, textlen)
         -- Cancel the throttle reset timer if it exists
         if (throttleResetTimer) then
             GL.Ace:CancelTimer(throttleResetTimer);

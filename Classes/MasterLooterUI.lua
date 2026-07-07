@@ -11,6 +11,8 @@ local Dialog = GL.Dialog;
 local AceGUI = GL.AceGUI;
 local ScrollingTable = GL.ScrollingTable;
 
+local ROLL_START_WATCHDOG_SECONDS = 5;
+
 ---@class MasterLooterUI
 local MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
@@ -264,6 +266,7 @@ function MasterLooterUI:draw(itemLink)
                     GL.Interface:get(self, "EditBox.ItemNote"):GetText()
                 )) then
                     GL.RollOff.inProgress = true;
+                    self:armStartRollOffWatchdog();
 
                     if (GL.Settings:get("UI.RollOff.closeOnStart")) then
                         self:close();
@@ -1409,6 +1412,40 @@ function MasterLooterUI:reset(keepItem)
     GL.Interface:get(self, "Table.Players"):SetData({}, true);
 
     MasterLooterUI:updateWidgets();
+end
+
+--- Arm a watchdog that resets inProgress if GL.ROLLOFF_STARTED doesn't fire within a few seconds
+---@return nil
+function MasterLooterUI:armStartRollOffWatchdog()
+    local timerID = "MasterLooterUI.startRollOffWatchdog";
+    local listenerID = "MasterLooterUIStartRollOffWatchdog";
+
+    GL.Events:unregister(listenerID);
+
+    GL.Events:register(listenerID, "GL.ROLLOFF_STARTED", function ()
+        if (not GL.RollOff:startedByMe()) then
+            return;
+        end
+
+        GL:cancelTimer(timerID);
+        GL.Events:unregister(listenerID);
+    end);
+
+    GL:after(ROLL_START_WATCHDOG_SECONDS, timerID, function ()
+        GL.Events:unregister(listenerID);
+
+        if (GL.RollOff.StopRollOffTimer) then
+            return;
+        end
+
+        GL.RollOff.inProgress = false;
+        GL:warning(L["Couldn't start the roll, please try again"]);
+
+        local StartButton = GL.Interface:get(MasterLooterUI, "Button.Start");
+        if (StartButton) then
+            MasterLooterUI:updateWidgets();
+        end
+    end);
 end
 
 -- Update the widgets based on the current state of the roll off

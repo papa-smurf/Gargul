@@ -52,6 +52,12 @@ def find_lua_files(root: Path, paths: Optional[List[Path]]) -> List[Path]:
     ]
 
 
+def _repo_luac() -> Optional[str]:
+    """Return path to the repo-bundled luac5.1.exe if present."""
+    candidate = Path(__file__).resolve().parent / "bin" / "luac5.1.exe"
+    return str(candidate) if candidate.is_file() else None
+
+
 def validate_with_luac(file_path: Path, luac_cmd: Optional[str] = None) -> Tuple[bool, str]:
     """Validate using luac -p. Returns (ok, error_message)."""
     # Lua 5.1 chokes on UTF-8 BOM; strip it to a temp file for validation
@@ -62,7 +68,7 @@ def validate_with_luac(file_path: Path, luac_cmd: Optional[str] = None) -> Tuple
         tmp.write(raw)
         tmp_path = tmp.name
     try:
-        cmds = [luac_cmd] if luac_cmd else ["luac5.1", "luac"]
+        cmds = [luac_cmd] if luac_cmd else [_repo_luac(), "luac5.1", "luac"]
         for cmd in cmds:
             if not cmd:
                 continue
