@@ -100,12 +100,16 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
         -- Roll button
         local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");
-        local buttonWidth = math.max(strlen(identifier) * 12, 70);
-        rollerUIWidth = rollerUIWidth + buttonWidth + 4;
-        Button:SetSize(buttonWidth, 20);
         Button:SetText(identifier);
         Button:SetNormalFontObject("GameFontNormal");
         Button:SetHighlightFontObject("GameFontNormal");
+
+        -- Base the width on the actual rendered text width rather than byte length
+        local FontString = Button:GetFontString();
+        local textWidth = FontString and FontString:GetStringWidth() or 0;
+        local buttonWidth = math.max(math.ceil(textWidth) + 20, 70);
+        rollerUIWidth = rollerUIWidth + buttonWidth + 4;
+        Button:SetSize(buttonWidth, 20);
 
         if (not userCanUseItem) then
             Button:Disable();
