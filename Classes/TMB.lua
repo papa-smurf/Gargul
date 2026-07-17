@@ -634,6 +634,15 @@ end
 --- Clear all TMB data
 ---@return nil
 function TMB:clear()
+    -- Loot priorities can be imported alongside TMB data. Only clear them if
+    -- they still match what our last TMB import wrote
+    local lootPriorityHash = GL.DB:get("TMB.MetaData.lootPriorityHash");
+    if (lootPriorityHash ~= nil
+        and lootPriorityHash == GL.LootPriority:fingerprint()
+    ) then
+        GL.LootPriority:save("");
+    end
+
     GL.DB.TMB = {};
 
     Events:fire("GL.TMB_CLEARED");
@@ -869,10 +878,15 @@ function TMB:import(data, triedToDecompress, source)
     end
 
     -- There is also loot priority data available, pass it to on!
+    local lootPriorityHash;
     if (type(WebsiteData.loot) == "string"
         and not GL:empty(WebsiteData.loot)
     ) then
         GL.LootPriority:save(WebsiteData.loot);
+
+        -- Remember the fingerprint of the priorities so that
+        -- TMB:clear can remove them in case nothing changed
+        lootPriorityHash = GL.LootPriority:fingerprint();
     end
 
     -- This can happen if the user only imported item notes
@@ -887,6 +901,7 @@ function TMB:import(data, triedToDecompress, source)
         importedFromRRobin = source == "rrobin" or GL:toboolean(WebsiteData.importedFromRRobin),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
+        lootPriorityHash = lootPriorityHash,
     };
 
     Events:fire("GL.TMB_IMPORTED");

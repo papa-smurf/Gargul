@@ -130,6 +130,24 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ShareButton);
 end
 
+--- Return a stable fingerprint of the current loot priorities
+---
+--- Used to determine whether the priorities still match what was last
+--- imported via TMB (see TMB:import / TMB:clear).
+---
+---@return number
+function LootPriority:fingerprint()
+    local Lines = {};
+
+    for item, priority in pairs(DB:get("LootPriority", {}) or {}) do
+        tinsert(Lines, ("%s>%s"):format(item, table.concat(priority, ">")));
+    end
+
+    table.sort(Lines);
+
+    return GL:stringHash(table.concat(Lines, "\n"));
+end
+
 --- Translate the lootpriority table to CSV
 ---
 ---@return string
