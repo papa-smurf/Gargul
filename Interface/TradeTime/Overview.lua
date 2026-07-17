@@ -454,11 +454,31 @@ function Overview:refreshNow()
 
     local Values = GL:tableValues(State);
 
-    -- Sort by time remaining (low > high)
+    -- Precompute the values used to break ties so we don't recalculate
+    -- them on every comparison during the sort below
+    for _, Details in pairs(Values) do
+        Details.sortSecondsRemaining = tonumber(Details.secondsRemaining) or math.huge;
+        Details.sortQuality = tonumber(GL:getItemQualityFromLink(Details.itemLink)) or -1;
+        Details.sortName = GL:getItemNameFromLink(Details.itemLink) or "";
+    end
+
+    -- Sort by time remaining (low > high). Items with the same number of
+    -- seconds remaining are ordered by quality (high > low), then name (ASC),
+    -- and finally itemGUID so the order stays stable across refreshes
     table.sort(Values, function (a, b)
-        return a.secondsRemaining
-            and b.secondsRemaining
-            and a.secondsRemaining < b.secondsRemaining;
+        if (a.sortSecondsRemaining ~= b.sortSecondsRemaining) then
+            return a.sortSecondsRemaining < b.sortSecondsRemaining;
+        end
+
+        if (a.sortQuality ~= b.sortQuality) then
+            return a.sortQuality > b.sortQuality;
+        end
+
+        if (a.sortName ~= b.sortName) then
+            return a.sortName < b.sortName;
+        end
+
+        return tostring(a.itemGUID) < tostring(b.itemGUID);
     end);
 
     -- Order all items based on their time remaining
