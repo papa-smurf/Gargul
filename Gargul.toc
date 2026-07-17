@@ -1,10 +1,10 @@
-## Interface: 120005, 120007
+## Interface: 120007
 ## Interface-Classic: 11508
-## Interface-BCC: 20505
+## Interface-BCC: 20506
 ## Interface-Wrath: 30405
 ## Interface-Titan: 38001
 ## Interface-Cata: 40402
-## Interface-Mists: 50503, 50504
+## Interface-Mists: 50504, 50505
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Title-deDE: Gargul |c00967FD2@project-version@|r
 ## Title-esES: Gargul |c00967FD2@project-version@|r
@@ -27,10 +27,21 @@
 ## Notes-ruRU: Универсальный аддон добычи: GDKP, SoftRes, авто-лут и другое.|n|cffBBBBBBОт Zhorax|r|n|n|TInterface/AddOns/Gargul/Assets/Icons/patreon:12:12|t |cff967FD2patreon.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/kofi:12:12|t |cff967FD2ko-fi.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/discord:12:12:0:-2|t |cff967FD2discord.gg/D3mDhYPVzf|r
 ## Notes-zhCN: 一站式拾取插件：GDKP、SoftRes、自动拾取等。|n|cffBBBBBB作者：Zhorax|r|n|n|TInterface/AddOns/Gargul/Assets/Icons/patreon:12:12|t |cff967FD2patreon.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/kofi:12:12|t |cff967FD2ko-fi.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/discord:12:12:0:-2|t |cff967FD2discord.gg/D3mDhYPVzf|r
 ## Notes-zhTW: 一站式拾取插件：GDKP、SoftRes、自動拾取等。|n|cffBBBBBB作者：Zhorax|r|n|n|TInterface/AddOns/Gargul/Assets/Icons/patreon:12:12|t |cff967FD2patreon.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/kofi:12:12|t |cff967FD2ko-fi.com/gargul|r|n|TInterface/AddOns/Gargul/Assets/Icons/discord:12:12:0:-2|t |cff967FD2discord.gg/D3mDhYPVzf|r
+## Category: Loot
+## Category-deDE: Beute
+## Category-esES: Botín
+## Category-esMX: Botín
+## Category-frFR: Butin
+## Category-itIT: Bottino
+## Category-koKR: 전리품
+## Category-ptBR: Saque
+## Category-ruRU: Добыча
+## Category-zhCN: 拾取
+## Category-zhTW: 拾取
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## OptionalDeps: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibDeflate, LibSerialize, Masque, LibCustomGlow, ChatThrottleLib
 ## Author: Zhorax - Firemaw
-## Version: 7.7.33
+## Version: 7.7.34
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
@@ -220,8 +231,8 @@ Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
 
 # Alerts
-Interface\Alerts.lua
-Interface\Alerts.xml
+Interface/Alerts.lua
+Interface/Alerts.xml
 
 # Test classes
 Interface/Tests/Runner.lua

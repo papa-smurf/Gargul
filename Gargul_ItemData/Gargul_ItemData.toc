@@ -1,15 +1,35 @@
-## Interface: 120005, 120007
+## Interface: 120007
 ## Interface-Classic: 11508
-## Interface-BCC: 20505
+## Interface-BCC: 20506
 ## Interface-Wrath: 30405
 ## Interface-Titan: 38001
 ## Interface-Cata: 40402
-## Interface-Mists: 50503, 50504
+## Interface-Mists: 50504, 50505
 ## Title: Gargul |cffffffffItem Data|r
+## Title-deDE: Gargul |cffffffffItemdaten|r
+## Title-esES: Gargul |cffffffffDatos de objetos|r
+## Title-esMX: Gargul |cffffffffDatos de objetos|r
+## Title-frFR: Gargul |cffffffffDonnées d'objets|r
+## Title-itIT: Gargul |cffffffffDati oggetti|r
+## Title-koKR: Gargul |cffffffff아이템 데이터|r
+## Title-ptBR: Gargul |cffffffffDados de itens|r
+## Title-ruRU: Gargul |cffffffffДанные предметов|r
+## Title-zhCN: Gargul |cffffffff物品数据|r
+## Title-zhTW: Gargul |cffffffff物品資料|r
 ## Notes: Optional item cache for Gargul. Enables players to search for items.
+## Notes-deDE: Optionaler Item-Cache für Gargul. Ermöglicht Spielern die Suche nach Gegenständen.
+## Notes-esES: Caché de objetos opcional para Gargul. Permite a los jugadores buscar objetos.
+## Notes-esMX: Caché de objetos opcional para Gargul. Permite a los jugadores buscar objetos.
+## Notes-frFR: Cache d'objets optionnel pour Gargul. Permet aux joueurs de rechercher des objets.
+## Notes-itIT: Cache oggetti opzionale per Gargul. Consente ai giocatori di cercare oggetti.
+## Notes-koKR: Gargul을 위한 선택적 아이템 캐시. 플레이어가 아이템을 검색할 수 있습니다.
+## Notes-ptBR: Cache de itens opcional para o Gargul. Permite que os jogadores pesquisem itens.
+## Notes-ruRU: Дополнительный кэш предметов для Gargul. Позволяет игрокам искать предметы.
+## Notes-zhCN: Gargul 的可选物品缓存。允许玩家搜索物品。
+## Notes-zhTW: Gargul 的可選物品快取。允許玩家搜尋物品。
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## Author: Gargul
-## Version: 1.0.0
+## Version: 1.0.1
 ## Dependencies: Gargul
 ## DefaultState: enabled
 ## LoadOnDemand: 1
