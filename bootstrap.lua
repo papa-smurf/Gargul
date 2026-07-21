@@ -27,8 +27,11 @@ GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.tocVersion = select(4, GetBuildInfo());
 GL.isEra = GL.tocVersion < 20000;
 -- C_Seasons only exists in Season of Discovery; wrap to avoid errors on Era/BCC/Wrath/etc.
-GL.isSoD = GL.isEra and (C_Seasons and C_Seasons.GetActiveSeason and Enum and Enum.SeasonID
-    and C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder);
+GL.isSoD = false;
+if (GL.isEra and C_Seasons and C_Seasons.GetActiveSeason and Enum and Enum.SeasonID) then
+    local sodSeasonID = Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder;
+    GL.isSoD = sodSeasonID ~= nil and C_Seasons.GetActiveSeason() == sodSeasonID;
+end
 GL.isClassic = not GL.isEra and GL.tocVersion < 90000;
 GL.isRetail = GL.tocVersion >= 90000;
 GL.isMuted = false;
