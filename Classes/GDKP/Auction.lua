@@ -69,6 +69,28 @@ local GDKPSession = GDKP.Session;
 local AUTO_BID_THROTTLE_IN_SECONDS = .6;
 local BROADCAST_QUEUE_DELAY_IN_SECONDS = 3;
 
+-- Marker item IDs used for manual pot adjustments across
+-- versions (21100 pre-Wrath, 45978 Wrath+).
+local ManualAdjustmentItemIDs = {
+    [21100] = true,
+    [45978] = true,
+};
+ManualAdjustmentItemIDs[Constants.GDKP.potIncreaseItemID] = true;
+
+---@param AuctionOrItemID table|number|string
+---@return boolean
+function Auction:concernsManualAdjustment(AuctionOrItemID)
+    if (type(AuctionOrItemID) == "table") then
+        if (AuctionOrItemID.manualAdjustment) then
+            return true;
+        end
+
+        return ManualAdjustmentItemIDs[tonumber(AuctionOrItemID.itemID)] == true;
+    end
+
+    return ManualAdjustmentItemIDs[tonumber(AuctionOrItemID)] == true;
+end
+
 ---@return nil
 function Auction:_init()
     if (self._initialized) then
@@ -252,6 +274,7 @@ function Auction:create(itemLinkOrID, price, winner, sessionID, Bids, note, awar
         price = price,
         itemID = itemID,
         itemLink = itemLink,
+        manualAdjustment = self:concernsManualAdjustment(itemID) or nil,
         createdAt = GetServerTime(),
         note = note ~= "" and note or nil,
         CreatedBy = {
@@ -488,8 +511,10 @@ end
 ---@param Instance table
 ---@return nil
 function Auction:sanitize(Instance)
+    local concernsManualAdjustment = self:concernsManualAdjustment(Instance);
     local SanitizedAuction = {
         itemLink = Instance.itemLink,
+        manualAdjustment = concernsManualAdjustment or nil,
     };
 
     Instance.price = tonumber(Instance.price);
@@ -548,10 +573,14 @@ function Auction:sanitize(Instance)
     end
 
     --[[ Make sure the item ID is valid ]]
-    SanitizedAuction.itemID = GL.GetItemInfoInstant(Instance.itemID);
-    if (not tonumber(SanitizedAuction.itemID)) then
-        GL:xd("Auction:sanitize step 4 failed, contact support!");
-        return false;
+    -- The pot-adjustment marker item needn't exist on
+    -- this client (e.g. no Solid Gold Coin on TBC).
+    if (not concernsManualAdjustment) then
+        SanitizedAuction.itemID = GL.GetItemInfoInstant(Instance.itemID);
+        if (not tonumber(SanitizedAuction.itemID)) then
+            GL:xd("Auction:sanitize step 4 failed, contact support!");
+            return false;
+        end
     end
 
     --[[ Auction.Bids ]]
@@ -672,6 +701,14 @@ function Auction:sanitize(Instance)
     SanitizedAuction.itemID = tonumber(Instance.itemID);
     SanitizedAuction.price = tonumber(Instance.price);
     SanitizedAuction.note = Instance.note;
+
+    -- Label unresolvable markers so the caller stores them without waiting on an item load.
+    if (concernsManualAdjustment
+        and GL:empty(SanitizedAuction.itemLink)
+        and not GL.GetItemInfoInstant(Instance.itemID)
+    ) then
+        SanitizedAuction.itemLink = L["Pot changed"];
+    end
 
     if (not GL:strStartsWith(Instance.ID, SanitizedAuction.createdAt)) then
         GL:xd("Auction:sanitize step 10 failed, contact support!");

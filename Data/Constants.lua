@@ -293,7 +293,7 @@ GL.Data.Constants = {
         adjustMutatorIdentifier = "+___adjust___+",
         adjustPercentageMutatorIdentifier = "+__%adjust%__+",
         baseMutatorIdentifier = "+___base___+",
-        potIncreaseItemID = select(4, GetBuildInfo()) < 20000 and 21100 or 45978, -- Classic era doesn't have a solid gold coin, yikes!
+        potIncreaseItemID = select(4, GetBuildInfo()) < 30000 and 21100 or 45978, -- Solid gold coin (45978) only exists in Wrath and beyond; Classic era and TBC use Coin of Ancestry (21100)
     },
 
     GroupLootActions = {

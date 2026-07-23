@@ -526,7 +526,7 @@ function LedgerList:refresh()
         local TableData = {};
         for _, Auction in pairs(Data) do
             local mutation;
-            if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+            if (GDKP.Auction:concernsManualAdjustment(Auction)) then
                 mutation = (L["Gold %s by"]):format(Auction.price < 0 and "removed" or "added");
             end
 

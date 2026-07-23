@@ -683,7 +683,7 @@ function Session:tooltipLines(itemLink)
 
     local itemID = GL:getItemIDFromLink(itemLink);
 
-    if (itemID == Constants.GDKP.potIncreaseItemID) then
+    if (GDKP.Auction:concernsManualAdjustment(itemID)) then
         return {};
     end
 
@@ -984,7 +984,7 @@ function Session:announceDeletedAuction(sessionID, Auction)
         local price = GL:tableGet(Auction, "PreviousStates.1.price");
 
         -- This was raw gold added to the pot
-        if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+        if (GDKP.Auction:concernsManualAdjustment(Auction)) then
             GL:sendChatMessage((L.CHAT["I removed %s from the pot"]):format(GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
@@ -1023,7 +1023,7 @@ function Session:announceRestoredAuction(sessionID, Auction)
         local price = Auction.price;
 
         -- This was raw gold added to the pot
-        if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+        if (GDKP.Auction:concernsManualAdjustment(Auction)) then
             GL:sendChatMessage((L.CHAT["I added %s back to the pot"]):format(GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
             return;

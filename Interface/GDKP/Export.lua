@@ -358,13 +358,19 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
 
         for _, Auction in pairs(Auctions) do
             local exportEntry = customExportFormat;
-            local ItemDetails = Details[Auction.itemID];
-            local wowheadLink, iconLink;
-            local icon = GL.Data.IconTexturePaths:byID(ItemDetails.icon);
+            local concernsManualAdjustment = GL.GDKP.Auction:concernsManualAdjustment(Auction);
+            -- Marker item may not have loaded; fall back to safe defaults below.
+            local ItemDetails = Details[Auction.itemID] or {};
 
-            if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
+            if (concernsManualAdjustment) then
                 ItemDetails.name = L["Pot changed"];
+                ItemDetails.link = ItemDetails.link or Auction.itemLink or L["Pot changed"];
+                ItemDetails.level = ItemDetails.level or 0;
+                ItemDetails.quality = ItemDetails.quality or 1;
             end
+
+            local wowheadLink, iconLink;
+            local icon = ItemDetails.icon and GL.Data.IconTexturePaths:byID(ItemDetails.icon) or nil;
 
             if (GL.isEra) then
                 wowheadLink = ("https://classic.wowhead.com/item=%s"):format(Auction.itemID);

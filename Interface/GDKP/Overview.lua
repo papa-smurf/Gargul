@@ -675,13 +675,18 @@ function Overview:refreshLedger()
 
                 local price = Auction.price or 0;
                 local auctionWasDeleted = not Auction.price;
-                local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
+                local concernsManualAdjustment = GDKPAuction:concernsManualAdjustment(Auction);
 
                 -- This entry should always exist, if it doesn't something went wrong (badly)
                 local ItemEntry = GL:getCachedItem(Auction.itemLink);
 
                 if (GL:empty(ItemEntry)) then
-                    return;
+                    -- A pot adjustment whose marker item doesn't resolve; render a placeholder.
+                    if (not concernsManualAdjustment) then
+                        return;
+                    end
+
+                    ItemEntry = { link = Auction.itemLink, };
                 end
 
                 -- [[ SET DETAILS ]]
