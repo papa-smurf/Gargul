@@ -57,6 +57,15 @@ CommRecorder.DropReason = {
 local PriorityCode = { ALERT = 1, NORMAL = 2, BULK = 3, };
 local ChannelCode = { RAID = 1, PARTY = 2, WHISPER = 3, GUILD = 4, INSTANCE_CHAT = 5, };
 
+-- Rolled into summary counters instead of flooding the ring buffer.
+local Actions = GL.Data.Constants.Comm.Actions or {};
+local AggregatedActions = {
+    [Actions.bidOnGDKPMultiAuction] = true,
+    [Actions.announceChangesForGDKPMultiAuction] = true,
+    [Actions.requestRunningGDKPMultiAuctionHash] = true,
+    [Actions.requestRunningGDKPMultiAuctionDetails] = true,
+};
+
 ---@return nil
 function CommRecorder:_init()
     if (self._initialized) then
@@ -137,6 +146,7 @@ function CommRecorder:startSession()
     self.approxBytes = 0;
     self.rollAnnounceAt = nil;
     self.Traffic = { gargul = 0, other = 0, gargulBytes = 0, otherBytes = 0, ByPrefix = {}, };
+    self.Aggregates = {};
     self.idCounter = 0;
     self.Session = {
         startedAt = time(),
@@ -269,6 +279,12 @@ function CommRecorder:record(Entry)
         return;
     end
 
+    -- Aggregate high-frequency actions instead of ringing them, drops excepted
+    if (Entry.k ~= self.Kind.drop and Entry.a and AggregatedActions[Entry.a]) then
+        self:aggregate(Entry);
+        return;
+    end
+
     Entry.o = self:msSince(self.Session.startTime or GetTime());
 
     local lastIndex = (self.nextIndex - 1);
@@ -298,6 +314,34 @@ function CommRecorder:record(Entry)
 
     if (self.approxBytes > self.MAX_BYTES) then
         self:trimHalf();
+    end
+end
+
+--- Roll an entry into a per-(action, kind) summary counter.
+---@param Entry table
+---@return nil
+function CommRecorder:aggregate(Entry)
+    self.Aggregates = self.Aggregates or {};
+
+    local key = ("%s:%s"):format(Entry.a or 0, Entry.k or 0);
+    local A = self.Aggregates[key];
+    if (not A) then
+        A = { a = Entry.a, k = Entry.k, count = 0, bytes = 0, latSum = 0, latCount = 0, latMax = 0, };
+        self.Aggregates[key] = A;
+    end
+
+    A.count = A.count + 1;
+
+    if (Entry.b) then
+        A.bytes = A.bytes + Entry.b;
+    end
+
+    if (Entry.l) then
+        A.latSum = A.latSum + Entry.l;
+        A.latCount = A.latCount + 1;
+        if (Entry.l > A.latMax) then
+            A.latMax = Entry.l;
+        end
     end
 end
 
@@ -398,17 +442,24 @@ function CommRecorder:flush()
         return;
     end
 
+    -- Don't overwrite a stored capture with an empty session
+    if (self.count < 1 and not (self.Aggregates and next(self.Aggregates))) then
+        return;
+    end
+
     local Store = GL.DB.CommTrace;
 
     Store.Previous = {
         Meta = Store.Meta,
         Traffic = Store.Traffic,
         Entries = Store.Entries,
+        Aggregates = Store.Aggregates,
     };
 
     Store.Meta = self.Session;
     Store.Traffic = self.Traffic;
     Store.Entries = self:orderedEntries();
+    Store.Aggregates = self.Aggregates;
 end
 
 ---@param action number|nil
@@ -515,8 +566,9 @@ local DropLabel = {
 ---@param Meta table
 ---@param Traffic table
 ---@param Entries table
+---@param Aggregates table|nil
 ---@return string
-function CommRecorder:formatSession(Meta, Traffic, Entries)
+function CommRecorder:formatSession(Meta, Traffic, Entries, Aggregates)
     local ActionsByID = GL:tableFlip(GL.Data.Constants.Comm.Actions or {});
     local Lines = {};
 
@@ -545,6 +597,25 @@ function CommRecorder:formatSession(Meta, Traffic, Entries)
         for i = 1, math.min(#Rows, 20) do
             local R = Rows[i];
             Lines[#Lines + 1] = ("  %s: %s msg / %s B"):format(R.prefix, R.count, R.bytes);
+        end
+    end
+
+    if (Aggregates and next(Aggregates)) then
+        local Rows = {};
+        for _, A in pairs(Aggregates) do
+            Rows[#Rows + 1] = A;
+        end
+        table.sort(Rows, function (a, b) return a.count > b.count; end);
+
+        Lines[#Lines + 1] = "High-frequency actions (aggregated, not listed individually):";
+        for _, A in ipairs(Rows) do
+            local action = A.a and (ActionsByID[A.a] or ("#" .. tostring(A.a))) or "-";
+            local kind = KindLabel[A.k] or tostring(A.k);
+            local latInfo = "";
+            if (A.latCount and A.latCount > 0) then
+                latInfo = (" | lat avg %sms max %sms"):format(math.floor(A.latSum / A.latCount + 0.5), A.latMax or 0);
+            end
+            Lines[#Lines + 1] = ("  %s %s: %s msg / %s B%s"):format(kind, action, A.count, A.bytes or 0, latInfo);
         end
     end
 
@@ -597,18 +668,18 @@ function CommRecorder:export(which)
             return;
         end
 
-        GL:frameMessage(self:formatSession(Prev.Meta, Prev.Traffic, Prev.Entries));
+        GL:frameMessage(self:formatSession(Prev.Meta, Prev.Traffic, Prev.Entries, Prev.Aggregates));
         return;
     end
 
-    if (self.count > 0) then
-        GL:frameMessage(self:formatSession(self.Session, self.Traffic, self:orderedEntries()));
+    if (self.count > 0 or (self.Aggregates and next(self.Aggregates))) then
+        GL:frameMessage(self:formatSession(self.Session, self.Traffic, self:orderedEntries(), self.Aggregates));
         return;
     end
 
     local Store = GL.DB.CommTrace;
     if (Store and Store.Entries and #Store.Entries > 0) then
-        GL:frameMessage(self:formatSession(Store.Meta, Store.Traffic, Store.Entries));
+        GL:frameMessage(self:formatSession(Store.Meta, Store.Traffic, Store.Entries, Store.Aggregates));
         return;
     end
 
