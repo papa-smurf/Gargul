@@ -24,6 +24,14 @@ function Advanced:draw(Parent)
             setting = "commDebugEnabled",
         },
         {
+            label = "Experimental: comm session recorder (for support)",
+            description = "Record all Gargul add-on communication this session (sends, receives, drops, timing, roll-off starts and queue pressure). Reproduce your issue, then run /gl commtrace to export a report you can share on Discord. Auto-disables after a while.",
+            setting = "commTraceEnabled",
+            callback = function ()
+                GL.CommRecorder:setEnabled(GL.Settings:get("commTraceEnabled"));
+            end,
+        },
+        {
             label = "Experimental: addon usage",
             description = "Show add-on memory usage. Warning: may cause FPS drop!",
             setting = "profilerEnabled",

@@ -127,6 +127,9 @@ function RollOff:announceStart(itemLink, time, note)
         channel = "GROUP",
     }):send();
 
+    -- Timestamp used to measure our own echo round-trip (the SEND itself is auto-logged)
+    GL.CommRecorder.rollAnnounceAt = GetTime();
+
     GL.Settings:set("UI.RollOff.timer", time);
 
     self:armStartWatchdog();

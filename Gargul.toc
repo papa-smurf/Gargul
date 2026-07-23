@@ -129,6 +129,7 @@ Classes/Player.lua
 Classes/BoostedRolls.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
+Classes/CommRecorder.lua
 Classes/RaidGroups.lua
 Classes/DroppedLootLedger.lua
 

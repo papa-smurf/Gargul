@@ -184,6 +184,7 @@ function GL:_init()
 
     self.Comm:_init();
     self.User:_init();
+    self.CommRecorder:_init();
     self.AwardedLoot:_init();
     self.AutoRoll:_init();
     self.ItemDataManager:_init();

@@ -11,6 +11,7 @@ local DB = {
     Tables = {
         "AwardHistory",
         "BoostedRolls",
+        "CommTrace",
         "GDKP",
         "LoadDetails",
         "LootPriority",

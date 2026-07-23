@@ -19,6 +19,7 @@ GL.Commands = GL.Commands or {
         autoroll = "Open the Auto Roll rules window. Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls).",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         bugreport = "Include the output of this command when filing a bug report on the Gargul discord server",
+        commtrace = "Export Gargul's recorded comm traffic for support/debugging (enable the recorder in Settings > Advanced first). Use /gl commtrace, /gl commtrace prev, or /gl commtrace clear",
         clearplusones = "Clear all plus one values",
         cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
         setdisenchanter = "Sets the disenchanter entry directly without having to select one: /gl sd [mydisenchanter]",
@@ -226,6 +227,9 @@ GL.Commands = GL.Commands or {
 
         -- Show xd output buffer in frame (selectable, copyable)
         xda = function () GL:xda(); end,
+
+        -- Export the recorded comm session trace (see Settings > Advanced). Accepts "prev" or "clear".
+        commtrace = function (...) GL.CommRecorder:export(...); end,
 
         -- Dump all globals for API availability tracking. Run in each client.
         dumpglobals = function () GL:dumpGlobals(); end,

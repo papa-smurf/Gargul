@@ -110,6 +110,7 @@ function CommMessage.newFromReceived(Message)
     self.recipient = Message.recipient;
     self.correspondenceID = Message.correspondenceID or Message.id;
     self.Responses = Message.Responses or {};
+    self.traceID = Message.traceID;
 
     return self;
 end
@@ -129,6 +130,7 @@ function CommMessage:send(broadcastFinishedCallback, packageSentCallback)
                     return;
                 end
 
+                GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.confirmTimeout, self.action, self.recipient);
                 self.onConfirm(false);
             end);
 
@@ -202,6 +204,14 @@ function CommMessage:confirm()
         return false;
     end
 
+    GL.CommRecorder:record({
+        k = GL.CommRecorder.Kind.confirm,
+        a = self.action,
+        c = 3, -- WHISPER
+        b = strlen(encoded),
+        p = 1, -- ALERT
+    });
+
     if (GL.Settings:get("commDebugEnabled", false)) then
         GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceID) or 0, "N"));
     end
@@ -244,7 +254,8 @@ function CommMessage:compress(Message)
         d = Message.correspondenceID or Message.id, -- Response ID
         m = Message.minimumVersion, -- Minimum version recipient should have
         v = Message.version, -- Version of sender
-        r = Message.channel ~= "WHISPER" and Message.recipient or nil;
+        r = Message.channel ~= "WHISPER" and Message.recipient or nil,
+        t = Message.traceID, -- comm trace ID, only present while recording
     };
 
     local success, encoded = pcall(function ()
@@ -291,5 +302,6 @@ function CommMessage:decompress(encoded)
         minimumVersion = Payload.m or nil, -- Minimum version recipient should have
         version = Payload.v or nil, -- Version of sender
         recipient = Payload.r or nil, -- Recipient (in case we route whisper through group)
+        traceID = Payload.t or nil, -- comm trace ID (optional)
     };
 end

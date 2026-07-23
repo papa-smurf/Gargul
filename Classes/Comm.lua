@@ -171,6 +171,11 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local recipient = CommMessage.recipient;
     local action = CommMessage.action;
 
+    -- Trace ID travels in the payload so a send pairs with its echo/receipt in the log
+    if (GL.CommRecorder.enabled) then
+        CommMessage.traceID = GL.CommRecorder:nextID();
+    end
+
     local compressedMessage = "";
 
     -- If this is a fresh message, not a response, then CommMessage will
@@ -219,11 +224,18 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     end
 
     local priority = PriorityByAction[action] or "BULK";
+
+    local traceID = CommMessage.traceID;
+    GL.CommRecorder:recordSend(action, priority, distribution, recipient, stringLength, traceID);
+    local sendStartedAt = GetTime();
+
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, priority, function (_, sent, textlen)
         -- Cancel the throttle reset timer if it exists
         if (throttleResetTimer) then
             GL.Ace:CancelTimer(throttleResetTimer);
         end
+
+        GL.CommRecorder:recordSent(action, GL.CommRecorder:msSince(sendStartedAt), sent, textlen, traceID);
 
         -- Execute the package sent calback
         if (type(packageSentCallback) == "function") then
@@ -258,6 +270,7 @@ function Comm:listen(payload, distribution, playerName)
 
     -- We're missing a payload
     if (not payload) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.decompressFail, nil, playerName);
         return false;
     end
 
@@ -287,6 +300,7 @@ function Comm:listen(payload, distribution, playerName)
             and not GL:iEquals(payload.recipient, GL.User.name)
         ))
     ) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.notForMe, type(payload) == "table" and payload.action or nil, playerName);
         return false;
     end
 
@@ -300,6 +314,7 @@ function Comm:listen(payload, distribution, playerName)
 
         -- This indicates potential source code tampering
         if (not GL:strStartsWith(ciSenderFqn, ciPlayerName)) then
+            GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.tamper, payload.action, playerName);
             return false;
         end
     end
@@ -338,6 +353,8 @@ function Comm:listen(payload, distribution, playerName)
             recipient = playerName,
         }):send();
 
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.senderOutdated, payload.action, playerName);
+
         -- Warn the recipient once per sender per session for start actions
         local label = OutdatedActionLabels[payload.action];
         if (label and not WarnedOutdatedSenders[playerName]) then
@@ -357,11 +374,13 @@ function Comm:listen(payload, distribution, playerName)
         and type(payload.minimumVersion) == "string"
         and not Version:leftIsNewerThanOrEqualToRight(Version.current, payload.minimumVersion)
     ) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.notBackwardsCompatible, payload.action, playerName);
         Version:notBackwardsCompatibleNotice();
         return false;
     end
 
     if (not payload.action) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.missingAction, nil, playerName);
         return false;
     end
 
@@ -372,12 +391,14 @@ function Comm:listen(payload, distribution, playerName)
     if (not payload.id
         and not payload.action == Actions.response
     ) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.missingID, payload.action, playerName);
         return false;
     end
 
     if (not payload.correspondenceID
         and payload.action == Actions.response
     ) then
+        GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.missingID, payload.action, playerName);
         return false;
     end
 
@@ -401,6 +422,8 @@ function Comm:dispatch(CommMessage, stringLength)
     end
 
     if (Comm.Actions[action]) then
+        GL.CommRecorder:recordReceive(action, stringLength, CommMessage.senderFqn, CommMessage.traceID);
+
         -- Make sure we can keep an eye on comm behavior
         if (GL.Settings:get("commDebugEnabled", false)) then
             local ActionsByID = GL:tableFlip(Actions);
@@ -414,6 +437,8 @@ function Comm:dispatch(CommMessage, stringLength)
 
         return Comm.Actions[action](CommMessage);
     end
+
+    GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.unknownAction, action, CommMessage.senderFqn);
 
     if (WarnedAboutCommAction[action]) then
         return;
