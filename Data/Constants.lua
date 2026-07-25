@@ -441,6 +441,29 @@ GL.Data.Constants = {
         20580, -- Hammer of Bestial Fury (Ysondre, Taerar, Lethon, Emeriss)
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
 
+        --[[ TBC WORLD BOSS LOOT ]]
+        30732, -- Exodar Life-Staff (Doom Lord Kazzak)
+        30733, -- Hope Ender (Doom Lord Kazzak)
+        30734, -- Leggings of the Seventh Circle (Doom Lord Kazzak)
+        30735, -- Ancient Spellcloak of the Highborne (Doom Lord Kazzak)
+        30736, -- Ring of Flowing Light (Doom Lord Kazzak)
+        30737, -- Gold-Leaf Wildboots (Doom Lord Kazzak)
+        30738, -- Ring of Reciprocity (Doom Lord Kazzak)
+        30739, -- Scaled Greaves of the Marksman (Doom Lord Kazzak)
+        30740, -- Ripfiend Shoulderplates (Doom Lord Kazzak)
+        30741, -- Topaz-Studded Battlegrips (Doom Lord Kazzak)
+
+        30722, -- Ethereum Nexus-Reaver (Doomwalker)
+        30723, -- Talon of the Tempest (Doomwalker)
+        30724, -- Barrel-Blade Longrifle (Doomwalker)
+        30725, -- Anger-Spark Gloves (Doomwalker)
+        30726, -- Archaic Charm of Presence (Doomwalker)
+        30727, -- Gilded Trousers of Benediction (Doomwalker)
+        30728, -- Fathom-Helm of the Deeps (Doomwalker)
+        30729, -- Black-Iron Battlecloak (Doomwalker)
+        30730, -- Terrorweave Tunic (Doomwalker)
+        30731, -- Faceguard of the Endless Watch (Doomwalker)
+
         71141, -- Eternal Ember
     },
 
