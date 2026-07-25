@@ -292,7 +292,8 @@ function GL:hookNativeWindowEvents()
         GL.merchantIsShown = false;
     end);
 
-    -- See https://wowpedia.fandom.com/wiki/PLAYER_INTERACTION_MANAGER_FRAME_HIDE for types
+    -- Era uses legacy events; other clients use PLAYER_INTERACTION_MANAGER_FRAME_* (types 5/8/10/17/21).
+    -- Don't register both: 1.15.9 fires both, which would set window state twice.
     if (not GL.isEra) then
         GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 5) then
@@ -321,49 +322,47 @@ function GL:hookNativeWindowEvents()
                 self.auctionHouseIsShown = false;
             end
         end);
+    else
+        GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function ()
+            self.auctionHouseIsShown = true;
+        end);
 
-        return;
+        GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function ()
+            self.auctionHouseIsShown = false;
+        end);
+
+        GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function ()
+            self.mailIsShown = true;
+        end);
+
+        GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function ()
+            self.mailIsShown = false;
+        end);
+
+        GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function ()
+            self.merchantIsShown = true;
+        end);
+
+        GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function ()
+            self.merchantIsShown = false;
+        end);
+
+        GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function ()
+            self.bankIsShown = true;
+        end);
+
+        GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function ()
+            self.bankIsShown = false;
+        end);
+
+        GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function ()
+            self.guildBankIsShown = true;
+        end);
+
+        GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function ()
+            self.guildBankIsShown = false;
+        end);
     end
-
-    GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function ()
-        self.auctionHouseIsShown = true;
-    end);
-
-    GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function ()
-        self.auctionHouseIsShown = false;
-    end);
-
-    GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function ()
-        self.mailIsShown = true;
-    end);
-
-    GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function ()
-        self.mailIsShown = false;
-    end);
-
-    GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function ()
-        self.merchantIsShown = true;
-    end);
-
-    GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function ()
-        self.merchantIsShown = false;
-    end);
-
-    GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function ()
-        self.bankIsShown = true;
-    end);
-
-    GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function ()
-        self.bankIsShown = false;
-    end);
-
-    GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function ()
-        self.guildBankIsShown = true;
-    end);
-
-    GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function ()
-        self.guildBankIsShown = false;
-    end);
 end
 
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier

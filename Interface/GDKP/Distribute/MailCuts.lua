@@ -44,7 +44,8 @@ function MailCuts:_init()
     self.cutMailSubject = Identity.cutMailSubject or L["Gargul GDKP: %sg"];
     self.cutMailBody = Identity.cutMailBody or L.CHAT["Hi ${player}, your ${cut} cut has arrived! - Gargul"];
 
-    --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
+    -- Era uses MAIL_SHOW/CLOSED; other clients use PLAYER_INTERACTION_MANAGER_FRAME_* (type 17).
+    -- Don't register both or the mailer opens twice.
     if (not GL.isEra) then
         Events:register("MailCutsPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 17) then
@@ -57,17 +58,15 @@ function MailCuts:_init()
                 self:close();
             end
         end);
+    else
+        Events:register("MailCutsMailShowListener", "MAIL_SHOW", function ()
+            self:openIfCutsToMail();
+        end);
 
-        return;
+        Events:register("MailCutsMailClosedListener", "MAIL_CLOSED", function ()
+            self:close();
+        end);
     end
-
-    Events:register("MailCutsMailShowListener", "MAIL_SHOW", function ()
-        self:openIfCutsToMail();
-    end);
-
-    Events:register("MailCutsMailClosedListener", "MAIL_CLOSED", function ()
-        self:close();
-    end);
 end
 
 ---@return nil
