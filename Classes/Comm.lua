@@ -140,6 +140,9 @@ Comm.Actions = {
     [Actions.broadcastEquippedGear] = function (Message)
         GL.RollOff:receiveEquippedGear(Message);
     end,
+    [Actions.shareEquippedGear] = function (Message)
+        GL.RollOff:receiveSharedEquippedGear(Message);
+    end,
 };
 
 function Comm:_init()

@@ -323,7 +323,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 end
 
---- Create a single roll row frame with 4 text columns
+--- Create a single roll row frame with 4 text columns and gear widgets.
 ---
 ---@param parent Frame
 ---@param width number
@@ -357,6 +357,37 @@ function RollerUI:createRollRow(parent, width)
     Row.PlusOneText = PlusOneText;
     Row.TypeText = TypeText;
 
+    -- Gear panel toggle, matching the master looter table's cell
+    local GearArrow = CreateFrame("Button", nil, Row);
+    GearArrow:SetSize(14, ROLL_TRACKER_ROW_HEIGHT);
+    local GearArrowText = GearArrow:CreateFontString(nil, "OVERLAY", GL.Data.Constants.GearPanelToggle.font);
+    GearArrowText:SetAllPoints(GearArrow);
+    GearArrowText:SetJustifyH("CENTER");
+    GearArrow:Hide();
+    Row.GearArrow = GearArrow;
+    Row.GearArrowText = GearArrowText;
+
+    -- Right gear icon slot
+    local GearIcon2 = CreateFrame("Button", nil, Row);
+    GearIcon2:SetSize(14, 14);
+    GearIcon2.Texture = GearIcon2:CreateTexture(nil, "ARTWORK");
+    GearIcon2.Texture:SetAllPoints(GearIcon2);
+    GearIcon2:Hide();
+    Row.GearIcon2 = GearIcon2;
+
+    -- Left gear icon slot
+    local GearIcon1 = CreateFrame("Button", nil, Row);
+    GearIcon1:SetSize(14, 14);
+    GearIcon1.Texture = GearIcon1:CreateTexture(nil, "ARTWORK");
+    GearIcon1.Texture:SetAllPoints(GearIcon1);
+    GearIcon1:Hide();
+    Row.GearIcon1 = GearIcon1;
+
+    -- Anchor chain from the right, clear of the 5px scroll track region
+    GearArrow:SetPoint("RIGHT", Row, "RIGHT", -8, 0);
+    GearIcon2:SetPoint("RIGHT", GearArrow, "LEFT", -2, 0);
+    GearIcon1:SetPoint("RIGHT", GearIcon2, "LEFT", -2, 0);
+
     return Row;
 end
 
@@ -380,6 +411,96 @@ function RollerUI:fillRollRow(Row, Entry)
 
     Row.TypeText:SetText(Entry.classification or "");
     Row.TypeText:SetTextColor(.8, .8, .8);
+
+    self:fillGearWidgets(Row, Entry);
+end
+
+--- Populate the gear icon widgets and panel arrow on a roll row.
+---
+---@param Row Frame
+---@param Entry table
+---@return nil
+function RollerUI:fillGearWidgets(Row, Entry)
+    if (not Row.GearIcon1) then
+        return;
+    end
+
+    local Gear = GL.RollOff:gearDisplayForRollEntry(Entry);
+    local placeholderIcon = GL.Data.Constants.gearPlaceholderIcon;
+
+    local function fillIcon(Icon, dehydratedLink, placeholder)
+        if (not dehydratedLink and not placeholder) then
+            Icon:Hide();
+            Icon:SetScript("OnEnter", nil);
+            Icon:SetScript("OnLeave", nil);
+            return;
+        end
+
+        Icon.Texture:SetTexture(placeholderIcon);
+        Icon:SetAlpha(Gear.alpha);
+        Icon:Show();
+
+        if (placeholder) then
+            Icon:SetScript("OnEnter", function ()
+                GameTooltip:SetOwner(Icon, "ANCHOR_TOP");
+                GameTooltip:AddLine(L["No worn gear to compare with this item"]);
+                GameTooltip:Show();
+            end);
+            Icon:SetScript("OnLeave", function ()
+                GameTooltip:Hide();
+            end);
+            return;
+        end
+
+        local itemID = GL:itemIDFromDehydratedLink(dehydratedLink);
+        if (itemID) then
+            GL:onItemLoadDo(itemID, function (Details)
+                if (not Details or not Icon.Texture) then
+                    return;
+                end
+                Icon.Texture:SetTexture(Details.icon or placeholderIcon);
+            end);
+        end
+
+        Icon:SetScript("OnEnter", function ()
+            GameTooltip:SetOwner(Icon, "ANCHOR_TOP");
+            GL:hydrateItemLink(dehydratedLink, function (itemLink)
+                if (itemLink) then
+                    GameTooltip:SetHyperlink(itemLink);
+                    GameTooltip:Show();
+                end
+            end);
+        end);
+        Icon:SetScript("OnLeave", function ()
+            GameTooltip:Hide();
+        end);
+    end
+
+    fillIcon(Row.GearIcon1, Gear.leftLink, false);
+    fillIcon(Row.GearIcon2, Gear.rightLink, Gear.placeholder);
+
+    if (Gear.hasGear and Gear.playerKey) then
+        Row.GearArrowText:SetText(GL.Data.Constants.GearPanelToggle.label);
+        Row.GearArrow:Show();
+        Row.GearArrow:SetScript("OnEnter", function ()
+            GameTooltip:SetOwner(Row.GearArrow, "ANCHOR_TOP");
+            GameTooltip:AddLine(L["Show all worn items"]);
+            GameTooltip:Show();
+        end);
+        Row.GearArrow:SetScript("OnLeave", function ()
+            GameTooltip:Hide();
+        end);
+        local player = Entry.player;
+        Row.GearArrow:SetScript("OnClick", function ()
+            GL.Interface.GearPanel:toggle(
+                player,
+                GL.RollerUI.Window,
+                { point = "TOPRIGHT", relativePoint = "TOPLEFT", x = -5, y = 0, }
+            );
+        end);
+    else
+        Row.GearArrow:Hide();
+    end
 end
 
 --- Draw the roll tracker panel below the countdown bar
@@ -448,33 +569,22 @@ function RollerUI:drawRollTracker(width)
     TypeText:SetWidth(50);
     TypeText:SetJustifyH("LEFT");
 
-    ---@type Button
-    local InfoButton = CreateFrame("Button", nil, TopRow);
-    InfoButton:SetSize(12, 12);
-    InfoButton:SetPoint("RIGHT", TopRow, "RIGHT", -4, 0);
-
-    local InfoTexture = InfoButton:CreateTexture(nil, "BACKGROUND");
-    InfoTexture:SetTexture("interface/friendsframe/informationicon");
-    InfoTexture:SetAllPoints(InfoButton);
-
-    local InfoHighlight = InfoButton:CreateTexture(nil, "HIGHLIGHT");
-    InfoHighlight:SetAllPoints(InfoButton);
-    InfoHighlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight");
-    InfoHighlight:SetTexCoord(0, 1, .23, .77);
-    InfoHighlight:SetBlendMode("ADD");
-
-    GL.Interface:addTooltip(InfoButton, L["Roll sorting may differ from the master looter's view due to missing data (e.g. +1s)"]);
+    -- The toggle lives in its own frame so it can follow the last visible row
+    local Controls = CreateFrame("Frame", nil, Tracker);
+    Controls:SetSize(12, ROLL_TRACKER_ROW_HEIGHT);
+    Controls:SetFrameLevel(Tracker:GetFrameLevel() + 10);
+    self.RollTrackerControls = Controls;
 
     ---@type Button
-    local ToggleButton = CreateFrame("Button", nil, TopRow);
+    local ToggleButton = CreateFrame("Button", nil, Controls);
     ToggleButton:SetSize(12, 12);
-    ToggleButton:SetPoint("RIGHT", InfoButton, "LEFT", -2, 0);
+    ToggleButton:SetPoint("RIGHT", Controls, "RIGHT", 0, 0);
     ToggleButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Up");
     ToggleButton:SetHighlightTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight");
     ToggleButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down");
     ToggleButton:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(ToggleButton, "ANCHOR_TOP");
-        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide"] or L["Show all"]);
+        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide rolls"] or L["Show rolls"]);
         GameTooltip:Show();
     end);
     ToggleButton:SetScript("OnLeave", function ()
@@ -483,6 +593,34 @@ function RollerUI:drawRollTracker(width)
     ToggleButton:SetScript("OnClick", function ()
         self:toggleRollTracker();
     end);
+
+    -- Gear widgets for the top row
+    local TopGearArrow = CreateFrame("Button", nil, TopRow);
+    TopGearArrow:SetSize(14, ROLL_TRACKER_ROW_HEIGHT);
+    local TopGearArrowText = TopGearArrow:CreateFontString(nil, "OVERLAY", GL.Data.Constants.GearPanelToggle.font);
+    TopGearArrowText:SetAllPoints(TopGearArrow);
+    TopGearArrowText:SetJustifyH("CENTER");
+    TopGearArrow:Hide();
+
+    local TopGearIcon2 = CreateFrame("Button", nil, TopRow);
+    TopGearIcon2:SetSize(14, 14);
+    TopGearIcon2.Texture = TopGearIcon2:CreateTexture(nil, "ARTWORK");
+    TopGearIcon2.Texture:SetAllPoints(TopGearIcon2);
+    TopGearIcon2:Hide();
+
+    local TopGearIcon1 = CreateFrame("Button", nil, TopRow);
+    TopGearIcon1:SetSize(14, 14);
+    TopGearIcon1.Texture = TopGearIcon1:CreateTexture(nil, "ARTWORK");
+    TopGearIcon1.Texture:SetAllPoints(TopGearIcon1);
+    TopGearIcon1:Hide();
+
+    TopGearIcon2:SetPoint("RIGHT", TopGearArrow, "LEFT", -2, 0);
+    TopGearIcon1:SetPoint("RIGHT", TopGearIcon2, "LEFT", -2, 0);
+
+    TopRow.GearArrow = TopGearArrow;
+    TopRow.GearArrowText = TopGearArrowText;
+    TopRow.GearIcon2 = TopGearIcon2;
+    TopRow.GearIcon1 = TopGearIcon1;
 
     TopRow.NameText = NameText;
     TopRow.RollText = RollText;
@@ -565,13 +703,67 @@ function RollerUI:drawRollTracker(width)
         end);
     end);
 
+    GL.Events:register("RollerUIGearReceivedListener", "GL.ROLLOFF_GEAR_RECEIVED", function ()
+        GL:after(.05, "RollerUIRollTrackerRefresh", function ()
+            self:refreshRollTracker();
+        end);
+    end);
+
     -- If the user previously expanded the tracker, restore that state
     if (self.rollTrackerExpanded) then
         self.RollTrackerExpandedFrame:Show();
     end
 
+    self:positionRollTrackerControls();
+
     -- Catch up with any rolls that arrived before the listener was registered
     self:refreshRollTracker();
+end
+
+--- Anchor the toggle/info icons to the last visible row and keep the gear widgets clear of them
+---
+---@return nil
+function RollerUI:positionRollTrackerControls()
+    local Controls = self.RollTrackerControls;
+    local TopRow = self.RollTrackerTopRow;
+
+    if (not Controls or not TopRow) then
+        return;
+    end
+
+    local TargetRow = TopRow;
+    if (self.rollTrackerExpanded and self.RollTrackerRows) then
+        for i = ROLL_TRACKER_MAX_VISIBLE, 1, -1 do
+            local Row = self.RollTrackerRows[i];
+
+            if (Row and Row:IsShown()) then
+                TargetRow = Row;
+                break;
+            end
+        end
+    end
+
+    Controls:ClearAllPoints();
+    Controls:SetPoint("RIGHT", TargetRow, "RIGHT", TargetRow == TopRow and -4 or -8, 0);
+
+    local anchorGear = function (Row)
+        if (not Row or not Row.GearArrow) then
+            return;
+        end
+
+        Row.GearArrow:ClearAllPoints();
+
+        if (Row == TargetRow) then
+            Row.GearArrow:SetPoint("RIGHT", Controls, "LEFT", -4, 0);
+        else
+            Row.GearArrow:SetPoint("RIGHT", Row, "RIGHT", -8, 0);
+        end
+    end;
+
+    anchorGear(TopRow);
+    for _, Row in pairs(self.RollTrackerRows or {}) do
+        anchorGear(Row);
+    end
 end
 
 --- Refresh the roll tracker display with current data
@@ -610,6 +802,8 @@ function RollerUI:refreshRollTracker()
     TopRow.TypeText:SetText(TopEntry.classification or "");
     TopRow.TypeText:SetTextColor(.8, .8, .8);
 
+    self:fillGearWidgets(TopRow, TopEntry);
+
     if (self.rollTrackerExpanded) then
         self:refreshExpandedRows();
     end
@@ -643,6 +837,8 @@ function RollerUI:refreshExpandedRows()
             Row:Hide();
         end
     end
+
+    self:positionRollTrackerControls();
 
     -- Update expanded frame height
     local expandedHeight = (visibleCount * ROLL_TRACKER_ROW_HEIGHT) + 2;
@@ -685,12 +881,13 @@ function RollerUI:toggleRollTracker()
     else
         self.RollTrackerExpandedFrame:Hide();
         self.RollTrackerFrame:SetHeight(ROLL_TRACKER_ROW_HEIGHT);
+        self:positionRollTrackerControls();
     end
 
     -- Refresh tooltip if the mouse is still over the toggle button
     local ToggleButton = self.RollTrackerTopRow and self.RollTrackerTopRow.ToggleButton;
     if (ToggleButton and GameTooltip:IsOwned(ToggleButton)) then
-        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide"] or L["Show all"]);
+        GameTooltip:SetText(self.rollTrackerExpanded and L["Hide rolls"] or L["Show rolls"]);
     end
 end
 
@@ -763,7 +960,9 @@ end
 function RollerUI:hide()
     GL.Events:unregister("RollerUIModifierStateChanged");
     GL.Events:unregister("RollerUIRollAcceptedListener");
+    GL.Events:unregister("RollerUIGearReceivedListener");
     GL:cancelTimer("RollerUIRollTrackerRefresh");
+    GL.Interface.GearPanel:hide();
 
     if (self.RollAcceptedTimer) then
         GL.Ace:CancelTimer(self.RollAcceptedTimer);
@@ -789,6 +988,7 @@ function RollerUI:hide()
     self.RollTrackerFrame = nil;
     self.RollTrackerTopRow = nil;
     self.RollTrackerExpandedFrame = nil;
+    self.RollTrackerControls = nil;
     self.RollTrackerRows = nil;
     self.RollTrackerScrollTrack = nil;
     self.RollTrackerScrollThumb = nil;

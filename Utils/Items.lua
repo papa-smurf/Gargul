@@ -1217,6 +1217,23 @@ function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, colu
 
     frame._itemCellValue = value;
 
+    -- Nothing to compare against, but we do know this player's gear: show a placeholder
+    -- so the row doesn't read as "no data" (see RollOff:gearDisplayForRollEntry)
+    if (not itemID and cellData and cellData._placeholder) then
+        frame:SetNormalTexture(GL.Data.Constants.gearPlaceholderIcon);
+        frame:SetAlpha(alpha);
+        frame:Show();
+
+        frame:SetScript("OnEnter", function ()
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+            GameTooltip:AddLine(L["No worn gear to compare with this item"]);
+            GameTooltip:Show();
+        end);
+
+        frame:SetScript("OnLeave", function () GameTooltip:Hide(); end);
+        return;
+    end
+
     if (not itemID or itemID == 0) then
         frame:SetAlpha(1);
         frame:SetScript("OnEnter", nil);
@@ -1274,7 +1291,7 @@ function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, 
     return true;
 end
 
---- Arrow cell for opening a player's worn-gear panel in the rolls table.
+--- Toggle cell for opening a player's worn-gear panel in the rolls table.
 ---@return nil
 function GL.LibStGearArrowCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
     local cellData = data[realrow] and data[realrow].cols[column];
@@ -1291,7 +1308,7 @@ function GL.LibStGearArrowCellUpdate (rowFrame, frame, data, cols, row, realrow,
         return;
     end
 
-    frame.text:SetText(cellData.value or ">>");
+    frame.text:SetText(cellData.value or GL.Data.Constants.GearPanelToggle.label);
     frame:Show();
 
     frame:SetScript("OnEnter", function ()

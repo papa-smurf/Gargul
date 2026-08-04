@@ -15,7 +15,6 @@ local ScrollingTable = GL.ScrollingTable;
 local MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
-    gearPanelPlayer = nil,
     Defaults = {
         itemIcon = "Interface/Icons/INV_Misc_QuestionMark",
         itemBoxText = "",
@@ -130,10 +129,13 @@ function MasterLooterUI:draw(itemLink)
     end);
 
     GL.Events:register("MasterLooterUIGearReceivedListener", "GL.ROLLOFF_GEAR_RECEIVED", function (_, playerFQN)
-        GL.RollOff:refreshRollsTable();
+        -- Gear tends to arrive in bursts (inspect sweeps, shared gear), one rebuild is enough
+        GL:after(.05, "MasterLooterUIGearRefresh", function ()
+            GL.RollOff:refreshRollsTable();
+        end);
 
         local playerKey = GL.RollOff:gearPlayerKey(playerFQN);
-        if (playerKey and self.gearPanelPlayer == playerKey) then
+        if (playerKey and GL.Interface.GearPanel.panelPlayer == playerKey) then
             self:drawGearPanel(playerKey);
         end
     end);
@@ -599,6 +601,33 @@ function MasterLooterUI:draw(itemLink)
         );
         RollTrackingSettingsButton:SetPoint("TOPRIGHT", FifthRow.frame, "TOPRIGHT", -10, -8);
         self.RollTrackingSettingsButton = RollTrackingSettingsButton;
+
+        --[[
+            SHARE GEAR BUTTON
+        ]]
+        self.ShareGearButton = GL.Interface:createShareButton(FifthRow, {
+            width = 18,
+            height = 18,
+            disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-disabled",
+            tooltip = L["Share worn gear with the group"],
+            disabledTooltip = L["No worn gear available to share"],
+            onClick = function ()
+                GL.RollOff:shareEquippedGear();
+            end,
+            update = function ()
+                MasterLooterUI:updateShareGearButton();
+            end,
+            updateOn = {
+                "GL.ROLLOFF_GEAR_RECEIVED",
+                "GL.ROLLOFF_ROLL_ACCEPTED",
+                "GL.ROLLOFF_STARTED",
+                "GL.ROLLOFF_STOPPED",
+            },
+        });
+        self.ShareGearButton:SetPoint("RIGHT", RollTrackingSettingsButton, "LEFT", -4, 3);
+
+        -- createShareButton's initial update runs before the assignment above lands
+        self:updateShareGearButton();
 
         local PlayersTableFrame = AceGUI:Create("SimpleGroup");
         PlayersTableFrame:SetLayout("fixed");
@@ -1082,16 +1111,22 @@ function MasterLooterUI:tableColumns()
     };
 end
 
---- Hide the worn-gear side panel.
----
+--- Enable the share button only when there's gear worth broadcasting.
 ---@return nil
-function MasterLooterUI:hideGearPanel()
-    local Panel = GL.Interface:get(self, "Frame.GearPanel");
-    if (Panel) then
-        Panel:Hide();
+function MasterLooterUI:updateShareGearButton()
+    if (not self.ShareGearButton) then
+        return;
     end
 
-    self.gearPanelPlayer = nil;
+    self.ShareGearButton:SetEnabled(GL.RollOff:userCanShareEquippedGear()
+        and GL.RollOff:sharableGearPayload() ~= nil
+    );
+end
+
+--- Hide the worn-gear side panel.
+---@return nil
+function MasterLooterUI:hideGearPanel()
+    GL.Interface.GearPanel:hide();
 end
 
 --- Toggle the worn-gear side panel for a player.
@@ -1099,17 +1134,12 @@ end
 ---@param playerFQN string
 ---@return nil
 function MasterLooterUI:toggleGearPanel(playerFQN)
-    local playerKey = GL.RollOff:gearPlayerKey(playerFQN);
-    if (not playerKey) then
-        return;
-    end
-
-    if (self.gearPanelPlayer == playerKey) then
-        self:hideGearPanel();
-        return;
-    end
-
-    self:drawGearPanel(playerKey);
+    local Window = GL.Interface:get(self, "Window");
+    GL.Interface.GearPanel:toggle(
+        playerFQN,
+        Window and Window.frame or nil,
+        { point = "TOPLEFT", relativePoint = "TOPRIGHT", x = 5, y = 0, }
+    );
 end
 
 --- Show all worn gear for a player beside the master looter window.
@@ -1118,174 +1148,11 @@ end
 ---@return nil
 function MasterLooterUI:drawGearPanel(playerKey)
     local Window = GL.Interface:get(self, "Window");
-    if (not Window) then
-        return;
-    end
-
-    local gear = GL.RollOff.EquippedGearByPlayer[playerKey];
-    if (not gear or not next(gear)) then
-        self:hideGearPanel();
-        return;
-    end
-
-    local Panel = GL.Interface:get(self, "Frame.GearPanel");
-    if (not Panel) then
-        Panel = CreateFrame("Frame", "GARGUL_MASTERLOOTERUI_GEAR_PANEL", Window.frame, "BackdropTemplate");
-        Panel:SetBackdrop({
-            bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
-            edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-            tile = true,
-            tileSize = 32,
-            edgeSize = 16,
-            insets = { left = 4, right = 4, top = 4, bottom = 4, },
-        });
-        Panel:SetFrameStrata("DIALOG");
-        Panel.Rows = {};
-        Panel.NameLabel = Panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
-        Panel.NameLabel:SetPoint("TOPLEFT", Panel, "TOPLEFT", 8, -14);
-        Panel.NameLabel:SetWidth(148);
-        Panel.InspectWarning = CreateFrame("Frame", nil, Panel);
-        Panel.InspectWarning:SetSize(14, 14);
-        Panel.InspectWarning:SetPoint("TOPLEFT", Panel, "TOPLEFT", 10, -12);
-        Panel.InspectWarning.Icon = Panel.InspectWarning:CreateTexture(nil, "ARTWORK");
-        Panel.InspectWarning.Icon:SetAllPoints(Panel.InspectWarning);
-        Panel.InspectWarning.Icon:SetTexture("Interface/DialogFrame/UI-Dialog-Icon-AlertNew");
-        Panel.InspectWarning:SetScript("OnEnter", function ()
-            GameTooltip:SetOwner(Panel.InspectWarning, "ANCHOR_RIGHT");
-            GameTooltip:SetText(L["Inspected gear: less reliable because this player doesn't have Gargul"]);
-            GameTooltip:Show();
-        end);
-        Panel.InspectWarning:SetScript("OnLeave", function ()
-            GameTooltip:Hide();
-        end);
-        Panel.InspectWarning:Hide();
-        GL.Interface:addCloseButton(Panel);
-        Panel.CloseButton:SetFrameLevel(Panel:GetFrameLevel() + 10);
-        Panel.CloseButton:SetScript("OnClick", function ()
-            GL.MasterLooterUI:hideGearPanel();
-        end);
-        GL.Interface:set(self, "GearPanel", Panel);
-    end
-
-    local slots = {};
-    for slot in pairs(gear) do
-        table.insert(slots, slot);
-    end
-    table.sort(slots);
-
-    -- Resolve class colour for the player name header
-    local baseName = (strsplit("-", playerKey));
-    local playerClass;
-    for _, Roll in pairs(GL.RollOff.CurrentRollOff.Rolls or {}) do
-        if (GL.RollOff:gearPlayerKey(Roll.player) == playerKey) then
-            playerClass = Roll.class;
-            break;
-        end
-    end
-    if (not playerClass) then
-        for _, Player in pairs(GL.User:groupMembers()) do
-            if (GL.RollOff:gearPlayerKey(Player.fqn) == playerKey) then
-                playerClass = Player.class;
-                break;
-            end
-        end
-    end
-    local C = GL:classRGBAColor(playerClass);
-    local colorizedName = ("|cFF%02X%02X%02X%s|r"):format(C.r * 255, C.g * 255, C.b * 255, baseName);
-
-    Panel.NameLabel:SetText(colorizedName);
-    if (GL.RollOff.GearWasInspectedByPlayer[playerKey]) then
-        Panel.InspectWarning:Show();
-    else
-        Panel.InspectWarning:Hide();
-    end
-
-    local rowHeight = 20;
-    local yOffset = -30;
-
-    for i, slot in ipairs(slots) do
-        local dehydratedLink = gear[slot];
-        local itemLink = GL:hydrateItemLink(dehydratedLink);
-
-        -- Reuse a pooled row frame so repeated opens don't leak frames
-        local Row = Panel.Rows[i];
-        if (not Row) then
-            Row = CreateFrame("Frame", nil, Panel);
-            Row:SetSize(180, rowHeight);
-            Row:EnableMouse(true);
-
-            Row.IconBorder = CreateFrame("Frame", nil, Row, "BackdropTemplate");
-            Row.IconBorder:SetSize(18, 18);
-            Row.IconBorder:SetPoint("LEFT", Row, "LEFT", 0, 0);
-            Row.IconBorder:SetBackdrop({ edgeFile = "Interface/Buttons/WHITE8X8", edgeSize = 1, });
-            Row.IconBorder:SetBackdropBorderColor(.5, .5, .5);
-            Row.IconBorder:EnableMouse(false);
-
-            Row.Icon = Row.IconBorder:CreateTexture(nil, "ARTWORK");
-            Row.Icon:SetPoint("TOPLEFT", Row.IconBorder, "TOPLEFT", 1, -1);
-            Row.Icon:SetPoint("BOTTOMRIGHT", Row.IconBorder, "BOTTOMRIGHT", -1, 1);
-
-            Row.Text = Row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
-            Row.Text:SetPoint("LEFT", Row, "LEFT", 22, 0);
-            Row.Text:SetJustifyH("LEFT");
-            Row.Text:SetWordWrap(false);
-            Row.Text:SetNonSpaceWrap(false);
-            Row.Text:SetWidth(154);
-            Panel.Rows[i] = Row;
-        end
-
-        Row:ClearAllPoints();
-        Row:SetPoint("TOPLEFT", Panel, "TOPLEFT", 8, yOffset);
-        Row.Icon:SetTexture("Interface/Icons/INV_Misc_QuestionMark");
-        Row.IconBorder:SetBackdropBorderColor(.5, .5, .5);
-        Row.Text:SetText("...");
-
-        -- Show the worn link with its modifiers intact, not the base item
-        GL:hydrateItemLink(dehydratedLink, function (itemLink)
-            if (not itemLink) then
-                return;
-            end
-
-            if (Row.Text and itemLink) then
-                Row.Text:SetText(itemLink);
-            end
-
-            Row:SetScript("OnEnter", function ()
-                GameTooltip:SetOwner(Row, "ANCHOR_RIGHT");
-                GameTooltip:SetHyperlink(itemLink);
-                GameTooltip:Show();
-            end);
-
-            -- Load icon and quality colour once item data is available (item is cached by this point)
-            GL:onItemLoadDo(itemLink, function (Details)
-                if (not Details or not Row.Icon) then
-                    return;
-                end
-                Row.Icon:SetTexture(Details.icon or "Interface/Icons/INV_Misc_QuestionMark");
-                local QColor = ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[Details.quality] or { r = .5, g = .5, b = .5, };
-                Row.IconBorder:SetBackdropBorderColor(QColor.r, QColor.g, QColor.b);
-            end);
-        end);
-
-        Row:SetScript("OnLeave", function ()
-            GameTooltip:Hide();
-        end);
-
-        Row:Show();
-        yOffset = yOffset - rowHeight;
-    end
-
-    -- Hide leftover rows from a previously larger gear set
-    for i = #slots + 1, #Panel.Rows do
-        Panel.Rows[i]:Hide();
-    end
-
-    Panel:SetSize(200, math.abs(yOffset) + 8);
-    Panel:ClearAllPoints();
-    Panel:SetPoint("TOPLEFT", Window.frame, "TOPRIGHT", 5, 0);
-    Panel:Show();
-
-    self.gearPanelPlayer = playerKey;
+    GL.Interface.GearPanel:show(
+        playerKey,
+        Window and Window.frame or nil,
+        { point = "TOPLEFT", relativePoint = "TOPRIGHT", x = 5, y = 0, }
+    );
 end
 
 function MasterLooterUI:ItemBoxChanged()
@@ -1422,6 +1289,8 @@ end
 
 -- Update the widgets based on the current state of the roll off
 function MasterLooterUI:updateWidgets()
+    self:updateShareGearButton();
+
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available
     --   The stop button should be available

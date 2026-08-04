@@ -225,6 +225,14 @@ GL.Data.Constants = {
     commandHexColor = "1EFF00",
     disabledTextColor = "5F5F5F",
 
+    GearPanelToggle = {
+        label = "...",
+        font = "GameFontHighlightSmall",
+    },
+
+    -- Stands in for a relevant gear icon when the rolled item has nothing to compare against
+    gearPlaceholderIcon = "Interface/Icons/INV_Misc_QuestionMark",
+
     success = 0,
     failure = 1,
 
@@ -661,6 +669,7 @@ GL.Data.Constants = {
             requestRunningGDKPMultiAuctionHash = 31,
             requestRunningGDKPMultiAuctionDetails = 32,
             broadcastEquippedGear = 33,
+            shareEquippedGear = 34,
         },
     },
 

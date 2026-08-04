@@ -136,6 +136,7 @@ Classes/DroppedLootLedger.lua
 # UI objects
 Interface/AceGUIWidget-LibScrollingTable.lua
 Interface/Interface.lua
+Interface/GearPanel.lua
 Interface/Award/Award.lua
 Interface/Award/Overview.lua
 Interface/Locale.lua

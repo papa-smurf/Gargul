@@ -34,6 +34,7 @@ GL.RollOff = GL.RollOff or {
         initiator = nil,
         sessionID = nil,
     },
+    lastGearShareAt = nil,
     inspectQueue = {},
     inspecting = nil,
     inspectUnit = nil,
@@ -1033,26 +1034,148 @@ function RollOff:receiveEquippedGear(CommMessage)
     self.EquippedGearByPlayer[playerKey] = gear;
     self.GearWasInspectedByPlayer[playerKey] = nil;
     self:cancelInspectDelay(playerKey);
-
-    if (self.inspecting == playerKey) then
-        if (self.inspectTimerID) then
-            GL:cancelTimer(self.inspectTimerID);
-            self.inspectTimerID = nil;
-        end
-
-        if (ClearInspectPlayer) then
-            ClearInspectPlayer();
-        end
-
-        self.inspecting = nil;
-        self.inspectUnit = nil;
-        self.inspectingPlayerFQN = nil;
-        self:processInspectQueue();
-    end
+    self:abortInspect(playerKey);
 
     GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", CommMessage.Sender.fqn);
 end
 
+--- Abort the inspect that's currently running for a player and move the queue along.
+---
+---@param playerKey string
+---@return nil
+function RollOff:abortInspect(playerKey)
+    if (self.inspecting ~= playerKey) then
+        return;
+    end
+
+    if (self.inspectTimerID) then
+        GL:cancelTimer(self.inspectTimerID);
+        self.inspectTimerID = nil;
+    end
+
+    if (ClearInspectPlayer) then
+        ClearInspectPlayer();
+    end
+
+    self.inspecting = nil;
+    self.inspectUnit = nil;
+    self.inspectingPlayerFQN = nil;
+    self:processInspectQueue();
+end
+
+--- Whether the user is allowed to share gear for the current roll.
+---
+---@return boolean
+function RollOff:userCanShareEquippedGear()
+    return GL.User.isInGroup
+        and (self:startedByMe() or GL.User.isMasterLooter or GL.User.hasAssist);
+end
+
+--- Collect the gear we know for everyone who rolled, keyed by player.
+---
+---@return table|nil Nil when nothing is worth sharing
+function RollOff:sharableGearPayload()
+    local Payload = {};
+    local hasAny = false;
+
+    for _, Roll in pairs(self.CurrentRollOff.Rolls or {}) do
+        local playerKey = self:gearPlayerKey(Roll.player);
+
+        if (playerKey) then
+            local gear = self.EquippedGearByPlayer[playerKey];
+
+            if (type(gear) == "table" and next(gear)) then
+                Payload[playerKey] = {
+                    s = gear,
+                    i = self.GearWasInspectedByPlayer[playerKey] or nil,
+                };
+                hasAny = true;
+            end
+        end
+    end
+
+    return hasAny and Payload or nil;
+end
+
+--- Broadcast known gear for all current rollers to the group (roll owner / ML / assist only).
+---@return nil
+function RollOff:shareEquippedGear()
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    if (not self:userCanShareEquippedGear()) then
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
+        return;
+    end
+
+    local now = GetTime();
+    if (self.lastGearShareAt and now - self.lastGearShareAt < 5) then
+        GL:warning(L["Please wait a moment before sharing again"]);
+        return;
+    end
+
+    local Payload = self:sharableGearPayload();
+    if (not Payload) then
+        GL:warning(L["No worn gear available to share"]);
+        return;
+    end
+
+    GL.CommMessage.new({
+        action = CommActions.shareEquippedGear,
+        content = Payload,
+        channel = "GROUP",
+    }):send();
+
+    self.lastGearShareAt = now;
+end
+
+--- Receive and merge gear shared by the roll owner; ignore senders without ML/assist.
+---@param CommMessage CommMessage
+---@return nil
+function RollOff:receiveSharedEquippedGear(CommMessage)
+    if (CommMessage.Sender.isSelf) then
+        return;
+    end
+
+    -- GetRaidRosterInfo (used by the ML/assist checks) is raid-only, so the roll
+    -- owner is our fallback: they're already the authority for this roll
+    local senderStartedTheRoll = CommMessage.Sender.id ~= nil
+        and CommMessage.Sender.id == self.CurrentRollOff.initiator;
+
+    if (not senderStartedTheRoll) then
+        local senderFQN = CommMessage.Sender.fqn or CommMessage.Sender.id;
+        if (not GL.Player:isMasterLooter(senderFQN) and not GL.Player:hasAssist(senderFQN)) then
+            return;
+        end
+    end
+
+    local Payload = CommMessage.content;
+    if (type(Payload) ~= "table") then
+        return;
+    end
+
+    for playerKey, Data in pairs(Payload) do
+        if (type(playerKey) == "string"
+            and type(Data) == "table"
+            and type(Data.s) == "table"
+        ) then
+            local existing = self.EquippedGearByPlayer[playerKey];
+            -- Keep first-hand comm gear (non-nil, non-empty, not inspect-sourced)
+            local isFirstHand = existing ~= nil
+                and next(existing) ~= nil
+                and not self.GearWasInspectedByPlayer[playerKey];
+
+            if (not isFirstHand) then
+                self.EquippedGearByPlayer[playerKey] = Data.s;
+                self.GearWasInspectedByPlayer[playerKey] = Data.i or nil;
+                self:cancelInspectDelay(playerKey);
+                self:abortInspect(playerKey);
+                GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerKey);
+            end
+        end
+    end
+end
 
 --- Wipe inspect queue state (e.g. on rolloff start).
 ---@return nil
@@ -1398,6 +1521,48 @@ function RollOff:getRelevantGearForPlayer(player, itemLink)
     return relevantGear;
 end
 
+--- Resolve the gear widgets for a roll entry: the two relevant item slots, whether
+--- we know anything at all about this player's gear, and the icon alpha.
+--- Used by both the MasterLooterUI table and the RollerUI roll tracker so the two stay in sync.
+---
+---@param Entry table An entry produced by buildSortedRollData
+---@return table { leftLink, rightLink, placeholder, hasGear, alpha, playerKey }
+function RollOff:gearDisplayForRollEntry(Entry)
+    local RelevantGear = Entry.relevantGear or {};
+    local leftLink, rightLink = RelevantGear[1], RelevantGear[2];
+
+    -- Single item: show it in the right slot so it sits next to the "..." toggle
+    if (leftLink and not rightLink) then
+        leftLink, rightLink = nil, leftLink;
+    end
+
+    local playerKey = self:gearPlayerKey(Entry.player);
+    local gear = playerKey and self.EquippedGearByPlayer[playerKey];
+    local hasGear = false;
+
+    if (type(gear) == "table") then
+        for _, link in pairs(gear) do
+            if (not GL:empty(link)) then
+                hasGear = true;
+                break;
+            end
+        end
+    end
+
+    return {
+        leftLink = leftLink,
+        rightLink = rightLink,
+
+        -- We know what they're wearing, the rolled item just has nothing to compare
+        -- against (crafting patterns, recipes, or an empty slot on their end)
+        placeholder = hasGear and not rightLink,
+
+        hasGear = hasGear,
+        alpha = (playerKey and self.GearWasInspectedByPlayer[playerKey]) and .6 or 1,
+        playerKey = playerKey,
+    };
+end
+
 --- Build an enriched, priority-sorted array of roll entries.
 --- Used by both the MasterLooterUI table and the RollerUI roll tracker.
 ---
@@ -1555,24 +1720,7 @@ function RollOff:refreshRollsTable()
     local RollTableData = {};
 
     for _, Entry in pairs(EnrichedRolls) do
-        local gearLink1 = Entry.relevantGear and Entry.relevantGear[1];
-        local gearLink2 = Entry.relevantGear and Entry.relevantGear[2];
-        -- Single item: show in the right slot (col 9) so it sits next to ">>"
-        if (gearLink1 and not gearLink2) then
-            gearLink1, gearLink2 = nil, gearLink1;
-        end
-        local playerKey = self:gearPlayerKey(Entry.player);
-        local playerGear = playerKey and self.EquippedGearByPlayer[playerKey];
-        local gearIconAlpha = playerKey and self.GearWasInspectedByPlayer[playerKey] and .6 or 1;
-        local hasGear = false;
-        if (type(playerGear) == "table") then
-            for _, link in pairs(playerGear) do
-                if (not GL:empty(link)) then
-                    hasGear = true;
-                    break;
-                end
-            end
-        end
+        local Gear = self:gearDisplayForRollEntry(Entry);
 
         local Row = {
             cols = {
@@ -1603,17 +1751,18 @@ function RollOff:refreshRollsTable()
                     value = Entry.plusOnesRaw,
                 },
                 {
-                    value = gearLink1,
-                    _alpha = gearIconAlpha,
+                    value = Gear.leftLink,
+                    _alpha = Gear.alpha,
                 },
                 {
-                    value = gearLink2,
-                    _alpha = gearIconAlpha,
+                    value = Gear.rightLink,
+                    _alpha = Gear.alpha,
+                    _placeholder = Gear.placeholder or nil,
                 },
                 {
-                    value = hasGear and ">>" or "",
+                    value = Gear.hasGear and GL.Data.Constants.GearPanelToggle.label or "",
                     _tooltip = L["Show all worn items"],
-                    _playerFQN = hasGear and Entry.player or nil,
+                    _playerFQN = Gear.hasGear and Entry.player or nil,
                 },
             },
         };
