@@ -1,0 +1,10 @@
+---
+description: How to analyse a /gl commtrace a user pasted
+alwaysApply: true
+---
+
+# Gargul Comm Traces
+
+Given output starting with `Gargul comm trace | v...`, read `.agents/reference/commtrace.md`
+first. It decodes every field and already holds the conclusions — don't re-derive them from
+`CommRecorder.lua`, `Comm.lua` and `ChatThrottleLib.lua`.
