@@ -145,7 +145,19 @@ function CommRecorder:startSession()
     self.count = 0;
     self.approxBytes = 0;
     self.rollAnnounceAt = nil;
-    self.Traffic = { gargul = 0, other = 0, gargulBytes = 0, otherBytes = 0, ByPrefix = {}, };
+
+    -- nBypass counts from login, so we need a baseline to measure this session against
+    local CTL = _G.ChatThrottleLib;
+    local bypass = CTL and tonumber(CTL.nBypass) or nil;
+
+    self.Traffic = {
+        gargul = 0,
+        other = 0,
+        gargulBytes = 0,
+        otherBytes = 0,
+        ByPrefix = {},
+        Bypass = bypass and { first = bypass, firstAt = GetTime(), } or nil,
+    };
     self.Aggregates = {};
     self.idCounter = 0;
     self.Session = {
@@ -154,6 +166,22 @@ function CommRecorder:startSession()
         version = GL.version,
         groupSize = GL:count(GL.User:groupMembers() or {}),
     };
+end
+
+--- Close off the session's duration and bypass counters. Call before exporting or persisting.
+---@return nil
+function CommRecorder:stampSession()
+    self.Session.durationMs = self:msSince(self.Session.startTime or GetTime());
+
+    local Bypass = self.Traffic and self.Traffic.Bypass;
+    local CTL = _G.ChatThrottleLib;
+    if (not Bypass or not CTL) then
+        return;
+    end
+
+    Bypass.last = tonumber(CTL.nBypass) or Bypass.first;
+    Bypass.seconds = (GetTime() or 0) - (Bypass.firstAt or 0);
+    Bypass.maxCPS = tonumber(CTL.MAX_CPS);
 end
 
 --- Next trace ID for an outgoing message. A bare counter keeps the payload
@@ -447,6 +475,8 @@ function CommRecorder:flush()
         return;
     end
 
+    self:stampSession();
+
     local Store = GL.DB.CommTrace;
 
     Store.Previous = {
@@ -562,6 +592,25 @@ local DropLabel = {
     [9] = "unknown-action",
 };
 
+--- Human readable duration, e.g. 1h02m03s.
+---@param ms number|nil
+---@return string
+local function formatDuration(ms)
+    local seconds = floor((tonumber(ms) or 0) / 1000 + .5);
+    local hours = floor(seconds / 3600);
+    local minutes = floor((seconds % 3600) / 60);
+
+    if (hours > 0) then
+        return ("%sh%02dm%02ds"):format(hours, minutes, seconds % 60);
+    end
+
+    if (minutes > 0) then
+        return ("%sm%02ds"):format(minutes, seconds % 60);
+    end
+
+    return ("%ss"):format(seconds);
+end
+
 --- Format a session into copyable text.
 ---@param Meta table
 ---@param Traffic table
@@ -576,15 +625,38 @@ function CommRecorder:formatSession(Meta, Traffic, Entries, Aggregates)
     Traffic = Traffic or {};
     Entries = Entries or {};
 
-    Lines[#Lines + 1] = ("Gargul comm trace | v%s | started %s | group %s"):format(
+    local durationSeconds = (tonumber(Meta.durationMs) or 0) / 1000;
+
+    Lines[#Lines + 1] = ("Gargul comm trace | v%s | started %s | duration %s | group %s"):format(
         tostring(Meta.version or GL.version),
         Meta.startedAt and date("%Y-%m-%d %H:%M:%S", Meta.startedAt) or "?",
+        Meta.durationMs and formatDuration(Meta.durationMs) or "?",
         tostring(Meta.groupSize or "?")
     );
     Lines[#Lines + 1] = ("Traffic: Gargul %s msg / %s B | Other addons %s msg / %s B"):format(
         tostring(Traffic.gargul or 0), tostring(Traffic.gargulBytes or 0),
         tostring(Traffic.other or 0), tostring(Traffic.otherBytes or 0)
     );
+
+    -- Traffic sent past ChatThrottleLib. Once this matches MAX_CPS the lib stops
+    -- despooling entirely, so anything we queue (any priority) never goes out.
+    local Bypass = Traffic.Bypass;
+    local bypassBytes = Bypass and Bypass.first and Bypass.last and (Bypass.last - Bypass.first) or nil;
+    if (bypassBytes and bypassBytes >= 0 and (Bypass.seconds or 0) > 0) then
+        local rate = floor(bypassBytes / Bypass.seconds + .5);
+        local maxCPS = Bypass.maxCPS or 800;
+        local verdict = "";
+
+        if (rate >= maxCPS) then
+            verdict = " | CTL STARVED: queued messages cannot be sent";
+        elseif (rate >= maxCPS * .5) then
+            verdict = " | heavy, Gargul sends will be slow";
+        end
+
+        Lines[#Lines + 1] = ("Sent past ChatThrottleLib: %s B in %ss = %s B/s vs MAX_CPS %s%s"):format(
+            bypassBytes, floor(Bypass.seconds + .5), rate, maxCPS, verdict
+        );
+    end
 
     if (Traffic.ByPrefix and next(Traffic.ByPrefix)) then
         local Rows = {};
@@ -596,7 +668,8 @@ function CommRecorder:formatSession(Meta, Traffic, Entries, Aggregates)
         Lines[#Lines + 1] = "Outgoing addon traffic by prefix (top offenders):";
         for i = 1, math.min(#Rows, 20) do
             local R = Rows[i];
-            Lines[#Lines + 1] = ("  %s: %s msg / %s B"):format(R.prefix, R.count, R.bytes);
+            local rate = durationSeconds > 0 and (" / %s B/s"):format(floor(R.bytes / durationSeconds + .5)) or "";
+            Lines[#Lines + 1] = ("  %s: %s msg / %s B%s"):format(R.prefix, R.count, R.bytes, rate);
         end
     end
 
@@ -673,6 +746,7 @@ function CommRecorder:export(which)
     end
 
     if (self.count > 0 or (self.Aggregates and next(self.Aggregates))) then
+        self:stampSession();
         GL:frameMessage(self:formatSession(self.Session, self.Traffic, self:orderedEntries(), self.Aggregates));
         return;
     end
