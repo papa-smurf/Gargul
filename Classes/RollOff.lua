@@ -27,6 +27,8 @@ GL.RollOff = GL.RollOff or {
     },
     EquippedGearByPlayer = {},
     GearWasInspectedByPlayer = {},
+    GearReceivedAt = {},
+    gearOverviewHinted = false,
     gearSessionID = math.random(1, 2147483647),
     initiatorSessionIDs = {},
     GearCache = {
@@ -1015,6 +1017,37 @@ function RollOff:sendEquippedGearIfNeeded(initiatorID)
     self.GearCache.sessionID = knownSessionID;
 end
 
+--- Store a player's worn gear along with the moment we learned about it.
+---
+---@param playerKey string
+---@param Gear table
+---@param wasInspected boolean|nil
+---@return nil
+function RollOff:storeGear(playerKey, Gear, wasInspected)
+    self.EquippedGearByPlayer[playerKey] = Gear;
+    self.GearWasInspectedByPlayer[playerKey] = wasInspected or nil;
+    self.GearReceivedAt[playerKey] = GetServerTime();
+
+    self:hintAtGearOverview(Gear);
+end
+
+--- Point people at the worn gear window, once per session, the first time gear rolls in.
+---
+---@param Gear table
+---@return nil
+function RollOff:hintAtGearOverview(Gear)
+    if (self.gearOverviewHinted
+        or type(Gear) ~= "table"
+        or not next(Gear)
+    ) then
+        return;
+    end
+
+    self.gearOverviewHinted = true;
+
+    GL:notice((L["Worn gear is coming in, type %s to see who's wearing what"]):format("|c00A79EFF/gl gear|r"));
+end
+
 --- Store a player's worn gear from addon comm.
 ---
 ---@param CommMessage CommMessage
@@ -1031,8 +1064,7 @@ function RollOff:receiveEquippedGear(CommMessage)
         return;
     end
 
-    self.EquippedGearByPlayer[playerKey] = gear;
-    self.GearWasInspectedByPlayer[playerKey] = nil;
+    self:storeGear(playerKey, gear);
     self:cancelInspectDelay(playerKey);
     self:abortInspect(playerKey);
 
@@ -1167,8 +1199,7 @@ function RollOff:receiveSharedEquippedGear(CommMessage)
                 and not self.GearWasInspectedByPlayer[playerKey];
 
             if (not isFirstHand) then
-                self.EquippedGearByPlayer[playerKey] = Data.s;
-                self.GearWasInspectedByPlayer[playerKey] = Data.i or nil;
+                self:storeGear(playerKey, Data.s, Data.i);
                 self:cancelInspectDelay(playerKey);
                 self:abortInspect(playerKey);
                 GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerKey);
@@ -1362,7 +1393,7 @@ end
 ---@param playerFQN string
 ---@return nil
 function RollOff:finishInspectUnavailable(playerKey, playerFQN)
-    self.EquippedGearByPlayer[playerKey] = {};
+    self:storeGear(playerKey, {});
 
     if (self.inspecting == playerKey) then
         if (self.inspectTimerID) then
@@ -1408,8 +1439,7 @@ function RollOff:processInspectQueue()
 
     -- Own gear: read directly, no inspect API
     if (unit == "player") then
-        self.EquippedGearByPlayer[playerKey] = self:readGearFromUnit("player");
-        self.GearWasInspectedByPlayer[playerKey] = true;
+        self:storeGear(playerKey, self:readGearFromUnit("player"), true);
         GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerFQN);
         self:processInspectQueue();
         return;
@@ -1462,8 +1492,7 @@ function RollOff:onInspectReady(guid)
     end
 
     if (self.EquippedGearByPlayer[playerKey] == nil) then
-        self.EquippedGearByPlayer[playerKey] = self:readGearFromUnit(self.inspectUnit);
-        self.GearWasInspectedByPlayer[playerKey] = true;
+        self:storeGear(playerKey, self:readGearFromUnit(self.inspectUnit), true);
         GL.Events:fire("GL.ROLLOFF_GEAR_RECEIVED", playerFQN);
     end
 

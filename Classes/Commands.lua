@@ -27,6 +27,7 @@ GL.Commands = GL.Commands or {
         cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
         rrobin = "Open the RRobin importer. Data exported from https://rrobin.net/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
+        gear = "Open the worn gear window which shows the equipped gear Gargul picked up for everyone in your group during roll offs",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
@@ -96,6 +97,10 @@ GL.Commands = GL.Commands or {
 
         -- export
         ex = "export",
+
+        -- gear
+        ge = "gear",
+        worngear = "gear",
 
         -- groups
         gr = "groups",
@@ -258,6 +263,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the plus ones window
         plusones = function () GL.Interface.PlusOnes.Overview:draw(); end,
+
+        -- Open the window showing everyone's worn gear
+        gear = function () GL.Interface.GearOverview:toggle(); end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
