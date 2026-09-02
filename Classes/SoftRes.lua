@@ -472,6 +472,8 @@ function SoftRes:draw()
     );
 end
 
+--- Empty values are returned as nil so callers can skip them
+---
 ---@param itemID number|string
 ---@return nil|string, nil|string
 function SoftRes:getHardReserveDetailsByID(itemID)
@@ -481,7 +483,10 @@ function SoftRes:getHardReserveDetailsByID(itemID)
         return;
     end
 
-    return Details.reservedFor, Details.note;
+    local reservedFor = not GL:empty(Details.reservedFor) and Details.reservedFor or nil;
+    local note = not GL:empty(Details.note) and Details.note or nil;
+
+    return reservedFor, note;
 end
 
 ---@param itemLink string
@@ -773,9 +778,12 @@ function SoftRes:tooltipLines(itemLink)
     local Lines = {};
 
     -- Check if the item is hard-reserved
-    local hardReservedFor, hardReservedNote = self:getHardReserveDetailsByItemLink(itemLink);
-    if (hardReservedFor or hardReservedNote) then
+    local itemID = GL:getItemIDFromLink(itemLink);
+    if (self:IDIsHardReserved(itemID)) then
+        local hardReservedFor, hardReservedNote = self:getHardReserveDetailsByID(itemID);
+
         tinsert(Lines, ("\n|cFFcc2743%s|r"):format(L["This item is hard-reserved"]));
+
         if (hardReservedFor) then
             tinsert(Lines, ("|cFFcc2743 %s|r"):format(
                 (L["For: %s"]):format(GL:formatPlayerName(hardReservedFor, { colorize = true, })))

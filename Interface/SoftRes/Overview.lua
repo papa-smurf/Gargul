@@ -604,13 +604,8 @@ function Overview:drawHardReservesTable(Parent)
             local selected = data[realrow].cols[1].value;
             local itemID = GL:getItemIDFromLink(selected);
             local IDString = tostring(itemID);
-            local hardReserveDetails = SoftRes.MaterializedData.HardReserveDetailsByID[IDString];
 
-            if (not hardReserveDetails
-                or (not hardReserveDetails.reservedFor
-                    and not hardReserveDetails.note
-                )
-            ) then
+            if (not SoftRes.MaterializedData.HardReserveDetailsByID[IDString]) then
                 return;
             end
 
