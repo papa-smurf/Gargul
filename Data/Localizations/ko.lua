@@ -979,6 +979,11 @@ L["\nHard-reserve information is not available because the soft-reserves\nprovid
 제공된 항목은 Softres.it의 'Gargul 내보내기' 버튼을 사용하여 생성되지 않았습니다.]];
 L["Imported on |c00A79EFF%s at |c00A79EFF%s"] = "|c00A79EFF%s의 |c00A79EFF%s에서 가져옴";
 L["Auto name fix: the SR of '%s' is now linked to '%s'"] = "자동 이름 수정: '%s'의 SR이 이제 '%s'에 연결되었습니다.";
+L["These Softreserves look like misspelled names. Link them to these players in your raid?"] = [[
+다음 Softreserve는 이름이 잘못 입력된 것으로 보입니다.
+공격대의 해당 플레이어와 연결할까요?]];
+L["Choosing no imports the Softreserves unchanged"] = "'아니요'를 선택하면 Softreserve를 변경하지 않고 가져옵니다";
+L["'%s' could be either '%s' or '%s'"] = "'%s'은(는) '%s' 또는 '%s'일 수 있습니다";
 L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."] = "시작하려면 먼저 Softres.it에 대한 공격대를 만들어야 합니다. 그런 다음 '애드온 내보내기'를 클릭하고 'Gargul'을 선택한 후 데이터를 복사하여 아래 양식에 붙여넣습니다.";
 L["Invalid soft-reserve data provided"] = "잘못된 소프트 예약 데이터가 제공되었습니다.";
 L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"] = "잘못된 데이터가 제공되었습니다. Softres.it에서 'Gargul 내보내기' 버튼을 클릭하고 여기에 전체 내용을 붙여넣으세요.";

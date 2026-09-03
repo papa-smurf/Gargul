@@ -21,6 +21,13 @@ function PopupDialog:open(Dialog)
     Frame:OnNo(Dialog.OnNo or function () end);
     Frame:OnCancel(Dialog.OnCancel or function () end);
 
+    -- Also fires after yes/no/cancel, so callers that use this need to guard against running twice
+    Frame:SetCallback("OnClose", Dialog.OnClose or function () end);
+
+    if (Dialog.closeOnEscape == false) then
+        Frame:DisableEscape();
+    end
+
     if (Dialog.withCancel) then
         Frame:IncludeCancel();
     end

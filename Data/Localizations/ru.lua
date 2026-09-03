@@ -987,6 +987,11 @@ L["\nHard-reserve information is not available because the soft-reserves\nprovid
 софт-реза не были созданы с помощью кнопки «Экспортировать Gargul» на сайте softres.it.]];
 L["Imported on |c00A79EFF%s at |c00A79EFF%s"] = "Импортировано |c00A79EFF%s в |c00A79EFF%s.";
 L["Auto name fix: the SR of '%s' is now linked to '%s'"] = "Автоматическое исправление имени: SR «%s» теперь связан с «%s».";
+L["These Softreserves look like misspelled names. Link them to these players in your raid?"] = [[
+Похоже, в этих Softreserves имена написаны с ошибками.
+Связать их с этими игроками из вашего рейда?]];
+L["Choosing no imports the Softreserves unchanged"] = "При выборе «Нет» Softreserves будут импортированы без изменений";
+L["'%s' could be either '%s' or '%s'"] = "«%s» может быть либо «%s», либо «%s»";
 L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."] = "Для начала вам сначала нужно создать рейд на softres.it. После этого нажмите «Экспорт аддонов», выберите «Гаргул», скопируйте данные и вставьте их в форму ниже.";
 L["Invalid soft-reserve data provided"] = "Предоставлены неверные данные софт-резерва.";
 L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"] = "Предоставлены неверные данные. Обязательно нажмите кнопку «Экспортировать Gargul» на сайте softres.it и вставьте сюда все содержимое.";

@@ -122,6 +122,204 @@ function GL:levenshtein(str1, str2)
     return matrix[len1][len2];
 end
 
+--- Ranges of code points that fold onto plain ASCII, as { first, last, replacement }
+local FoldRanges = {
+    { 0xC0, 0xC5, "a", }, { 0xC6, 0xC6, "ae", }, { 0xC7, 0xC7, "c", }, { 0xC8, 0xCB, "e", },
+    { 0xCC, 0xCF, "i", }, { 0xD0, 0xD0, "d", }, { 0xD1, 0xD1, "n", }, { 0xD2, 0xD6, "o", },
+    { 0xD8, 0xD8, "o", }, { 0xD9, 0xDC, "u", }, { 0xDD, 0xDD, "y", }, { 0xDE, 0xDE, "th", },
+    { 0xDF, 0xDF, "ss", }, { 0xE0, 0xE5, "a", }, { 0xE6, 0xE6, "ae", }, { 0xE7, 0xE7, "c", },
+    { 0xE8, 0xEB, "e", }, { 0xEC, 0xEF, "i", }, { 0xF0, 0xF0, "d", }, { 0xF1, 0xF1, "n", },
+    { 0xF2, 0xF6, "o", }, { 0xF8, 0xF8, "o", }, { 0xF9, 0xFC, "u", }, { 0xFD, 0xFD, "y", },
+    { 0xFE, 0xFE, "th", }, { 0xFF, 0xFF, "y", },
+    { 0x100, 0x105, "a", }, { 0x106, 0x10D, "c", }, { 0x10E, 0x111, "d", }, { 0x112, 0x11B, "e", },
+    { 0x11C, 0x123, "g", }, { 0x124, 0x127, "h", }, { 0x128, 0x131, "i", }, { 0x132, 0x133, "ij", },
+    { 0x134, 0x135, "j", }, { 0x136, 0x138, "k", }, { 0x139, 0x142, "l", }, { 0x143, 0x14B, "n", },
+    { 0x14C, 0x151, "o", }, { 0x152, 0x153, "oe", }, { 0x154, 0x159, "r", }, { 0x15A, 0x161, "s", },
+    { 0x162, 0x167, "t", }, { 0x168, 0x173, "u", }, { 0x174, 0x175, "w", }, { 0x176, 0x178, "y", },
+    { 0x179, 0x17E, "z", }, { 0x17F, 0x17F, "s", },
+    { 0x218, 0x219, "s", }, { 0x21A, 0x21B, "t", }, -- romanian comma-below
+};
+
+local NameFold = {};
+for _, Range in ipairs(FoldRanges) do
+    for codepoint = Range[1], Range[2] do
+        NameFold[codepoint] = Range[3];
+    end
+end
+
+--- Split a UTF-8 string into its unicode code points
+---
+---@param str string
+---@return table
+function GL:utf8Codepoints(str)
+    local Codepoints = {};
+    local position = 1;
+    local length = strlen(str);
+
+    while (position <= length) do
+        local leadByte = str:byte(position);
+        local codepoint, size;
+
+        -- Anything below 0xC0 is ASCII, or a stray continuation byte we pass through as-is
+        if (leadByte < 0xC0) then
+            codepoint, size = leadByte, 1;
+        elseif (leadByte < 0xE0) then
+            codepoint, size = leadByte - 0xC0, 2;
+        elseif (leadByte < 0xF0) then
+            codepoint, size = leadByte - 0xE0, 3;
+        else
+            codepoint, size = leadByte - 0xF0, 4;
+        end
+
+        for offset = 1, size - 1 do
+            codepoint = codepoint * 64 + ((str:byte(position + offset) or 0x80) - 0x80);
+        end
+
+        tinsert(Codepoints, codepoint);
+        position = position + size;
+    end
+
+    return Codepoints;
+end
+
+--- Turn a unicode code point back into a UTF-8 string
+---
+---@param codepoint number
+---@return string
+function GL:utf8Char(codepoint)
+    if (codepoint < 0x80) then
+        return strchar(codepoint);
+    end
+
+    if (codepoint < 0x800) then
+        return strchar(0xC0 + math.floor(codepoint / 0x40), 0x80 + codepoint % 0x40);
+    end
+
+    if (codepoint < 0x10000) then
+        return strchar(
+            0xE0 + math.floor(codepoint / 0x1000),
+            0x80 + math.floor(codepoint / 0x40) % 0x40,
+            0x80 + codepoint % 0x40
+        );
+    end
+
+    return strchar(
+        0xF0 + math.floor(codepoint / 0x40000),
+        0x80 + math.floor(codepoint / 0x1000) % 0x40,
+        0x80 + math.floor(codepoint / 0x40) % 0x40,
+        0x80 + codepoint % 0x40
+    );
+end
+
+--- Fold a player name into a plain comparable form: realm stripped, accents
+--- removed, lower cased, anything that isn't a letter dropped. Names that only
+--- differ in accents, capitalisation, realm or spacing fold to the same string.
+---
+---@param name string
+---@return string
+function GL:foldName(name)
+    local Folded = {};
+
+    for _, codepoint in ipairs(self:utf8Codepoints(self:stripRealm(tostring(name)))) do
+        local replacement = NameFold[codepoint];
+
+        if (replacement) then
+            tinsert(Folded, replacement);
+        elseif (codepoint >= 0x41 and codepoint <= 0x5A) then -- A-Z
+            tinsert(Folded, strchar(codepoint + 0x20));
+        elseif (codepoint >= 0x61 and codepoint <= 0x7A) then -- a-z
+            tinsert(Folded, strchar(codepoint));
+        elseif (codepoint == 0x401) then -- cyrillic Ё
+            tinsert(Folded, self:utf8Char(0x451));
+        elseif (codepoint >= 0x410 and codepoint <= 0x42F) then -- cyrillic А-Я
+            tinsert(Folded, self:utf8Char(codepoint + 0x20));
+        elseif (codepoint > 0x7F) then -- any other script, keep it untouched
+            tinsert(Folded, self:utf8Char(codepoint));
+        end
+
+        -- ASCII digits, spaces and punctuation are dropped entirely
+    end
+
+    return table.concat(Folded);
+end
+
+--- Number of unicode characters in a string. Differs from strlen on any name
+--- that isn't plain ASCII, where one character can be up to four bytes.
+---
+---@param str string
+---@return number
+function GL:utf8Length(str)
+    return #self:utf8Codepoints(str);
+end
+
+--- Damerau-Levenshtein distance, counted in unicode characters instead of bytes
+--- so it behaves the same on every realm. Unlike levenshtein, swapping two
+--- neighbouring characters costs 1 instead of 2, which is a very common typo.
+---
+---@param str1 string
+---@param str2 string
+---@return number
+function GL:nameDistance(str1, str2)
+    local First = self:utf8Codepoints(str1);
+    local Second = self:utf8Codepoints(str2);
+    local len1, len2 = #First, #Second;
+
+    if (len1 == 0) then
+        return len2;
+    end
+
+    if (len2 == 0) then
+        return len1;
+    end
+
+    local Matrix = {};
+    for i = 0, len1 do
+        Matrix[i] = { [0] = i, };
+    end
+
+    for j = 0, len2 do
+        Matrix[0][j] = j;
+    end
+
+    for i = 1, len1 do
+        for j = 1, len2 do
+            local cost = First[i] == Second[j] and 0 or 1;
+            Matrix[i][j] = math.min(Matrix[i - 1][j] + 1, Matrix[i][j - 1] + 1, Matrix[i - 1][j - 1] + cost);
+
+            -- Two neighbouring characters were swapped around
+            if (i > 1 and j > 1
+                and First[i] == Second[j - 1]
+                and First[i - 1] == Second[j]
+            ) then
+                Matrix[i][j] = math.min(Matrix[i][j], Matrix[i - 2][j - 2] + 1);
+            end
+        end
+    end
+
+    return Matrix[len1][len2];
+end
+
+--- Whether fuzzy matching makes sense for a name. Logographic and syllabic
+--- scripts pack far more meaning into one character, so a single difference
+--- there is a different person rather than a typo.
+---
+---@param name string
+---@return boolean
+function GL:nameIsFuzzyMatchable(name)
+    for _, codepoint in ipairs(self:utf8Codepoints(name)) do
+        if ((codepoint >= 0x1100 and codepoint <= 0x11FF) -- hangul jamo
+            or (codepoint >= 0x3040 and codepoint <= 0x30FF) -- hiragana and katakana
+            or (codepoint >= 0x3400 and codepoint <= 0x4DBF) -- cjk extension a
+            or (codepoint >= 0x4E00 and codepoint <= 0x9FFF) -- cjk unified
+            or (codepoint >= 0xAC00 and codepoint <= 0xD7A3) -- hangul syllables
+        ) then
+            return false;
+        end
+    end
+
+    return true;
+end
+
 --- Check whether the provided string starts with a given substring
 ---
 ---@param str string

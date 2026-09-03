@@ -976,6 +976,11 @@ L["\nHard-reserve information is not available because the soft-reserves\nprovid
 提供的内容不是使用 softres.it 上的“Gargul Export”按钮生成的]];
 L["Imported on |c00A79EFF%s at |c00A79EFF%s"] = "导入于 |c00A79EFF%s |c00A79EFF%s";
 L["Auto name fix: the SR of '%s' is now linked to '%s'"] = "自动名称修复：“%s”的 SR 现在链接到“%s”";
+L["These Softreserves look like misspelled names. Link them to these players in your raid?"] = [[
+这些 Softreserve 看起来是拼错的名字。
+是否将它们关联到你团队中的这些玩家？]];
+L["Choosing no imports the Softreserves unchanged"] = "选择“否”将原样导入这些 Softreserve";
+L["'%s' could be either '%s' or '%s'"] = "“%s”可能是“%s”或“%s”";
 L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."] = "为了开始，您首先需要在 softres.it 上创建一个 raid。然后单击“Addon Export”，选择“Gargul”，复制数据并将其粘贴到下面的表单中。";
 L["Invalid soft-reserve data provided"] = "提供的软保留数据无效";
 L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"] = "提供的数据无效。确保单击 softres.it 上的“Gargul Export”按钮并将完整内容粘贴到此处";

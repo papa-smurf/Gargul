@@ -7,7 +7,7 @@ local _, GL = ...;
 PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
 -------------------------------------------------------------------------------]]
-local Type, Version = "GargulPopupDialog", 1;
+local Type, Version = "GargulPopupDialog", 2;
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true);
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return; end
 
@@ -68,6 +68,20 @@ local Events = {
         self.DialogLabel:SetText(question);
     end,
 
+    --- Require an explicit answer by taking escape away
+    DisableEscape = function (self)
+        self.escapeDisabled = true;
+
+        -- These widgets are pooled and keep their frame name, so this one may
+        -- still be registered from an earlier dialog that did allow escape
+        local frameName = self.frame:GetName();
+        for index = #UISpecialFrames, 1, -1 do
+            if (UISpecialFrames[index] == frameName) then
+                table.remove(UISpecialFrames, index);
+            end
+        end
+    end,
+
     IncludeCancel = function (self)
         self.Yes:SetWidth(80);
         self.No:SetWidth(80);
@@ -89,9 +103,15 @@ local Events = {
         self:ApplyStatus();
         self.frame:SetParent(UIParent);
         self.frame:SetFrameStrata("FULLSCREEN_DIALOG");
+        self.escapeDisabled = false;
 
-        -- Make sure the dialog can be closed using the escape key
+        -- Make sure the dialog can be closed using the escape key, unless the
+        -- caller called DisableEscape before this fires
         GL.Ace:ScheduleTimer(function ()
+            if (self.escapeDisabled) then
+                return;
+            end
+
             table.insert(UISpecialFrames, self.frame:GetName());
         end, .1);
 

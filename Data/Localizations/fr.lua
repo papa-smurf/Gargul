@@ -982,6 +982,11 @@ Les informations sur les hard-reserves ne sont pas disponibles car les soft-rese
 fournis n'ont pas été générés à l'aide du bouton 'Gargul Export' sur softres.it]];
 L["Imported on |c00A79EFF%s at |c00A79EFF%s"] = "Importé le |c00A79EFF%s à |c00A79EFF%s";
 L["Auto name fix: the SR of '%s' is now linked to '%s'"] = "Correction automatique du nom : le SR de '%s' est désormais lié à '%s'";
+L["These Softreserves look like misspelled names. Link them to these players in your raid?"] = [[
+Ces Softreserves semblent correspondre à des noms mal orthographiés.
+Les lier à ces joueurs de votre raid ?]];
+L["Choosing no imports the Softreserves unchanged"] = "En choisissant Non, les Softreserves sont importées telles quelles";
+L["'%s' could be either '%s' or '%s'"] = "'%s' pourrait être soit '%s', soit '%s'";
 L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."] = "Pour commencer, vous devez d'abord créer un raid sur softres.it. Cliquez ensuite sur « Addon Export », sélectionnez « Gargul », copiez les données et collez-les dans le formulaire ci-dessous.";
 L["Invalid soft-reserve data provided"] = "Données soft-reserve fournies invalides";
 L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"] = "Données non valides fournies. Assurez-vous de cliquer sur le bouton « Gargul Export » sur softres.it et collez le contenu complet ici";

@@ -920,11 +920,9 @@ function SoftRes:import(data, openOverview)
         return false;
     end
 
-    -- Attempt to "fix" player names (e.g. people misspelling their names)
-    local RewiredNames = {};
-    if (Settings:get("SoftRes.fixPlayerNames", true)) then
-        RewiredNames = self:fixPlayerNames();
-
+    -- The rest of the import only runs once we know which name fixes to apply,
+    -- which can be after the user answered the confirmation dialog
+    local finalize = function (RewiredNames)
         if (reportStatus) then
             for softResName, playerName in pairs(RewiredNames) do
                 GL:notice((L["Auto name fix: the SR of '%s' is now linked to '%s'"]):format(
@@ -933,84 +931,178 @@ function SoftRes:import(data, openOverview)
                 ));
             end
         end
-    end
 
-    DB:set("SoftRes.MetaData.playerMap", RewiredNames);
+        DB:set("SoftRes.MetaData.playerMap", RewiredNames);
 
-    -- Convert any Softres.it bonus rolls into Boosted Roll points
-    GL.BoostedRolls:importFromSoftres(self.PendingBonusRolls, RewiredNames, {
-        softresID = DB:get("SoftRes.MetaData.id"),
-        consumedOnUse = DB:get("SoftRes.MetaData.bonusRollsConsumedOnUse", false),
-        force = openOverview,
-    });
+        -- Convert any Softres.it bonus rolls into Boosted Roll points
+        GL.BoostedRolls:importFromSoftres(self.PendingBonusRolls, RewiredNames, {
+            softresID = DB:get("SoftRes.MetaData.id"),
+            consumedOnUse = DB:get("SoftRes.MetaData.bonusRollsConsumedOnUse", false),
+            force = openOverview,
+        });
 
-    -- Reset the materialized data
-    self.MaterializedData = {
-        ClassByPlayerName = {},
-        DetailsByPlayerName = {},
-        HardReserveDetailsByID = {},
-        PlayerNamesByItemID = {},
-        ReservedItemIDs = {},
-        SoftReservedItemIDs = {},
-    };
+        -- Reset the materialized data
+        self.MaterializedData = {
+            ClassByPlayerName = {},
+            DetailsByPlayerName = {},
+            HardReserveDetailsByID = {},
+            PlayerNamesByItemID = {},
+            ReservedItemIDs = {},
+            SoftReservedItemIDs = {},
+        };
 
-    -- Materialize the data for ease of use
-    if (not self:materializeData()) then
-        return;
-    end
+        -- Materialize the data for ease of use
+        if (not self:materializeData()) then
+            return false;
+        end
 
-    GL.Events:fire("GL.SOFTRES_IMPORTED");
+        GL.Events:fire("GL.SOFTRES_IMPORTED");
 
-    if (reportStatus) then
-        -- Display missing soft-reserves
-        local PlayersWhoDidntReserve = self:playersWithoutSoftReserves();
-        if (not GL:empty(PlayersWhoDidntReserve)) then
-            local MissingReservers = {};
-            for _, name in pairs(PlayersWhoDidntReserve) do
-                tinsert(MissingReservers, GL:formatPlayerName(name, { colorize = true, }));
+        if (reportStatus) then
+            -- Display missing soft-reserves
+            local PlayersWhoDidntReserve = self:playersWithoutSoftReserves();
+            if (not GL:empty(PlayersWhoDidntReserve)) then
+                local MissingReservers = {};
+                for _, name in pairs(PlayersWhoDidntReserve) do
+                    tinsert(MissingReservers, GL:formatPlayerName(name, { colorize = true, }));
+                end
+
+                GL:warning(L["The following players did not reserve anything:"]);
+                GL:message(table.concat(MissingReservers, " "));
             end
-
-            GL:warning(L["The following players did not reserve anything:"]);
-            GL:message(table.concat(MissingReservers, " "));
         end
-    end
 
-    GL.Interface.SoftRes.Importer:close();
+        GL.Interface.SoftRes.Importer:close();
 
-    if (broadcast
-        and self:userIsAllowedToBroadcast()
-    ) then
-        -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
-        if (not GL.DB:get("SoftRes.MetaData.hidden", true)) then
-            self:broadcast();
-        end
-    end
-
-    -- Yes, we need to repeat this if-statement since userIsAllowedToBroadcast includes its own isInGroup check
-    if (not GL.User.isInGroup
-        or (broadcast
+        if (broadcast
             and self:userIsAllowedToBroadcast()
-        )
-    ) then
-        -- Let everyone know how to double-check their soft-reserves
-        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)
-            and (not GL.User.isInGroup
-                or not self.announcedImportSoftResAt -- Hasn't been announced yet
-                or self.announcedImportSoftResAt <= GetServerTime() - 300 -- Was announced 5 minutes ago or more
+        ) then
+            -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
+            if (not GL.DB:get("SoftRes.MetaData.hidden", true)) then
+                self:broadcast();
+            end
+        end
+
+        -- Yes, we need to repeat this if-statement since userIsAllowedToBroadcast includes its own isInGroup check
+        if (not GL.User.isInGroup
+            or (broadcast
+                and self:userIsAllowedToBroadcast()
             )
         ) then
-            GL:sendChatMessage(
-                L.CHAT["I just imported soft-reserves into Gargul. Whisper !sr to double-check your reserves!"],
-                "GROUP"
-            );
+            -- Let everyone know how to double-check their soft-reserves
+            if (GL.Settings:get("SoftRes.enableWhisperCommand", true)
+                and (not GL.User.isInGroup
+                    or not self.announcedImportSoftResAt -- Hasn't been announced yet
+                    or self.announcedImportSoftResAt <= GetServerTime() - 300 -- Was announced 5 minutes ago or more
+                )
+            ) then
+                GL:sendChatMessage(
+                    L.CHAT["I just imported soft-reserves into Gargul. Whisper !sr to double-check your reserves!"],
+                    "GROUP"
+                );
+            end
+        end
+
+        if (openOverview) then
+            self:draw();
+        end
+
+        return true;
+    end
+
+    if (not Settings:get("SoftRes.fixPlayerNames", true)) then
+        return finalize({});
+    end
+
+    local Proposals, Ambiguous = self:proposeNameFixes();
+
+    -- Don't put a dialog in front of everyone receiving our broadcast
+    if (not reportStatus) then
+        return finalize(self:applyNameFixes(Proposals));
+    end
+
+    for _, description in pairs(Ambiguous) do
+        GL:warning(description);
+    end
+
+    if (GL:empty(Proposals)) then
+        return finalize({});
+    end
+
+    self:confirmNameFixes(Proposals, function (Confirmed)
+        finalize(self:applyNameFixes(Confirmed));
+    end);
+
+    return true;
+end
+
+--- Ask the user whether the proposed name fixes are correct before applying them
+---
+---@param Proposals table Soft-reserve name -> group member name
+---@param callback function Called exactly once with the proposals to apply
+---@return nil
+function SoftRes:confirmNameFixes(Proposals, callback)
+    -- The soft-reserve side isn't in our group, so its class can only come from
+    -- the imported data. MaterializedData isn't built yet at this point
+    local ClassBySoftResName = {};
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        ClassBySoftResName[Reservation.name] = Reservation.class;
+    end
+
+    -- classHexColor is used over formatPlayerName's colorize, which runs the class
+    -- through GetClassColor and would choke on softres.it's "death knight"
+    local colorized = function (name, class)
+        return ("|c00%s%s|r"):format(GL:classHexColor(class), GL:formatPlayerName(name));
+    end
+
+    local Pairings = {};
+    for softResName, playerName in pairs(Proposals) do
+        tinsert(Pairings, {
+            sortKey = strlower(softResName),
+            line = ("%s  >  %s"):format(
+                colorized(softResName, ClassBySoftResName[softResName]),
+                colorized(playerName, GL.Player:classByName(playerName, false))
+            ),
+        });
+    end
+
+    -- Sort on the bare names, colour codes would throw the order off
+    table.sort(Pairings, function (a, b)
+        return a.sortKey < b.sortKey;
+    end);
+
+    local Lines = {};
+    for _, Pairing in ipairs(Pairings) do
+        tinsert(Lines, Pairing.line);
+    end
+
+    -- Dismissing the dialog counts as a no, and OnClose fires after yes/no too
+    local answered = false;
+    local answer = function (Accepted)
+        if (not answered) then
+            answered = true;
+            callback(Accepted);
         end
     end
 
-    if (openOverview) then
-        self:draw();
-    end
-
-    return true;
+    GL.Interface.Dialogs.PopupDialog:open({
+        -- The import is on hold until this is answered, so make it a deliberate choice
+        closeOnEscape = false,
+        question = ("%s\n\n%s\n\n%s"):format(
+            L["These Softreserves look like misspelled names. Link them to these players in your raid?"],
+            table.concat(Lines, "\n"),
+            L["Choosing no imports the Softreserves unchanged"]
+        ),
+        OnYes = function ()
+            answer(Proposals);
+        end,
+        OnNo = function ()
+            answer({});
+        end,
+        OnClose = function ()
+            answer({});
+        end,
+    });
 end
 
 --- Import data from LootReserve. This happens automatically via an event listener
@@ -1357,88 +1449,239 @@ function SoftRes:importCSVData(data, reportStatus)
     return not GL:empty(DB.SoftRes.SoftReserves);
 end
 
+--- Class names reach us in several shapes ("Death Knight", "deathknight", "DEATHKNIGHT")
+---
+---@param class string
+---@return string
+local function normalizeClass(class)
+    return (strlower(tostring(class or "")):gsub("[%s%-]", ""));
+end
+
+--- Work out which soft-reserve names are likely typos of someone in our group.
+--- Nothing is changed here, feed the result to SoftRes:applyNameFixes.
+---
+--- A proposal is only made when there is exactly one sensible explanation. Names
+--- that merely look a bit alike (Trym vs Hulf) are never linked, and a tie between
+--- two equally likely candidates is reported instead of guessed at.
+---
+---@return table Proposals Soft-reserve name -> group member name
+---@return table Ambiguous Human readable description of the ties we refused to resolve
+function SoftRes:proposeNameFixes()
+    local GroupMemberNames = {};
+    local MemberByName = {};
+    local MemberByFoldedName = {};
+    local ambiguousFold = {};
+    for _, playerName in pairs(GL.User:groupMemberNames()) do
+        playerName = strlower(playerName);
+        local folded = GL:foldName(playerName);
+
+        tinsert(GroupMemberNames, playerName);
+        MemberByName[playerName] = playerName;
+
+        -- Two people in the raid whose names only differ in accents, e.g. Sorina
+        -- and Sørina. Folding can't tell them apart so it mustn't try
+        if (MemberByFoldedName[folded]
+            and MemberByFoldedName[folded] ~= playerName
+        ) then
+            ambiguousFold[folded] = true;
+        end
+
+        MemberByFoldedName[folded] = playerName;
+    end
+
+    local Proposals = {};
+    local MemberReserved = {};
+    local Unclaimed = {};
+
+    -- Someone reserving under their exact name is certain, so let those claim
+    -- their player before the accent and spacing variants get a go
+    local Variants = {};
+    local VariantsByFold = {};
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        local member = MemberByName[strlower(Reservation.name)];
+
+        if (member) then
+            MemberReserved[member] = true;
+        else
+            local folded = GL:foldName(Reservation.name);
+
+            tinsert(Variants, Reservation);
+            VariantsByFold[folded] = (VariantsByFold[folded] or 0) + 1;
+        end
+    end
+
+    -- Accents, capitalisation, realm suffixes and stray spaces all fold away.
+    -- Only link on that when one reserve folds onto one player, or Sorîna (who
+    -- isn't even here) ends up on Sorina's reserves
+    for _, Reservation in pairs(Variants) do
+        local folded = GL:foldName(Reservation.name);
+        local member = not ambiguousFold[folded] and MemberByFoldedName[folded] or nil;
+
+        if (member
+            and not MemberReserved[member]
+            and VariantsByFold[folded] == 1
+        ) then
+            MemberReserved[member] = true;
+            Proposals[Reservation.name] = member;
+        else
+            tinsert(Unclaimed, {
+                name = Reservation.name,
+                folded = folded,
+                class = normalizeClass(Reservation.class),
+                length = GL:utf8Length(folded),
+                firstCharacter = GL:utf8Codepoints(folded)[1],
+                fuzzyMatchable = GL:nameIsFuzzyMatchable(folded),
+            });
+        end
+    end
+
+    local MembersWithoutReserve = {};
+    for _, playerName in pairs(GroupMemberNames) do
+        if (not MemberReserved[playerName]) then
+            tinsert(MembersWithoutReserve, playerName);
+        end
+    end
+
+    if (GL:empty(MembersWithoutReserve) or GL:empty(Unclaimed)) then
+        return Proposals, {};
+    end
+
+    -- Score every remaining combination, keeping only the plausible ones
+    local Candidates = {};
+    for _, member in pairs(MembersWithoutReserve) do
+        local memberFolded = GL:foldName(member);
+        local memberClass = normalizeClass(GL.Player:classByName(member, false) or "");
+        local memberLength = GL:utf8Length(memberFolded);
+        local memberFirstCharacter = GL:utf8Codepoints(memberFolded)[1];
+        local memberFuzzyMatchable = GL:nameIsFuzzyMatchable(memberFolded);
+
+        for _, Candidate in pairs(Unclaimed) do
+            if (memberFuzzyMatchable
+                and Candidate.fuzzyMatchable
+                -- Once accents are folded away, typos practically never hit the first letter
+                and memberFirstCharacter == Candidate.firstCharacter
+                -- Shorter than this and a typo is indistinguishable from a different name
+                and math.max(memberLength, Candidate.length) >= 4
+            ) then
+                -- A quarter of the name may be wrong, so short names get very little slack.
+                -- The old flat allowance of 4 made any two short names look like a typo.
+                local maximumDistance = math.max(1, math.floor(math.max(memberLength, Candidate.length) / 4));
+
+                -- Only treat a class difference as evidence when we actually know both classes.
+                -- classByName falls back to priest, which would otherwise read as a match.
+                if (not GL:empty(memberClass)
+                    and not GL:empty(Candidate.class)
+                    and memberClass ~= Candidate.class
+                ) then
+                    maximumDistance = 1;
+                end
+
+                local distance = GL:nameDistance(memberFolded, Candidate.folded);
+
+                if (distance <= maximumDistance) then
+                    tinsert(Candidates, {
+                        member = member,
+                        name = Candidate.name,
+                        distance = distance,
+                    });
+                end
+            end
+        end
+    end
+
+    -- Sort on the data itself, never on table order, so an import always
+    -- produces the exact same result no matter how the reservations are stored
+    table.sort(Candidates, function (a, b)
+        if (a.distance ~= b.distance) then
+            return a.distance < b.distance;
+        end
+
+        if (a.name ~= b.name) then
+            return a.name < b.name;
+        end
+
+        return a.member < b.member;
+    end);
+
+    local Ambiguous = {};
+    local memberTaken = {};
+    local nameTaken = {};
+
+    for _, Candidate in ipairs(Candidates) do
+        if (not memberTaken[Candidate.member]
+            and not nameTaken[Candidate.name]
+        ) then
+            local Rival;
+
+            -- Another candidate that explains this pairing equally well
+            for _, Other in ipairs(Candidates) do
+                if (Other ~= Candidate
+                    and Other.distance == Candidate.distance
+                    and not memberTaken[Other.member]
+                    and not nameTaken[Other.name]
+                    and (Other.member == Candidate.member or Other.name == Candidate.name)
+                ) then
+                    Rival = Other;
+                    break;
+                end
+            end
+
+            memberTaken[Candidate.member] = true;
+            nameTaken[Candidate.name] = true;
+
+            if (not Rival) then
+                Proposals[Candidate.name] = Candidate.member;
+            else
+                -- Nobody involved in a tie gets matched to anything
+                memberTaken[Rival.member] = true;
+                nameTaken[Rival.name] = true;
+
+                -- The tie is either two reserves for one raider, or two raiders for one reserve
+                local subject, first, second = Candidate.member, Candidate.name, Rival.name;
+                if (Rival.name == Candidate.name) then
+                    subject, first, second = Candidate.name, Candidate.member, Rival.member;
+                end
+
+                tinsert(Ambiguous, (L["'%s' could be either '%s' or '%s'"]):format(
+                    GL:capitalize(subject),
+                    GL:capitalize(first),
+                    GL:capitalize(second)
+                ));
+            end
+        end
+    end
+
+    return Proposals, Ambiguous;
+end
+
+--- Point the given soft-reserves at their corrected player names
+---
+---@param Proposals table Soft-reserve name -> group member name
+---@return table Applied
+function SoftRes:applyNameFixes(Proposals)
+    local Applied = {};
+
+    if (GL:empty(Proposals)) then
+        return Applied;
+    end
+
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        local correctedName = Proposals[Reservation.name];
+
+        if (correctedName) then
+            Applied[Reservation.name] = correctedName;
+            Reservation.name = correctedName;
+        end
+    end
+
+    return Applied;
+end
+
 --- Attempt to fix players misspelling their character name on softres
 ---
 ---@return table
 function SoftRes:fixPlayerNames()
-    -- Get the names of everyone in our group and lowercase them
-    local GroupMemberNames = {};
-    for _, playerName in pairs(GL.User:groupMemberNames()) do
-        tinsert(GroupMemberNames, strlower(playerName));
-    end
-
-    local GroupMembersThatReserved = {};
-    local PlayersNotInGroup = {};
-
-    -- Check all reservations and split them in players that are in our group, and players (+class) that aren't
-    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
-        -- This player is actually in our group
-        if (GL:inTable(GroupMemberNames, Reservation.name)) then
-            tinsert(GroupMembersThatReserved, Reservation.name);
-
-        -- We don't know this player, potentially mistyped name
-        else
-            PlayersNotInGroup[Reservation.name] = strlower(Reservation.class);
-        end
-    end
-
-    -- Check who's in our group and didn't reserve yet
-    local PlayersWhoDidntReserve = {};
-    for _, playerName in pairs(GroupMemberNames) do
-        if (not GL:inTable(GroupMembersThatReserved, playerName)) then
-            tinsert(PlayersWhoDidntReserve, playerName);
-        end
-    end
-
-    -- Everyone reserved, great, let's move on
-    if (GL:empty(PlayersWhoDidntReserve)) then
-        return {};
-    end
-
-    -- Try to find matching names for players who didn't soft-reserve, which means they likely made a typo
-    local NameDictionary = {};
-    for _, playerWhoDidntReserve in pairs(PlayersWhoDidntReserve) do
-        local playerClass = GL.Player:classByName(playerWhoDidntReserve);
-        local mostSimilarName = false;
-        local lastDistance = 99;
-
-        for playerNotInGroup, class in pairs(PlayersNotInGroup) do
-            local distance = GL:levenshtein(playerWhoDidntReserve, playerNotInGroup);
-            local maximumDistance = 4;
-
-            -- If the class of the player doesn't match with the class of the soft-reserve
-            -- then we drastically lower the maximum distance. If both name and class are wrong, a match is unlikely!
-            if (playerClass ~= class) then
-                maximumDistance = 2;
-            end
-
-            if (distance <= maximumDistance
-                and distance < lastDistance
-            ) then
-                mostSimilarName = playerNotInGroup;
-            end
-        end
-
-        if (mostSimilarName) then
-            NameDictionary[mostSimilarName] = playerWhoDidntReserve;
-        end
-    end
-
-    -- Nothing to rewire!
-    if (GL:empty(NameDictionary)) then
-        return {};
-    end
-
-    -- Rewire reservations e.g. match names
-    local RewiredNames = {};
-    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
-        if (NameDictionary[Reservation.name]) then
-            RewiredNames[Reservation.name] = NameDictionary[Reservation.name];
-            Reservation.name = NameDictionary[Reservation.name];
-        end
-    end
-
-    return RewiredNames;
+    return self:applyNameFixes((self:proposeNameFixes()));
 end
 
 --- Broadcast our soft reserves table to the raid or group
