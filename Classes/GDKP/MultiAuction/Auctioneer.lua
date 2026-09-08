@@ -674,8 +674,15 @@ end
 ---@return nil
 function Auctioneer:scheduleUpdater()
     GL:interval(UPDATE_INTERVAL, "GDKP.MultiAuction.auctionUpdated", function ()
-        if (not self:auctionStartedByMe() or not self:hasRunningAuctions()) then
+        if (not self:auctionStartedByMe()) then
             GL:cancelTimer("GDKP.MultiAuction.auctionUpdated");
+            return;
+        end
+
+        -- Send what just closed before we stop ticking
+        if (not self:hasRunningAuctions()) then
+            GL:cancelTimer("GDKP.MultiAuction.auctionUpdated");
+            self:broadcastChanges();
             return;
         end
 
@@ -1042,7 +1049,7 @@ function Auctioneer:closeAuction(auctionID)
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
         local awardChecksum = GL.AwardedLoot:addWinner({
-            broadcast = false,
+            broadcast = true,
             gdkpCost = BidDetails.amount,
             itemLink = itemLink,
             winner = BidDetails.player,
@@ -1150,6 +1157,9 @@ function Auctioneer:finish(announcePot)
     for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
         self:closeAuction(auctionID);
     end
+
+    -- Don't wait for the updater's next tick
+    self:broadcastChanges();
 
     if (not announcePot) then
         return;

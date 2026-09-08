@@ -1259,8 +1259,7 @@ function AwardedLoot:receiveAwardedItem(Award, Sender)
         return GL:warning("Couldn't process award result in AwardedLoot:receiveAwardedItem");
     end
 
-    -- Show an item won alert on TBC+. Hydrate first, an ID alone would give us the
-    -- base item and lose whatever suffix or bonus IDs it was awarded with
+    -- Show an item won alert on TBC+. Hydrate, an ID would lose the bonus IDs
     if (not GL.isEra and GL:iEquals(Award.awardedTo, GL.User.name)) then
         GL:hydrateItemLink(Award.itemLink, function (itemLink)
             if (not itemLink) then
@@ -1341,8 +1340,7 @@ function AwardedLoot:processAwardMutations(CommMessage)
         return GL:warning("Couldn't process award mutations in AwardedLoot:processAwardMutations");
     end
 
-    -- Anything that isn't shaped like we expect is dropped, one bad entry
-    -- shouldn't take the rest of the batch with it
+    -- Skip junk instead of letting it kill the rest of the batch
     for _, Mutation in ipairs(Mutations) do
         local isTable = type(Mutation) == "table";
         local op = isTable and Mutation.op;

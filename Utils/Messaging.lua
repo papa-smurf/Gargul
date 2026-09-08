@@ -308,7 +308,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
         end
     end
 
-    if (not pretend) then
+    if (not pretend and not GL.isMuted) then
         SendChatMessage(
             message,
             chatType,
@@ -325,11 +325,17 @@ end
 ---@return nil
 function GL:mute()
     GL.isMuted = true;
+
+    -- In case the caller errors out before unmuting
+    GL:after(0, "GL.unmuteFailsafe", function ()
+        GL.isMuted = false;
+    end);
 end
 
 --- Unmute add-on after (temporary) mute
 ---
 ---@return nil
 function GL:unmute()
+    GL:cancelTimer("GL.unmuteFailsafe");
     GL.isMuted = false;
 end
