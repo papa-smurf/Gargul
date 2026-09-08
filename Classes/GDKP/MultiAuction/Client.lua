@@ -81,6 +81,77 @@ function Client:currentSessionHash()
     }, ".");
 end
 
+---@param Auctions table Auction objects with link, auctionID, minimum, increment, endsAt and optionally CurrentBid
+---@return table
+function Client:encodeAuctionsForComm(Auctions)
+    local CommItems = {};
+
+    for _, Details in pairs(Auctions or {}) do
+        local dehydratedLink = GL:dehydrateItemLink(Details.link);
+
+        if (dehydratedLink) then
+            local CurrentBid;
+            if (type(Details.CurrentBid) == "table") then
+                CurrentBid = { Details.CurrentBid.player, Details.CurrentBid.amount, };
+            end
+
+            table.insert(CommItems, {
+                Details.auctionID,
+                dehydratedLink,
+                Details.minimum,
+                Details.increment,
+                Details.endsAt,
+                CurrentBid,
+            });
+        end
+    end
+
+    return CommItems;
+end
+
+---@param CommItems table Positional array produced by Client:encodeAuctionsForComm
+---@param callback function Receives auctions keyed by auctionID
+---@return nil
+function Client:decodeAuctionsFromComm(CommItems, callback)
+    callback = type(callback) == "function" and callback or function () end;
+
+    local Auctions = {};
+    local pending = GL:count(CommItems);
+
+    if (pending < 1) then
+        callback(Auctions);
+        return;
+    end
+
+    for _, CommItem in pairs(CommItems) do
+        local auctionID, dehydratedLink, minimum, increment, endsAt, CurrentBid = CommItem[1], CommItem[2], CommItem[3], CommItem[4], CommItem[5], CommItem[6];
+
+        GL:hydrateItemLink(dehydratedLink, function (itemLink)
+            pending = pending - 1;
+
+            -- Don't store the dehydrated string as link if hydration failed
+            if (itemLink) then
+                Auctions[auctionID] = {
+                    auctionID = auctionID,
+                    itemID = GL:itemIDFromDehydratedLink(dehydratedLink),
+                    link = itemLink,
+                    minimum = minimum,
+                    increment = increment,
+                    endsAt = endsAt,
+                    CurrentBid = type(CurrentBid) == "table" and {
+                        player = CurrentBid[1],
+                        amount = CurrentBid[2],
+                    } or nil,
+                };
+            end
+
+            if (pending < 1) then
+                callback(Auctions);
+            end
+        end);
+    end
+end
+
 ---@return nil
 function Client:start(Message)
     if (not GL.GDKPIsAllowed) then
@@ -96,41 +167,41 @@ function Client:start(Message)
         GL:error((L["The loot master (%s) is outdated, this can cause bids to fail!"]):format(GL:formatPlayerName(Message.Sender.fqn)));
     end
 
-    self.AuctionDetails = {
-        initiator = Message.Sender.fqn,
-        antiSnipe = Message.content.antiSnipe,
-        bth = Message.content.bth,
-        precision = Message.content.precision or 0,
-        Auctions = {},
-    };
+    self:decodeAuctionsFromComm(GL:tableGet(Message, "content.ItemDetails", {}), function (Auctions)
+        self.AuctionDetails = {
+            initiator = Message.Sender.fqn,
+            antiSnipe = Message.content.antiSnipe,
+            bth = Message.content.bth,
+            precision = Message.content.precision or 0,
+            Auctions = Auctions,
+        };
 
-    local runningAuctions = false;
-    local serverTime = GetServerTime();
-    for _, Item in pairs(GL:tableGet(Message, "content.ItemDetails", {})) do
-        self.AuctionDetails.Auctions[Item.auctionID] = Item;
-
-        if (serverTime < Item.endsAt) then
-            runningAuctions = true;
+        local runningAuctions = false;
+        local serverTime = GetServerTime();
+        for _, Item in pairs(Auctions) do
+            if (serverTime < Item.endsAt) then
+                runningAuctions = true;
+            end
         end
-    end
 
-    UI:clear();
+        UI:clear();
 
-    UI:open();
-    UI:refresh();
+        UI:open();
+        UI:refresh();
 
-    GL:after(.2, nil, function ()
-        UI.showFavorites = true;
-        UI.showUnusable = false;
-        UI.showInactive = false;
-        UI.ToggleFavorites:GetScript("OnClick")();
-        UI.ToggleActive:GetScript("OnClick")();
+        GL:after(.2, nil, function ()
+            UI.showFavorites = true;
+            UI.showUnusable = false;
+            UI.showInactive = false;
+            UI.ToggleFavorites:GetScript("OnClick")();
+            UI.ToggleActive:GetScript("OnClick")();
+        end);
+
+        -- Looks like there are no active auctions, this can happen when joining a new group with expired data
+        if (not runningAuctions) then
+            UI:close();
+        end
     end);
-
-    -- Looks like there are no active auctions, this can happen when joining a new group with expired data
-    if (not runningAuctions) then
-        UI:close();
-    end
 end
 
 ---@param link table|string item link

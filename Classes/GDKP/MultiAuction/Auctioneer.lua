@@ -359,7 +359,7 @@ function Auctioneer:syncWithRunningSession()
                         content = {
                             antiSnipe = Response.antiSnipe,
                             bth = Response.bth,
-                            ItemDetails = Response.Auctions,
+                            ItemDetails = Client:encodeAuctionsForComm(Response.Auctions),
                         },
                     });
 
@@ -395,8 +395,7 @@ function Auctioneer:syncWithRunningSession()
                             return;
                         end
 
-                        ---@todo: check if needed or ID is available
-                        local itemID = GL:getItemIDFromLink(Auction.link);
+                        local itemID = Auction.itemID or GL:getItemIDFromLink(Auction.link);
                         local bid = tonumber(Auction.CurrentBid and Auction.CurrentBid.amount or 0) or 0;
 
                         -- There weren't any bids on this auction yet so we can safely extend it
@@ -595,8 +594,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     GL.CommMessage.new({
         action = CommActions.startGDKPMultiAuction,
         content = {
-            ItemDetails = ItemDetails,
-            endsAt = endsAt,
+            ItemDetails = Client:encodeAuctionsForComm(ItemDetails),
             antiSnipe = antiSnipe,
             bth = GL.User:bth(),
             precision = precision,

@@ -32,7 +32,7 @@ GL.AwardedLoot = {
 ---@type AwardedLoot
 local AwardedLoot = GL.AwardedLoot;
 
--- Op codes, shared by the queue and the wire format
+-- Op codes, shared by the queue and the comm format
 local MutationOp = {
     award = 1,
     edit = 2,
@@ -1100,7 +1100,7 @@ function AwardedLoot:flushMutations()
             break;
         end
 
-        tinsert(Batch, self:mutationForWire(Mutation));
+        tinsert(Batch, self:mutationForComm(Mutation));
     end
 
     GL.CommMessage.new({
@@ -1124,7 +1124,7 @@ end
 ---
 ---@param Mutation table
 ---@return table
-function AwardedLoot:mutationForWire(Mutation)
+function AwardedLoot:mutationForComm(Mutation)
     if (Mutation.op == MutationOp.delete) then
         return {
             op = MutationOp.delete,
@@ -1134,7 +1134,7 @@ function AwardedLoot:mutationForWire(Mutation)
 
     return {
         op = Mutation.op,
-        Award = self:awardEntryForWire(Mutation.Award),
+        Award = self:awardEntryForComm(Mutation.Award),
     };
 end
 
@@ -1142,7 +1142,7 @@ end
 ---
 ---@param AwardEntry table
 ---@return table
-function AwardedLoot:awardEntryForWire(AwardEntry)
+function AwardedLoot:awardEntryForComm(AwardEntry)
     local Rolls = {};
     for _, Roll in ipairs(AwardEntry.Rolls or {}) do
         tinsert(Rolls, {
@@ -1174,12 +1174,12 @@ function AwardedLoot:awardEntryForWire(AwardEntry)
     };
 end
 
---- Turn wire Rolls back into real Rolls, restoring absolute timestamps
+--- Turn comm Rolls back into real Rolls, restoring absolute timestamps
 ---
 ---@param Rolls table
 ---@param timestamp number
 ---@return table
-function AwardedLoot:rollsFromWire(Rolls, timestamp)
+function AwardedLoot:rollsFromComm(Rolls, timestamp)
     local Result = {};
 
     for _, Roll in ipairs(Rolls or {}) do
@@ -1198,12 +1198,12 @@ function AwardedLoot:rollsFromWire(Rolls, timestamp)
     return Result;
 end
 
---- Build a local AwardHistory entry from a wire award payload
+--- Build a local AwardHistory entry from a comm award payload
 ---
 ---@param Award table
 ---@param Sender table CommMessage.Sender
 ---@return table
-function AwardedLoot:awardEntryFromWire(Award, Sender)
+function AwardedLoot:awardEntryFromComm(Award, Sender)
     return {
         checksum = Award.checksum,
         itemID = GL:itemIDFromDehydratedLink(Award.itemLink),
@@ -1220,7 +1220,7 @@ function AwardedLoot:awardEntryFromWire(Award, Sender)
         WL = GL:toboolean(Award.WL),
         PL = GL:toboolean(Award.PL),
         TMB = GL:toboolean(Award.WL) or GL:toboolean(Award.PL),
-        Rolls = self:rollsFromWire(Award.Rolls, Award.timestamp),
+        Rolls = self:rollsFromComm(Award.Rolls, Award.timestamp),
     };
 end
 
@@ -1286,7 +1286,7 @@ function AwardedLoot:receiveAwardedItem(Award, Sender)
         return;
     end
 
-    local AwardEntry = self:awardEntryFromWire(Award, Sender);
+    local AwardEntry = self:awardEntryFromComm(Award, Sender);
     self:storeReceivedAward(AwardEntry, Award.itemLink);
 
     Events:fire("GL.ITEM_AWARDED", AwardEntry);
@@ -1322,7 +1322,7 @@ function AwardedLoot:receiveEditedItem(Award, Sender)
         return self:receiveAwardedItem(Award, Sender);
     end
 
-    local AwardEntry = self:awardEntryFromWire(Award, Sender);
+    local AwardEntry = self:awardEntryFromComm(Award, Sender);
     self:storeReceivedAward(AwardEntry, Award.itemLink);
 
     Events:fire("GL.ITEM_AWARD_EDITED", AwardEntry);
