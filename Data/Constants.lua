@@ -641,7 +641,8 @@ GL.Data.Constants = {
 
         ---@class CommActions
         Actions = {
-            awardItem = 1,
+            -- 1, 15 and 16 were awardItem/editAwardedItem/deleteAwardedItem, now merged
+            -- into broadcastAwardMutations below. Leave unused, don't reassign.
             broadcastLootPriorities = 2,
             broadcastSoftRes = 3,
             broadcastTMBData = 4,
@@ -655,8 +656,6 @@ GL.Data.Constants = {
             broadcastBoostedRollsData = 12,
             requestBoostedRollsData = 13,
             broadcastBoostedRollsMutation = 14,
-            editAwardedItem = 15,
-            deleteAwardedItem = 16,
             startGDKPAuction = 17,
             stopGDKPAuction = 18,
             rescheduleGDKPAuction = 19,
@@ -675,6 +674,7 @@ GL.Data.Constants = {
             requestRunningGDKPMultiAuctionDetails = 32,
             broadcastEquippedGear = 33,
             shareEquippedGear = 34,
+            broadcastAwardMutations = 35,
         },
     },
 

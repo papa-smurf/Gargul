@@ -33,14 +33,8 @@ local PriorityByAction = {
 };
 
 Comm.Actions = {
-    [Actions.awardItem] = function (Message)
-        GL.AwardedLoot:processAwardedLoot(Message);
-    end,
-    [Actions.editAwardedItem] = function (Message)
-        GL.AwardedLoot:processEditedLoot(Message);
-    end,
-    [Actions.deleteAwardedItem] = function (Message)
-        GL.AwardedLoot:deleteWinner(Message.content, false, false);
+    [Actions.broadcastAwardMutations] = function (Message)
+        GL.AwardedLoot:processAwardMutations(Message);
     end,
     [Actions.response] = function (Message)
         return Message:processResponse();

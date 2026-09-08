@@ -21,13 +21,28 @@ local Constants = GL.Data.Constants;
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
-    outStandingBroadcasts = 0,
 
     AwardedToSelfWithoutAnItemGUID = {},
+
+    -- Award/edit/delete mutations waiting to go out together in the next batch
+    PendingMutations = {},
+    firstMutationQueuedAt = nil,
 };
 
 ---@type AwardedLoot
 local AwardedLoot = GL.AwardedLoot;
+
+-- Op codes, shared by the queue and the wire format
+local MutationOp = {
+    award = 1,
+    edit = 2,
+    delete = 3,
+};
+
+-- Batch mutations together, but don't hold the first one longer than this
+local MUTATION_FLUSH_DEBOUNCE_SECONDS = 1.5;
+local MUTATION_FLUSH_MAX_DELAY_SECONDS = 4;
+local MUTATIONS_PER_MESSAGE = 25;
 
 ---@return nil
 function AwardedLoot:_init()
@@ -291,12 +306,7 @@ function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
     -- If the user is not in a group then there's no need
     -- to broadcast or attempt to auto assign loot to the winner
     if (GL.User.isInGroup and broadcast) then
-        -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new({
-            action = CommActions.deleteAwardedItem,
-            content = checksum,
-            channel = "GROUP",
-        }):send();
+        self:queueDeleteMutation(checksum);
     end
 end
 
@@ -396,11 +406,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     end
 
     -- Broadcast the awarded loot details to everyone in the group
-    GL.CommMessage.new({
-        action = CommActions.editAwardedItem,
-        content = AwardEntry,
-        channel = "GROUP",
-    }):send();
+    self:queueEditMutation(AwardEntry);
 
     -- The loot window is not active and the auto assign setting is enabled
     if (not GL.DroppedLoot.lootWindowIsOpened
@@ -681,19 +687,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     end
 
     if (broadcast) then
-        self.outStandingBroadcasts = self.outStandingBroadcasts + 1;
-
-        -- In case we award a lot we want to spread out the awarded loot
-        GL:after((self.outStandingBroadcasts * 2.3) + 10, nil, function ()
-            -- Broadcast the awarded loot details to everyone in the group
-            GL.CommMessage.new({
-                action = CommActions.awardItem,
-                content = AwardEntry,
-                channel = "GROUP",
-            }):send();
-
-            self.outStandingBroadcasts = self.outStandingBroadcasts - 1;
-        end);
+        self:queueAwardMutation(AwardEntry);
     end
 
     -- Trading players is not necessary when the item was awarded
@@ -992,29 +986,284 @@ function AwardedLoot:tradeCompleted(Details)
     end
 end
 
---- The loot master awarded an item to someone, add it to our list as well
+--- Find a still-queued mutation for the given checksum
 ---
----@param CommMessage table
----@return nil
-function AwardedLoot:processAwardedLoot(CommMessage)
-    GL:debug("AwardedLoot:processAwardedLoot");
-
-    local AwardEntry = CommMessage.content;
-
-    -- Make sure all values are available
-    if (GL:empty(AwardEntry.checksum)
-        or GL:empty(AwardEntry.itemLink)
-        or GL:empty(AwardEntry.itemID)
-        or GL:empty(AwardEntry.awardedTo)
-        or GL:empty(AwardEntry.timestamp)
-    ) then
-        return GL:warning("Couldn't process award result in AwardedLoot:processAwardedLoot");
+---@param checksum string
+---@return number|nil
+function AwardedLoot:pendingMutationIndex(checksum)
+    for index, Mutation in ipairs(self.PendingMutations) do
+        if (Mutation.checksum == checksum) then
+            return index;
+        end
     end
 
-    -- Show an item won alert on TBC+
-    if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
-        GL:onItemLoadDo(AwardEntry.itemLink, function (Details)
-            if (not Details) then
+    return nil;
+end
+
+--- Queue an award for the next batch
+---
+---@param AwardEntry table
+---@return nil
+function AwardedLoot:queueAwardMutation(AwardEntry)
+    tinsert(self.PendingMutations, {
+        op = MutationOp.award,
+        checksum = AwardEntry.checksum,
+        Award = AwardEntry,
+    });
+
+    self:armMutationFlush();
+end
+
+--- Queue an edit for the next batch
+---
+---@param AwardEntry table
+---@return nil
+function AwardedLoot:queueEditMutation(AwardEntry)
+    local index = self:pendingMutationIndex(AwardEntry.checksum);
+
+    -- Already queued (as an award or an edit), just update it in place
+    if (index) then
+        self.PendingMutations[index].Award = AwardEntry;
+        return;
+    end
+
+    tinsert(self.PendingMutations, {
+        op = MutationOp.edit,
+        checksum = AwardEntry.checksum,
+        Award = AwardEntry,
+    });
+
+    self:armMutationFlush();
+end
+
+--- Queue a delete for the next batch
+---
+---@param checksum string
+---@return nil
+function AwardedLoot:queueDeleteMutation(checksum)
+    local index = self:pendingMutationIndex(checksum);
+
+    if (index) then
+        local wasAward = self.PendingMutations[index].op == MutationOp.award;
+        tremove(self.PendingMutations, index);
+
+        -- Nobody's heard about this award yet, so there's nothing to delete for them
+        if (wasAward) then
+            if (GL:empty(self.PendingMutations)) then
+                GL:cancelTimer("AwardedLoot.FlushMutations");
+                self.firstMutationQueuedAt = nil;
+            end
+
+            return;
+        end
+    end
+
+    tinsert(self.PendingMutations, {
+        op = MutationOp.delete,
+        checksum = checksum,
+    });
+
+    self:armMutationFlush();
+end
+
+--- Schedule the batch flush. Gets pushed back as new mutations come in, but never past the ceiling below
+---
+---@return nil
+function AwardedLoot:armMutationFlush()
+    if (not self.firstMutationQueuedAt) then
+        self.firstMutationQueuedAt = GetTime();
+    end
+
+    local untilCeiling = MUTATION_FLUSH_MAX_DELAY_SECONDS - (GetTime() - self.firstMutationQueuedAt);
+    local delay = math.min(MUTATION_FLUSH_DEBOUNCE_SECONDS, math.max(untilCeiling, 0));
+
+    GL:after(delay, "AwardedLoot.FlushMutations", function ()
+        self:flushMutations();
+    end);
+end
+
+--- Send the next batch of queued mutations
+---
+---@return nil
+function AwardedLoot:flushMutations()
+    GL:cancelTimer("AwardedLoot.FlushMutations");
+
+    if (GL:empty(self.PendingMutations)) then
+        self.firstMutationQueuedAt = nil;
+        return;
+    end
+
+    local Batch = {};
+    for _ = 1, MUTATIONS_PER_MESSAGE do
+        local Mutation = tremove(self.PendingMutations, 1);
+        if (not Mutation) then
+            break;
+        end
+
+        tinsert(Batch, self:mutationForWire(Mutation));
+    end
+
+    GL.CommMessage.new({
+        action = CommActions.broadcastAwardMutations,
+        content = Batch,
+        channel = "GROUP",
+    }):send();
+
+    -- More mutations came in while we were building this batch, flush them right away
+    if (not GL:empty(self.PendingMutations)) then
+        GL:after(0, "AwardedLoot.FlushMutations", function ()
+            self:flushMutations();
+        end);
+        return;
+    end
+
+    self.firstMutationQueuedAt = nil;
+end
+
+--- Convert a queued mutation into what we actually send over comms
+---
+---@param Mutation table
+---@return table
+function AwardedLoot:mutationForWire(Mutation)
+    if (Mutation.op == MutationOp.delete) then
+        return {
+            op = MutationOp.delete,
+            checksum = Mutation.checksum,
+        };
+    end
+
+    return {
+        op = Mutation.op,
+        Award = self:awardEntryForWire(Mutation.Award),
+    };
+end
+
+--- Strip an award entry down to what a receiver actually needs
+---
+---@param AwardEntry table
+---@return table
+function AwardedLoot:awardEntryForWire(AwardEntry)
+    local Rolls = {};
+    for _, Roll in ipairs(AwardEntry.Rolls or {}) do
+        tinsert(Rolls, {
+            player = Roll.player,
+            class = Roll.class,
+            amount = Roll.amount,
+            classification = Roll.classification,
+            plusOneState = Roll.plusOneState,
+            min = Roll.min,
+            max = Roll.max,
+            timeOffset = Roll.time and (Roll.time - AwardEntry.timestamp) or nil,
+        });
+    end
+
+    return {
+        checksum = AwardEntry.checksum,
+        itemLink = GL:dehydrateItemLink(AwardEntry.itemLink),
+        awardedTo = AwardEntry.awardedTo,
+        timestamp = AwardEntry.timestamp,
+        softresID = AwardEntry.softresID,
+        winnerClass = AwardEntry.winnerClass,
+        BRCost = AwardEntry.BRCost,
+        GDKPCost = AwardEntry.GDKPCost,
+        OS = AwardEntry.OS,
+        SR = AwardEntry.SR,
+        WL = AwardEntry.WL,
+        PL = AwardEntry.PL,
+        Rolls = Rolls,
+    };
+end
+
+--- Turn wire Rolls back into real Rolls, restoring absolute timestamps
+---
+---@param Rolls table
+---@param timestamp number
+---@return table
+function AwardedLoot:rollsFromWire(Rolls, timestamp)
+    local Result = {};
+
+    for _, Roll in ipairs(Rolls or {}) do
+        tinsert(Result, {
+            player = Roll.player,
+            class = Roll.class,
+            amount = Roll.amount,
+            classification = Roll.classification,
+            plusOneState = Roll.plusOneState,
+            min = Roll.min,
+            max = Roll.max,
+            time = Roll.timeOffset and (timestamp + Roll.timeOffset) or nil,
+        });
+    end
+
+    return Result;
+end
+
+--- Build a local AwardHistory entry from a wire award payload
+---
+---@param Award table
+---@param Sender table CommMessage.Sender
+---@return table
+function AwardedLoot:awardEntryFromWire(Award, Sender)
+    return {
+        checksum = Award.checksum,
+        itemID = GL:itemIDFromDehydratedLink(Award.itemLink),
+        awardedTo = Award.awardedTo,
+        awardedBy = Sender.fqn,
+        timestamp = Award.timestamp,
+        softresID = Award.softresID,
+        received = true,
+        winnerClass = Award.winnerClass,
+        BRCost = Award.BRCost,
+        GDKPCost = Award.GDKPCost,
+        OS = GL:toboolean(Award.OS),
+        SR = GL:toboolean(Award.SR),
+        WL = GL:toboolean(Award.WL),
+        PL = GL:toboolean(Award.PL),
+        TMB = GL:toboolean(Award.WL) or GL:toboolean(Award.PL),
+        Rolls = self:rollsFromWire(Award.Rolls, Award.timestamp),
+    };
+end
+
+--- Store the award, then fill in the real item link once it's loaded
+---
+---@param AwardEntry table
+---@param dehydratedLink string
+---@return nil
+function AwardedLoot:storeReceivedAward(AwardEntry, dehydratedLink)
+    GL.DB.AwardHistory[AwardEntry.checksum] = AwardEntry;
+
+    GL:hydrateItemLink(dehydratedLink, function (itemLink)
+        local Entry = GL.DB.AwardHistory[AwardEntry.checksum];
+        if (itemLink and Entry) then
+            Entry.itemLink = itemLink;
+        end
+    end);
+end
+
+--- The loot master awarded an item to someone, add it to our list as well
+---
+---@param Award table Trimmed award entry received over comm
+---@param Sender table CommMessage.Sender
+---@return nil
+function AwardedLoot:receiveAwardedItem(Award, Sender)
+    GL:debug("AwardedLoot:receiveAwardedItem");
+
+    local itemID = GL:itemIDFromDehydratedLink(Award.itemLink);
+
+    -- Make sure all values are available
+    if (GL:empty(Award.checksum)
+        or not itemID
+        or GL:empty(Award.awardedTo)
+        or GL:empty(Award.timestamp)
+    ) then
+        return GL:warning("Couldn't process award result in AwardedLoot:receiveAwardedItem");
+    end
+
+    -- Show an item won alert on TBC+. Hydrate first, an ID alone would give us the
+    -- base item and lose whatever suffix or bonus IDs it was awarded with
+    if (not GL.isEra and GL:iEquals(Award.awardedTo, GL.User.name)) then
+        GL:hydrateItemLink(Award.itemLink, function (itemLink)
+            if (not itemLink) then
                 return;
             end
 
@@ -1028,99 +1277,83 @@ function AwardedLoot:processAwardedLoot(CommMessage)
                 end
             end
             local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", callback, 6, math.huge);
-            LootAlertSystem:AddAlert(Details.link);
+            LootAlertSystem:AddAlert(itemLink);
         end);
     end
 
     -- No need to add awarded loot if we broadcasted it ourselves
-    if (CommMessage.Sender.isSelf) then
-        GL:debug("AwardedLoot:processAwardedLoot received by self, skip");
+    if (Sender.isSelf) then
+        GL:debug("AwardedLoot:receiveAwardedItem received by self, skip");
         return;
     end
 
-    -- There's no point to us giving the winner the item since we don't have it
-    AwardEntry.received = true;
+    local AwardEntry = self:awardEntryFromWire(Award, Sender);
+    self:storeReceivedAward(AwardEntry, Award.itemLink);
 
-    -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
-    -- We don't pass the actual AwardEntry object as-is here just in case there are some additional keys that we don't need
-    GL.DB.AwardHistory[AwardEntry.checksum] = {
-        checksum = AwardEntry.checksum,
-        itemLink = AwardEntry.itemLink,
-        itemID = AwardEntry.itemID,
-        awardedTo = AwardEntry.awardedTo,
-        awardedBy = CommMessage.Sender.fqn,
-        timestamp = AwardEntry.timestamp,
-        softresID = AwardEntry.softresID,
-        received = AwardEntry.received,
-        winnerClass = AwardEntry.winnerClass,
-        BRCost = AwardEntry.BRCost,
-        GDKPCost = AwardEntry.GDKPCost,
-        OS = GL:toboolean(AwardEntry.OS),
-        SR = GL:toboolean(AwardEntry.SR),
-        WL = GL:toboolean(AwardEntry.WL),
-        PL = GL:toboolean(AwardEntry.PL),
-        TMB = GL:toboolean(AwardEntry.TMB),
-        Rolls = AwardEntry.Rolls,
-    };
-
-    Events:fire("GL.ITEM_AWARDED", GL.DB.AwardHistory[AwardEntry.checksum]);
+    Events:fire("GL.ITEM_AWARDED", AwardEntry);
 end
 
---- The loot master edited an item award, make sure our list reflect those changes
+--- The loot master edited an item award, make sure our list reflects those changes
 ---
----@param CommMessage table
+---@param Award table Trimmed award entry received over comm
+---@param Sender table CommMessage.Sender
 ---@return nil
-function AwardedLoot:processEditedLoot(CommMessage)
-    GL:debug("AwardedLoot:processEditedLoot");
+function AwardedLoot:receiveEditedItem(Award, Sender)
+    GL:debug("AwardedLoot:receiveEditedItem");
 
     -- No need to do anything if we broadcasted it ourselves
-    if (CommMessage.Sender.isSelf) then
-        GL:debug("AwardedLoot:processEditedLoot received by self, skip");
+    if (Sender.isSelf) then
+        GL:debug("AwardedLoot:receiveEditedItem received by self, skip");
         return;
     end
 
-    local AwardEntry = CommMessage.content;
+    local itemID = GL:itemIDFromDehydratedLink(Award.itemLink);
 
     -- Make sure all values are available
-    if (GL:empty(AwardEntry.checksum)
-        or GL:empty(AwardEntry.itemLink)
-        or GL:empty(AwardEntry.itemID)
-        or GL:empty(AwardEntry.awardedTo)
-        or GL:empty(AwardEntry.timestamp)
+    if (GL:empty(Award.checksum)
+        or not itemID
+        or GL:empty(Award.awardedTo)
+        or GL:empty(Award.timestamp)
     ) then
-        return GL:warning("Couldn't process edit result in AwardedLoot:processEditedLoot");
-    end
-
-    -- There's no point to us giving the winner the item since we don't have it
-    AwardEntry.received = true;
-
-    local checksum;
-    for index, Loot in pairs(DB:get("AwardHistory")) do
-        if (Loot and index == AwardEntry.checksum) then
-            checksum = index;
-            break;
-        end
+        return GL:warning("Couldn't process edit result in AwardedLoot:receiveEditedItem");
     end
 
     -- We don't have any record of this item, add it instead
-    if (not checksum) then
-        self:processAwardedLoot(CommMessage);
-        return;
+    if (not GL.DB.AwardHistory[Award.checksum]) then
+        return self:receiveAwardedItem(Award, Sender);
     end
 
-    -- Store the changes
-    GL.DB.AwardHistory[checksum] = {
-        checksum = AwardEntry.checksum,
-        itemLink = AwardEntry.itemLink,
-        itemID = AwardEntry.itemID,
-        awardedTo = AwardEntry.awardedTo,
-        awardedBy = AwardEntry.awardedBy,
-        timestamp = AwardEntry.timestamp,
-        softresID = AwardEntry.softresID,
-        received = AwardEntry.received,
-        BRCost = AwardEntry.BRCost,
-        GDKPCost = AwardEntry.GDKPCost,
-        OS = AwardEntry.OS,
-        Rolls = AwardEntry.Rolls,
-    };
+    local AwardEntry = self:awardEntryFromWire(Award, Sender);
+    self:storeReceivedAward(AwardEntry, Award.itemLink);
+
+    Events:fire("GL.ITEM_AWARD_EDITED", AwardEntry);
+end
+
+--- Process an incoming batch of award mutations, in order
+---
+---@param CommMessage table
+---@return nil
+function AwardedLoot:processAwardMutations(CommMessage)
+    GL:debug("AwardedLoot:processAwardMutations");
+
+    local Mutations = CommMessage.content;
+    if (type(Mutations) ~= "table") then
+        return GL:warning("Couldn't process award mutations in AwardedLoot:processAwardMutations");
+    end
+
+    -- Anything that isn't shaped like we expect is dropped, one bad entry
+    -- shouldn't take the rest of the batch with it
+    for _, Mutation in ipairs(Mutations) do
+        local isTable = type(Mutation) == "table";
+        local op = isTable and Mutation.op;
+        local Award = isTable and type(Mutation.Award) == "table" and Mutation.Award;
+
+        if (op == MutationOp.delete) then
+            self:deleteWinner(Mutation.checksum, false, false);
+        elseif (op == MutationOp.edit and Award) then
+            self:receiveEditedItem(Award, CommMessage.Sender);
+        elseif (op == MutationOp.award and Award) then
+            self:receiveAwardedItem(Award, CommMessage.Sender);
+        end
+    end
 end
