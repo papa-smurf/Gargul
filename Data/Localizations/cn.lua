@@ -466,6 +466,7 @@ L["Auto bid up to the bid you fill in on the left"] = "自动竞拍，在左侧�
 L["Stop your auto bid (%sg)"] = "停止自动竞拍 (%sg)";
 L["Bid on %s could not be confirmed"] = "无法确认 %s 的竞拍";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "竞拍无效或出价过低！最小值为 %sg";
+L["Your bid was lowered to %sg to match the auction's increment"] = "为匹配拍卖的增价，您的出价已降至 %sg";
 L["You need to wait two seconds between bids on the same item"] = "同一商品的两次竞拍之间需要等待两秒钟";
 L["Clear bids"] = "清除出价记录";
 L["Remove all bids from the auction"] = "从拍卖中删除所有出价";

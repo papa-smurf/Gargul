@@ -469,6 +469,7 @@ L["Auto bid up to the bid you fill in on the left"] = "Автоматическ�
 L["Stop your auto bid (%sg)"] = "Остановите автоматическую ставку (%sg)";
 L["Bid on %s could not be confirmed"] = "Ставка на %s не может быть подтверждена";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "Недействительная ставка или ставка слишком низкая! Минимум — %sg.";
+L["Your bid was lowered to %sg to match the auction's increment"] = "Ваша ставка снижена до %sg в соответствии с шагом аукциона";
 L["You need to wait two seconds between bids on the same item"] = "Вам нужно подождать две секунды между ставками на один и тот же товар.";
 L["Clear bids"] = "Обнулить";
 L["Remove all bids from the auction"] = "Удалить все ставки с аукциона";

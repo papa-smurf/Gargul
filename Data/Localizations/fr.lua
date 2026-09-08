@@ -473,6 +473,7 @@ L["Auto bid up to the bid you fill in on the left"] = "Enchérissez automatiquem
 L["Stop your auto bid (%sg)"] = "Arrêtez votre enchère automatique (%spo)";
 L["Bid on %s could not be confirmed"] = "L'enchère sur %s n'a pas pu être confirmée";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "Enchère invalide ou enchère trop basse ! Le minimum est %spo";
+L["Your bid was lowered to %sg to match the auction's increment"] = "Votre enchère a été abaissée à %spo pour respecter l'incrément de l'enchère";
 L["You need to wait two seconds between bids on the same item"] = "Vous devez attendre deux secondes entre les enchères sur le même objet";
 L["Clear bids"] = "Effacer les enchères";
 L["Remove all bids from the auction"] = "Supprimer toutes les offres de l'enchère";

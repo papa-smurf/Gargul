@@ -470,6 +470,7 @@ L["Auto bid up to the bid you fill in on the left"] = "왼쪽에 입력한 입�
 L["Stop your auto bid (%sg)"] = "자동 입찰 중지(%sg)";
 L["Bid on %s could not be confirmed"] = "%s에 대한 입찰을 확인할 수 없습니다.";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "입찰가가 잘못되었거나 입찰가가 너무 낮습니다. 최소값은 %sg입니다.";
+L["Your bid was lowered to %sg to match the auction's increment"] = "경매의 증가 단위에 맞춰 입찰가가 %sg으로 낮아졌습니다.";
 L["You need to wait two seconds between bids on the same item"] = "동일한 항목에 대한 입찰 사이에 2초를 기다려야 합니다.";
 L["Clear bids"] = "입찰가 지우기";
 L["Remove all bids from the auction"] = "경매에서 모든 입찰을 제거합니다.";

@@ -81,7 +81,25 @@ function Client:currentSessionHash()
     }, ".");
 end
 
----@param Auctions table Auction objects with link, auctionID, minimum, increment, endsAt and optionally CurrentBid
+--- Drop anything that isn't a player with a numeric bid, we don't control what's sent to us
+---
+---@param BidsPerPlayer table
+---@return table
+local sanitizeBidsPerPlayer = function (BidsPerPlayer)
+    local Sanitized = {};
+
+    for player, bid in pairs(BidsPerPlayer) do
+        bid = tonumber(bid);
+
+        if (type(player) == "string" and bid) then
+            Sanitized[player] = bid;
+        end
+    end
+
+    return Sanitized;
+end;
+
+---@param Auctions table Auction objects with link, auctionID, minimum, increment, endsAt and optionally CurrentBid and BidsPerPlayer
 ---@return table
 function Client:encodeAuctionsForComm(Auctions)
     local CommItems = {};
@@ -102,6 +120,7 @@ function Client:encodeAuctionsForComm(Auctions)
                 Details.increment,
                 Details.endsAt,
                 CurrentBid,
+                not GL:empty(Details.BidsPerPlayer) and Details.BidsPerPlayer or nil,
             });
         end
     end
@@ -124,7 +143,8 @@ function Client:decodeAuctionsFromComm(CommItems, callback)
     end
 
     for _, CommItem in pairs(CommItems) do
-        local auctionID, dehydratedLink, minimum, increment, endsAt, CurrentBid = CommItem[1], CommItem[2], CommItem[3], CommItem[4], CommItem[5], CommItem[6];
+        local auctionID, dehydratedLink, minimum, increment, endsAt, CurrentBid, BidsPerPlayer
+            = CommItem[1], CommItem[2], CommItem[3], CommItem[4], CommItem[5], CommItem[6], CommItem[7];
 
         GL:hydrateItemLink(dehydratedLink, function (itemLink)
             pending = pending - 1;
@@ -142,6 +162,7 @@ function Client:decodeAuctionsFromComm(CommItems, callback)
                         player = CurrentBid[1],
                         amount = CurrentBid[2],
                     } or nil,
+                    BidsPerPlayer = type(BidsPerPlayer) == "table" and sanitizeBidsPerPlayer(BidsPerPlayer) or nil,
                 };
             end
 
@@ -340,7 +361,6 @@ function Client:updateBids(Message)
             -- This is a new item, add it to the auction
             if (not Message.Sender.isSelf and Details.I) then
                 self.AuctionDetails.Auctions[auctionID] = Details.I;
-                self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
 
                 GL:after(.2, "GDKP.MultiAuction.refreshUI", function ()
                     UI:refresh(true);
@@ -351,18 +371,16 @@ function Client:updateBids(Message)
                 return;
             end
 
-            local amount = Details.a * 1000;
+            local amount = tonumber(Details.a) or 0;
             local bidder = Details.p;
             local bidderIsMe = GL:iEquals(bidder, GL.User.fqn);
 
             -- The auctioneer already did this on his end before sending it to us
             if (not Message.Sender.isSelf) then
-                ---@todo: maybe in the future when this data is available to everyone
-                -- Store the highest bid for this player to show in the bid history
-                --if (bidder) then
-                    --self.AuctionDetails.Auctions[auctionID].BidsPerPlayer = self.AuctionDetails.Auctions[auctionID].BidsPerPlayer or {};
-                    --self.AuctionDetails.Auctions[auctionID].BidsPerPlayer[bidder] = amount;
-                --end
+                -- Bid history, used for the bids tooltip
+                if (type(Details.B) == "table") then
+                    self.AuctionDetails.Auctions[auctionID].BidsPerPlayer = sanitizeBidsPerPlayer(Details.B);
+                end
 
                 -- There are no bids
                 if (GL:lt(amount, .0001)) then
@@ -414,6 +432,8 @@ function Client:updateBids(Message)
     UI:refresh();
 end
 
+--- The session's precision is used, not our own setting, so we round the same way the auctioneer does
+---
 ---@param auctionID number
 ---@param bid number
 ---@return number
@@ -429,7 +449,7 @@ function Client:roundBidToClosestIncrement(auctionID, bid)
     end
 
     return bid == Auction.minimum and bid
-        or Auction.minimum + GL:floor((bid - Auction.minimum) / Auction.increment, Settings:get("GDKP.precision")) * Auction.increment;
+        or Auction.minimum + GL:floor((bid - Auction.minimum) / Auction.increment, self.AuctionDetails.precision or 0) * Auction.increment;
 end
 
 --- Check if the given bid is valid for the given auction ID

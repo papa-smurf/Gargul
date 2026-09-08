@@ -893,6 +893,26 @@ function ClientInterface:build()
             end);
 
             local lockRow, unlockRow, lastBid = nil, nil, 0;
+
+            --- Bid from the input box, snapped to the increment. False when it's not a valid bid.
+            ---
+            ---@return number|boolean
+            local bidFromInput = function ()
+                local bid = tonumber(BidInput:GetText()) or 0;
+                local snappedBid = Client:roundBidToClosestIncrement(auctionID, bid);
+
+                if (not Client:isBidValidForAuction(auctionID, snappedBid)) then
+                    GL:error((L["Invalid bid or bid is too low! The minimum is %sg"]):format(Client:minimumBidForAuction(auctionID)));
+                    return false;
+                end
+
+                if (not GL:e(bid, snappedBid)) then
+                    GL:notice((L["Your bid was lowered to %sg to match the auction's increment"]):format(snappedBid));
+                end
+
+                return snappedBid;
+            end;
+
             AutoBidButton:SetScript("OnClick", function ()
                 if (AutoBidButton.currentAmount) then
                     lockRow();
@@ -910,10 +930,9 @@ function ClientInterface:build()
                     return;
                 end
 
-                local bid = tonumber(BidInput:GetText()) or 0;
-                bid = Client:roundBidToClosestIncrement(auctionID, bid);
-                if (not Client:isBidValidForAuction(auctionID, bid)) then
-                    return GL:error((L["Invalid bid or bid is too low! The minimum is %sg"]):format(Client:minimumBidForAuction(auctionID)));
+                local bid = bidFromInput();
+                if (not bid) then
+                    return;
                 end
 
                 lockRow();
@@ -951,15 +970,14 @@ function ClientInterface:build()
             BidButton:SetPoint("RIGHT", AutoBidButton, "LEFT", -2, 0);
 
             BidButton:SetScript("OnClick", function ()
-                local bid = tonumber(BidInput:GetText()) or 0;
-                bid = Client:roundBidToClosestIncrement(auctionID, bid);
-                if (not Client:isBidValidForAuction(auctionID, bid)) then
-                    return GL:error((L["Invalid bid or bid is too low! The minimum is %sg"]):format(Client:minimumBidForAuction(auctionID)));
-                end
-
                 -- Crude throttle
                 if (GL:lt(GetTime() - lastBid, 2)) then
                     return GL:notice(L["You need to wait two seconds between bids on the same item"]);
+                end
+
+                local bid = bidFromInput();
+                if (not bid) then
+                    return;
                 end
 
                 lockRow();

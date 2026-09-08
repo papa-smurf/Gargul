@@ -467,6 +467,7 @@ L["Auto bid up to the bid you fill in on the left"] = "Automatisches Gebot bis z
 L["Stop your auto bid (%sg)"] = "Stoppe dein automatisches Gebot (%sg)";
 L["Bid on %s could not be confirmed"] = "Das Gebot für %s konnte nicht bestätigt werden";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "Ungültiges oder zu niedriges Gebot! Das Minimum ist %sg";
+L["Your bid was lowered to %sg to match the auction's increment"] = "Dein Gebot wurde auf %sg gesenkt, um zum Inkrement der Auktion zu passen";
 L["You need to wait two seconds between bids on the same item"] = "Zwischen Geboten für denselben Gegenstand musst du zwei Sekunden warten";
 L["Clear bids"] = "Leere Gebote";
 L["Remove all bids from the auction"] = "Entferne alle Gebote aus der Auktion";

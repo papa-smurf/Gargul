@@ -473,6 +473,7 @@ L["Auto bid up to the bid you fill in on the left"] = "自動出價，最高可�
 L["Stop your auto bid (%sg)"] = "停止自動出價 (%sg)";
 L["Bid on %s could not be confirmed"] = "無法確認 %s 的出價";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "出價無效或出價過低！最小值為 %sg";
+L["Your bid was lowered to %sg to match the auction's increment"] = "為符合拍賣的增量，您的出價已降至 %sg";
 L["You need to wait two seconds between bids on the same item"] = "同一商品的兩次出價之間需要等待兩秒鐘";
 L["Clear bids"] = "明確出價";
 L["Remove all bids from the auction"] = "從拍賣中刪除所有出價";

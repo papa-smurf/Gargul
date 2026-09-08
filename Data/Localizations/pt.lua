@@ -470,6 +470,7 @@ L["Auto bid up to the bid you fill in on the left"] = "Lance automático até o 
 L["Stop your auto bid (%sg)"] = "Interrompa seu lance automático (%sg)";
 L["Bid on %s could not be confirmed"] = "Não foi possível confirmar o lance de %s";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "Lance inválido ou lance muito baixo! O mínimo é %sg";
+L["Your bid was lowered to %sg to match the auction's increment"] = "Seu lance foi reduzido para %sg para corresponder ao incremento do leilão";
 L["You need to wait two seconds between bids on the same item"] = "Você precisa esperar dois segundos entre lances no mesmo item";
 L["Clear bids"] = "Limpar lances";
 L["Remove all bids from the auction"] = "Remover todos os lances do leilão";

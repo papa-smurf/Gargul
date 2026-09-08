@@ -468,6 +468,7 @@ L["Auto bid up to the bid you fill in on the left"] = "Oferta automática hasta 
 L["Stop your auto bid (%sg)"] = "Detenga su oferta automática (%sg)";
 L["Bid on %s could not be confirmed"] = "No se pudo confirmar la oferta de %s";
 L["Invalid bid or bid is too low! The minimum is %sg"] = "¡Oferta no válida o la oferta es demasiado baja! El mínimo es %sg";
+L["Your bid was lowered to %sg to match the auction's increment"] = "Su oferta se redujo a %sg para coincidir con el incremento de la subasta";
 L["You need to wait two seconds between bids on the same item"] = "Debe esperar dos segundos entre ofertas por el mismo artículo.";
 L["Clear bids"] = "Borrar ofertas";
 L["Remove all bids from the auction"] = "Eliminar todas las ofertas de la subasta.";
