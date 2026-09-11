@@ -8,12 +8,12 @@ alwaysApply: true
 **"Lint" / "format" / "style check"** → Apply **@.agents/rules/lint-rules.mdc**:
 - Scan for style violations (tables, naming, WoW string functions, semicolons, etc.)
 - Report and optionally fix violations
-- Do NOT use validate_lua.py for this
+- Do NOT use validate_lua.lua for this
 
-**"Validate" / "syntax check"** → Run **Scripts/validate_lua.py**:
+**"Validate" / "syntax check"** → Run **Scripts/validate_lua.lua**:
 - Lua 5.1 syntax validation via luac
 - See @.agents/rules/lua-validation.mdc
 
 **"Full lint check" / "pre-push check"** → Do BOTH:
 1. Apply lint-rules.mdc (style)
-2. Run `python Scripts/validate_lua.py` (syntax)
+2. Run `Scripts\bin\lua5.1.exe Scripts\validate_lua.lua` (syntax)
