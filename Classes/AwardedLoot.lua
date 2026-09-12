@@ -1145,15 +1145,17 @@ end
 function AwardedLoot:awardEntryForComm(AwardEntry)
     local Rolls = {};
     for _, Roll in ipairs(AwardEntry.Rolls or {}) do
+        -- Positional to keep the batch small, see rollsFromComm for the order.
+        -- plusOneState goes last because it's the one that's usually nil.
         tinsert(Rolls, {
-            player = Roll.player,
-            class = Roll.class,
-            amount = Roll.amount,
-            classification = Roll.classification,
-            plusOneState = Roll.plusOneState,
-            min = Roll.min,
-            max = Roll.max,
-            timeOffset = Roll.time and (Roll.time - AwardEntry.timestamp) or nil,
+            Roll.player,
+            Roll.class,
+            Roll.amount,
+            Roll.classification,
+            Roll.min,
+            Roll.max,
+            Roll.time and (Roll.time - AwardEntry.timestamp) or nil,
+            Roll.plusOneState,
         });
     end
 
@@ -1183,15 +1185,18 @@ function AwardedLoot:rollsFromComm(Rolls, timestamp)
     local Result = {};
 
     for _, Roll in ipairs(Rolls or {}) do
+        local player, class, amount, classification, min, max, timeOffset, plusOneState
+            = Roll[1], Roll[2], Roll[3], Roll[4], Roll[5], Roll[6], Roll[7], Roll[8];
+
         tinsert(Result, {
-            player = Roll.player,
-            class = Roll.class,
-            amount = Roll.amount,
-            classification = Roll.classification,
-            plusOneState = Roll.plusOneState,
-            min = Roll.min,
-            max = Roll.max,
-            time = Roll.timeOffset and (timestamp + Roll.timeOffset) or nil,
+            player = player,
+            class = class,
+            amount = amount,
+            classification = classification,
+            plusOneState = plusOneState,
+            min = min,
+            max = max,
+            time = timeOffset and (timestamp + timeOffset) or nil,
         });
     end
 
