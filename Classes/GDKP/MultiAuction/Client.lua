@@ -356,11 +356,18 @@ function Client:updateBids(Message)
         return;
     end
 
-    for auctionID, Details in pairs(Message.content or {}) do
+    for auctionID, Change in pairs(Message.content or {}) do
         (function ()
+            if (type(Change) ~= "table") then
+                return;
+            end
+
+            local amount, endsAt, bidder, BidsPerPlayer, NewItemDetails
+                = tonumber(Change[1]) or 0, Change[2], Change[3], Change[4], Change[5];
+
             -- This is a new item, add it to the auction
-            if (not Message.Sender.isSelf and Details.I) then
-                self.AuctionDetails.Auctions[auctionID] = Details.I;
+            if (not Message.Sender.isSelf and NewItemDetails) then
+                self.AuctionDetails.Auctions[auctionID] = NewItemDetails;
 
                 GL:after(.2, "GDKP.MultiAuction.refreshUI", function ()
                     UI:refresh(true);
@@ -371,15 +378,13 @@ function Client:updateBids(Message)
                 return;
             end
 
-            local amount = tonumber(Details.a) or 0;
-            local bidder = Details.p;
             local bidderIsMe = GL:iEquals(bidder, GL.User.fqn);
 
             -- The auctioneer already did this on his end before sending it to us
             if (not Message.Sender.isSelf) then
                 -- Bid history, used for the bids tooltip
-                if (type(Details.B) == "table") then
-                    self.AuctionDetails.Auctions[auctionID].BidsPerPlayer = sanitizeBidsPerPlayer(Details.B);
+                if (type(BidsPerPlayer) == "table") then
+                    self.AuctionDetails.Auctions[auctionID].BidsPerPlayer = sanitizeBidsPerPlayer(BidsPerPlayer);
                 end
 
                 -- There are no bids
@@ -412,8 +417,8 @@ function Client:updateBids(Message)
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
             end
 
-            if (Details.e) then
-                self.AuctionDetails.Auctions[auctionID].endsAt = Details.e > 0 and Details.e + ENDS_AT_OFFSET or Details.e;
+            if (endsAt) then
+                self.AuctionDetails.Auctions[auctionID].endsAt = endsAt > 0 and endsAt + ENDS_AT_OFFSET or endsAt;
 
                 if (self.AuctionDetails.Auctions[auctionID].endsAt == 0
                     and GL:gt(amount, 0)

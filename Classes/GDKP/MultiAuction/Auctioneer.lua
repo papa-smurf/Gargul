@@ -649,12 +649,14 @@ function Auctioneer:broadcastChanges()
             end
 
             local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
+
+            -- Positional, see Client:updateBids for the order. Bids are always
+            -- included so a cleared bid also clears the history on clients
             Changes[auctionID] = {
-                p = GL:tableGet(Details, "CurrentBid.player"),
-                a = bid,
-                e = Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
-                -- Always included so a cleared bid also clears the history on clients
-                B = Details.BidsPerPlayer or {},
+                bid,
+                Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
+                GL:tableGet(Details, "CurrentBid.player"),
+                Details.BidsPerPlayer or {},
             };
 
             changesAvailable = true;
@@ -738,11 +740,13 @@ function Auctioneer:syncNewItems()
         ) then
             local Details = Client.AuctionDetails.Auctions[id];
 
+            -- A new item carries its full details in the last slot, no bids yet
             Changes[id] = {
-                I = Details,
-                p = GL:tableGet(Details, "CurrentBid.player"),
-                a = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
-                e = Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
+                tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
+                Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
+                GL:tableGet(Details, "CurrentBid.player"),
+                nil,
+                Details,
             };
         end
 
