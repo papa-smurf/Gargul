@@ -68,7 +68,7 @@ end
 ---
 ---@param Table table
 ---@param keyString string
----@param default any
+---@param default? any
 ---@return any
 function GL:tableGet(Table, keyString, default)
     if (type(keyString) ~= "string"
@@ -77,37 +77,45 @@ function GL:tableGet(Table, keyString, default)
         return default;
     end
 
-    local keys = GL:explode(keyString, ".");
-    local numberOfKeys = #keys;
-    local firstKey = keys[1];
-
-    if (not numberOfKeys or not firstKey) then
-        return default;
+    if (type(Table) ~= "table") then
+        return Table or default;
     end
 
-    if (type(Table) == "table") then
-        if (type(Table[firstKey]) == "nil") then
-            firstKey = tonumber(firstKey);
+    local position = 1;
+    local lastIndex = strlen(keyString) + 1;
 
+    while (true) do
+        local separator = strfind(keyString, ".", position, true);
+        local key = strtrim(strsub(keyString, position, (separator or lastIndex) - 1));
+        local value = Table[key];
+
+        if (value == nil) then
             -- Make sure we're not looking for a numeric key instead of a string
-            if (not firstKey or type(Table[firstKey]) == "nil") then
+            local numericKey = tonumber(key);
+
+            if (numericKey == nil) then
+                return default;
+            end
+
+            value = Table[numericKey];
+
+            if (value == nil) then
                 return default;
             end
         end
 
-        Table = Table[firstKey];
-    else
-        return Table or default;
-    end
+        if (not separator) then
+            return value;
+        end
 
-    -- Changed if (#keys == 1) then to below, saved this just in case we get weird behavior
-    if (numberOfKeys == 1) then
-        default = nil;
-        return Table;
-    end
+        -- A scalar part way down the key ends the walk, it has nothing left to index
+        if (type(value) ~= "table") then
+            return value or default;
+        end
 
-    tremove(keys, 1);
-    return self:tableGet(Table, strjoin(".", unpack(keys)), default);
+        Table = value;
+        position = separator + 1;
+    end
 end
 
 --- Set a table value by a given key and value. Use dot notation to traverse multiple levels e.g:
