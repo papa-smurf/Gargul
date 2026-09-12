@@ -982,9 +982,6 @@ function BoostedRolls:broadcast()
             if (Label) then
                 Label:SetText(L["Broadcast finished!"]);
             end
-
-            -- Make sure to broadcast the loot priorities as well
-            GL.LootPriority:broadcast();
         end, function (sent, total)
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
