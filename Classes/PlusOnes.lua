@@ -294,6 +294,36 @@ function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
     self:triggerChangeEvent();
 end
 
+--- Delete a player's plus one
+---
+---@param name string
+---@param dontBroadcast? boolean
+---@return nil
+function PlusOnes:deletePlusOnes(name, dontBroadcast)
+    if (type(name) ~= "string") then
+        return;
+    end
+
+    dontBroadcast = GL:toboolean(dontBroadcast);
+
+    local playerGUID = self:playerGUID(name);
+    if (not self.MaterializedData.DetailsByPlayerName[playerGUID]) then
+        return;
+    end
+
+    self.MaterializedData.DetailsByPlayerName[playerGUID] = nil;
+    DB.PlusOnes.Totals[playerGUID] = nil;
+    DB:set("PlusOnes.MetaData.updatedAt", GetServerTime());
+
+    if (not dontBroadcast
+        and GL.Settings:get("PlusOnes.automaticallyShareData")
+    ) then
+        self:broadcastUpdate(playerGUID, nil, true);
+    end
+
+    self:triggerChangeEvent();
+end
+
 --- Import a CSV or TSV data string
 ---
 ---@param data string
@@ -764,6 +794,35 @@ function PlusOnes:receiveUpdate(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == GL.User.name) then
         GL:debug("PlusOnes:receiveUpdate received by self, skip");
+        return;
+    end
+
+    -- Incremental updates only apply to the dataset they came from
+    local Updates = CommMessage.content.updates;
+    if (type(Updates) == "table") then
+        local uuid = DB:get("PlusOnes.MetaData.uuid", "");
+
+        if (GL:empty(uuid)
+            or CommMessage.content.uuid ~= uuid
+        ) then
+            return;
+        end
+
+        local dontBroadcast = true;
+        for _, Update in pairs(Updates) do
+            if (type(Update) == "table"
+                and type(Update.playerName) == "string"
+            ) then
+                if (Update.plusOne) then
+                    self:setPlusOnes(Update.playerName, Update.plusOne, dontBroadcast);
+                end
+
+                if (Update.delete) then
+                    self:deletePlusOnes(Update.playerName, dontBroadcast);
+                end
+            end
+        end
+
         return;
     end
 
