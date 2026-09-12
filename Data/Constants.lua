@@ -675,6 +675,7 @@ GL.Data.Constants = {
             broadcastEquippedGear = 33,
             shareEquippedGear = 34,
             broadcastAwardMutations = 35,
+            requestRollOffBoostedRanges = 36,
         },
     },
 

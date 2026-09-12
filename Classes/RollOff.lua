@@ -7,6 +7,7 @@ local _, GL = ...;
 local TMB = GL.TMB;
 
 local ROLL_START_WATCHDOG_SECONDS = 5;
+local BOOSTED_RANGE_CACHE_LIMIT = 5; -- Boosted-roll range maps we keep around, newest first
 
 ---@class RollOff
 GL.RollOff = GL.RollOff or {
@@ -39,6 +40,12 @@ GL.RollOff = GL.RollOff or {
         sessionID = nil,
     },
     lastGearShareAt = nil,
+    BoostedRangeCache = { -- Last boosted-roll range map we (as initiator) broadcast
+        identifier = nil,
+        hash = nil,
+        RangePerPlayer = nil,
+    },
+    pendingBoostedRangeRequests = {},
     inspectQueue = {},
     inspecting = nil,
     inspectUnit = nil,
@@ -54,6 +61,43 @@ local RollOff = GL.RollOff; ---@type RollOff
 
 local CommActions = GL.Data.Constants.Comm.Actions;
 local Events = GL.Events; ---@type Events
+local DB = GL.DB; ---@type DB
+
+-- Add the current player's boosted-roll bracket to SupportedRolls, if any
+---@param SupportedRolls table
+---@param identifier string|nil
+---@param RangePerPlayer table|nil
+---@return boolean added
+local function appendBoostedRollBracket(SupportedRolls, identifier, RangePerPlayer)
+    if (type(SupportedRolls) ~= "table"
+        or GL:empty(identifier)
+        or GL:empty(RangePerPlayer)
+    ) then
+        return false;
+    end
+
+    -- Never hand out two buttons for the same identifier
+    for _, Bracket in pairs(SupportedRolls) do
+        if (type(Bracket) == "table" and Bracket[1] == identifier) then
+            return false;
+        end
+    end
+
+    -- Ranges arrive over comm and out of the DB, don't trust their shape
+    local myRange = RangePerPlayer[GL.BoostedRolls:normalizedName(GL.User.fqn)];
+    if (type(myRange) ~= "string") then
+        return false;
+    end
+
+    local low, high = myRange:match("^(%d+)-(%d+)$");
+    if (not low) then
+        return false;
+    end
+
+    table.insert(SupportedRolls, { identifier, low, high, });
+
+    return true;
+end
 
 --- Announce to everyone in the raid that a roll off is starting
 ---
@@ -70,6 +114,13 @@ function RollOff:announceStart(itemLink, time, note)
     time = tonumber(time);
 
     if (not GL:isValidItemLink(itemLink)) then
+        GL:warning(L["Invalid data provided for roll start!"]);
+        return false;
+    end
+
+    -- Receivers can't start a roll without a usable item string
+    local dehydratedLink = GL:dehydrateItemLink(itemLink);
+    if (not dehydratedLink) then
         GL:warning(L["Invalid data provided for roll start!"]);
         return false;
     end
@@ -96,14 +147,13 @@ function RollOff:announceStart(itemLink, time, note)
     self:listenForRolls();
 
     --- If boosted rolls are enabled, sending additional data is required
-    local BoostedRolls;
+    local b; -- Boosted-roll payload: identifier + range hash, range map only when it changed
 
     if (GL.BoostedRolls:enabled()
         and GL.BoostedRolls:available()
     ) then
-        BoostedRolls = {};
-        BoostedRolls.identifier = strsub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
-        BoostedRolls.RangePerPlayer = {};
+        local identifier = strsub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+        local RangePerPlayer = {};
 
         -- Softres bonus rolls can only be spent on the items a player reserved
         local softresItemID = GL.BoostedRolls:importedFromSoftres() and GL:getItemIDFromLink(itemLink) or nil;
@@ -122,21 +172,32 @@ function RollOff:announceStart(itemLink, time, note)
                 end
 
                 local points = GL.BoostedRolls:getPoints(normalizedName);
-                BoostedRolls.RangePerPlayer[normalizedName] = ("%d-%d"):format(GL.BoostedRolls:minBoostedRoll(points), GL.BoostedRolls:maxBoostedRoll(points));
+                RangePerPlayer[normalizedName] = ("%d-%d"):format(GL.BoostedRolls:minBoostedRoll(points), GL.BoostedRolls:maxBoostedRoll(points));
             end)();
         end
+
+        local hash = self:boostedRangeHash(RangePerPlayer);
+        b = {
+            i = identifier,
+            h = hash,
+            R = hash ~= self.BoostedRangeCache.hash and RangePerPlayer or nil,
+        };
+
+        self.BoostedRangeCache.identifier = identifier;
+        self.BoostedRangeCache.hash = hash;
+        self.BoostedRangeCache.RangePerPlayer = RangePerPlayer;
     end
 
     GL.CommMessage.new({
         action = CommActions.startRollOff,
         content = {
-            item = itemLink,
+            item = dehydratedLink,
             time = time,
             note = note,
             bth = GL.User:bth(),
             g = self.gearSessionID,
             SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
-            BoostedRollData = BoostedRolls,
+            b = b,
         },
         channel = "GROUP",
     }):send();
@@ -346,202 +407,359 @@ function RollOff:start(CommMessage)
         return GL:debug("No item provided in RollOff:start");
     end
 
-    --- We have to wait with starting the actual roll off process until
-    --- the item that's up for rolling has been successfully loaded by the Item API
-    ---
-    ---@vararg Item
-    ---@return nil
-    GL:onItemLoadDo(content.item, function (Details)
-        if (not Details) then
+    -- content.item is a dehydrated item string, hydrate it into a real link first
+    GL:hydrateItemLink(content.item, function (itemLink)
+        if (not itemLink) then
             return;
         end
 
-        local time = math.floor(tonumber(content.time));
-        local SupportedRolls = content.SupportedRolls or {};
-        local gearSessionID = tonumber(content.g);
-        if (gearSessionID) then
-            if (CommMessage.Sender.id) then
-                self.initiatorSessionIDs[CommMessage.Sender.id] = gearSessionID;
+        -- Hydrating loaded the item already, this just hands us its ID, name and icon
+        GL:onItemLoadDo(itemLink, function (Details)
+            if (not Details) then
+                return;
             end
 
-            if (CommMessage.Sender.fqn) then
-                self.initiatorSessionIDs[CommMessage.Sender.fqn] = gearSessionID;
+            local time = math.floor(tonumber(content.time));
+            local SupportedRolls = content.SupportedRolls or {};
+            local gearSessionID = tonumber(content.g);
+            if (gearSessionID) then
+                if (CommMessage.Sender.id) then
+                    self.initiatorSessionIDs[CommMessage.Sender.id] = gearSessionID;
+                end
+
+                if (CommMessage.Sender.fqn) then
+                    self.initiatorSessionIDs[CommMessage.Sender.fqn] = gearSessionID;
+                end
             end
-        end
 
-        -- Add BoostedRolls to the list of SupportedRolls if data is available
-        if (type(content.BoostedRollData) == "table"
-            and not GL:empty(content.BoostedRollData.identifier)
-            and not GL:empty(content.BoostedRollData.RangePerPlayer)
-        ) then
-            local myNormalizedName = GL.BoostedRolls:normalizedName(GL.User.fqn);
-            local myRange = content.BoostedRollData.RangePerPlayer[myNormalizedName];
+            -- Resolve the boosted-roll identifier/range map, fetching a fresh copy if ours is stale
+            local boostedRollIdentifier, boostedRollRangePerPlayer;
+            if (type(content.b) == "table"
+                and not GL:empty(content.b.i)
+            ) then
+                boostedRollIdentifier = content.b.i;
 
-            if (myRange) then
-                local low, high = myRange:match("^(%d+)-(%d+)$");
-                table.insert(SupportedRolls, {
-                    content.BoostedRollData.identifier,
-                    low,
-                    high,
+                if (type(content.b.R) == "table") then
+                    boostedRollRangePerPlayer = content.b.R;
+                    self:storeBoostedRanges(CommMessage, content.b.i, content.b.h, boostedRollRangePerPlayer);
+                else
+                    boostedRollRangePerPlayer = self:cachedBoostedRanges(CommMessage, content.b.h);
+
+                    if (not boostedRollRangePerPlayer) then
+                        self:requestBoostedRanges(CommMessage, content.b.h);
+                    end
+                end
+            end
+
+            appendBoostedRollBracket(SupportedRolls, boostedRollIdentifier, boostedRollRangePerPlayer);
+
+            -- This is a new roll off so clean everything
+            if (Details.link ~= self.CurrentRollOff.itemLink
+                or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
+            ) then
+                local KnownRolls = self.CurrentRollOff.Rolls or {};
+
+                -- This is a new item so make sure to
+                -- override all previously set properties
+                self.CurrentRollOff = {
+                    initiator = CommMessage.Sender.id,
+                    time = time,
+                    itemID = Details.id,
+                    itemName = Details.name,
+                    itemLink = Details.link,
+                    itemIcon = Details.icon,
+                    SupportedRolls = SupportedRolls,
+                    note = content.note,
+                };
+
+                self:resetInspectState();
+
+                -- Note: the auctioneer already did this on his end
+                if (not CommMessage.Sender.isSelf) then
+                    self.CurrentRollOff.Rolls = {};
+                else
+                    self.CurrentRollOff.Rolls = KnownRolls;
+                end
+            else
+                -- Same item re-roll: update timer and inspect state, keep rolls until reset/new item
+                self.CurrentRollOff.time = time;
+                self:resetInspectState();
+            end
+
+            -- Stored so that the roller UI can be redrawn later on (see /gl rolls)
+            self.CurrentRollOff.bth = content.bth;
+            self.CurrentRollOff.boostedRollIdentifier = boostedRollIdentifier;
+
+            self.inProgress = true;
+            self.pendingStart = false;
+            GL:cancelTimer("RollOff.startWatchdog");
+            self:listenForRolls();
+
+            if (self:startedByMe()) then
+                self:postStartMessage(Details.link, time, content.note);
+                GL.MasterLooterUI:drawReopenMasterLooterUIButton();
+            end
+
+            -- A roller UI that's still up belongs to the previous roll off and is stale now
+            GL.RollerUI:closeIfRollOffEnded();
+
+            -- Auto Roll: if we have a rule, perform the roll (or pass) and optionally skip the UI
+            local autoRollHandled, autoRollAction = GL.AutoRoll:onRollStart(Details.link, Details.id, SupportedRolls);
+
+            -- Don't show the roll UI if the user disabled it, or if Auto Roll handled it (pass always hides; roll hides when closeAfterRoll)
+            if (GL.Settings:get("Rolling.showRollOffWindow"))
+                and not (autoRollHandled and (autoRollAction == "passed" or GL.Settings:get("Rolling.closeAfterRoll")))
+            then
+                GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth, self.CurrentRollOff.boostedRollIdentifier, autoRollHandled and autoRollAction == "rolled");
+            elseif (autoRollHandled and autoRollAction == "rolled") then
+                GL.RollerUI:showRollAcceptedNotification();
+            end
+
+            -- Make sure the rolloff stops when time is up
+            self.StopRollOffTimer = GL.Ace:ScheduleTimer(function ()
+                self:stop();
+            end, time);
+
+            -- Send a countdown in chat when enabled
+            local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
+            if (self:startedByMe() -- Only post a countdown if this user initiated the roll
+                and time - numberOfSecondsToCountdown > 2-- No point in counting down if there's hardly enough time anyways
+                and GL.Settings:get("MasterLooting.doCountdown")
+            ) then
+                local SecondsAnnounced = {};
+
+                self.InitiateCountDownTimer = GL.Ace:ScheduleTimer(function ()
+                    self.CountDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                        GL:debug("Run RollOff.CountDownTimer");
+
+                        local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.StopRollOffTimer));
+                        if (secondsLeft <= numberOfSecondsToCountdown
+                            and secondsLeft > 0
+                            and not SecondsAnnounced[secondsLeft]
+                        ) then
+                            SecondsAnnounced[secondsLeft] = true;
+
+                            GL:sendChatMessage((L.CHAT["%s seconds to roll"]):format(secondsLeft), "GROUP");
+
+                            if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
+                                GL:debug("Cancel RollOff.CountDownTimer");
+
+                                GL.Ace:CancelTimer(self.CountDownTimer);
+                                self.CountDownTimer = nil;
+                            end
+                        end
+                    end, .2);
+                end, time - numberOfSecondsToCountdown - 2);
+            end
+
+            local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
+            local itemOfInterestSound = GL.Settings:get("Rolling.itemOfInterestSound");
+
+            -- Play a raid warning sound
+            GL:playSound(SOUNDKIT.RAID_WARNING);
+
+            -- If this is an item of interest, play a different sound and post a message
+            local isItemOfInterest, reason = GL:isItemOfInterest(Details.id);
+            if (isItemOfInterest) then
+                local message = "";
+                local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
+                local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", itemOfInterestSound);
+
+                -- We reserved there item
+                if (reason == ItemOfInterestReasons.RESERVE) then
+                    message = L["You reserved %s!"];
+                end
+
+                -- We have the item on prio
+                if (reason == ItemOfInterestReasons.PRIOLIST) then
+                    message = L["You have %s on prio!"];
+                end
+
+                -- We have the item on wishlist
+                if (reason == ItemOfInterestReasons.WISHLIST) then
+                    message = L["You have %s on wishlist!"];
+                end
+
+                if (notifyOnItemOfInterest) then
+                    GL:success((message):format(Details.link));
+                end
+
+                -- Play the notification sound after the raid warning has ended
+                GL:after(.8, nil, function ()
+                    GL:playSound(sound);
+                end);
+
+                GL.Interface.Alerts:fire("GargulNotification", {
+                    message = ("|c00BE3333%s|r"):format(L["Item of interest!"]),
                 });
             end
-        end
 
-        -- This is a new roll off so clean everything
-        if (Details.link ~= self.CurrentRollOff.itemLink
-            or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
-        ) then
-            local KnownRolls = self.CurrentRollOff.Rolls or {};
+            -- Flash the game icon in case the player alt-tabbed
+            FlashClientIcon();
 
-            -- This is a new item so make sure to
-            -- override all previously set properties
-            self.CurrentRollOff = {
-                initiator = CommMessage.Sender.id,
-                time = time,
-                itemID = Details.id,
-                itemName = Details.name,
-                itemLink = Details.link,
-                itemIcon = Details.icon,
-                SupportedRolls = SupportedRolls,
-                note = content.note,
-            };
+            -- Flash the game icon in case the player alt-tabbed
+            FlashClientIcon();
 
-            self:resetInspectState();
+            self:refreshRollsTable();
 
-            -- Note: the auctioneer already did this on his end
-            if (not CommMessage.Sender.isSelf) then
-                self.CurrentRollOff.Rolls = {};
-            else
-                self.CurrentRollOff.Rolls = KnownRolls;
-            end
-        else
-            -- Same item re-roll: update timer and inspect state, keep rolls until reset/new item
-            self.CurrentRollOff.time = time;
-            self:resetInspectState();
-        end
+            -- Let the application know that a rolloff has started
+            GL.Events:fire("GL.ROLLOFF_STARTED");
 
-        -- Stored so that the roller UI can be redrawn later on (see /gl rolls)
-        self.CurrentRollOff.bth = content.bth;
-        self.CurrentRollOff.boostedRollIdentifier = content.BoostedRollData and content.BoostedRollData.identifier or nil;
-
-        self.inProgress = true;
-        self.pendingStart = false;
-        GL:cancelTimer("RollOff.startWatchdog");
-        self:listenForRolls();
-
-        if (self:startedByMe()) then
-            self:postStartMessage(Details.link, time, content.note);
-            GL.MasterLooterUI:drawReopenMasterLooterUIButton();
-        end
-
-        -- A roller UI that's still up belongs to the previous roll off and is stale now
-        GL.RollerUI:closeIfRollOffEnded();
-
-        -- Auto Roll: if we have a rule, perform the roll (or pass) and optionally skip the UI
-        local autoRollHandled, autoRollAction = GL.AutoRoll:onRollStart(Details.link, Details.id, SupportedRolls);
-
-        -- Don't show the roll UI if the user disabled it, or if Auto Roll handled it (pass always hides; roll hides when closeAfterRoll)
-        if (GL.Settings:get("Rolling.showRollOffWindow"))
-            and not (autoRollHandled and (autoRollAction == "passed" or GL.Settings:get("Rolling.closeAfterRoll")))
-        then
-            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth, self.CurrentRollOff.boostedRollIdentifier, autoRollHandled and autoRollAction == "rolled");
-        elseif (autoRollHandled and autoRollAction == "rolled") then
-            GL.RollerUI:showRollAcceptedNotification();
-        end
-
-        -- Make sure the rolloff stops when time is up
-        self.StopRollOffTimer = GL.Ace:ScheduleTimer(function ()
-            self:stop();
-        end, time);
-
-        -- Send a countdown in chat when enabled
-        local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
-        if (self:startedByMe() -- Only post a countdown if this user initiated the roll
-            and time - numberOfSecondsToCountdown > 2-- No point in counting down if there's hardly enough time anyways
-            and GL.Settings:get("MasterLooting.doCountdown")
-        ) then
-            local SecondsAnnounced = {};
-
-            self.InitiateCountDownTimer = GL.Ace:ScheduleTimer(function ()
-                self.CountDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                    GL:debug("Run RollOff.CountDownTimer");
-
-                    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.StopRollOffTimer));
-                    if (secondsLeft <= numberOfSecondsToCountdown
-                        and secondsLeft > 0
-                        and not SecondsAnnounced[secondsLeft]
-                    ) then
-                        SecondsAnnounced[secondsLeft] = true;
-
-                        GL:sendChatMessage((L.CHAT["%s seconds to roll"]):format(secondsLeft), "GROUP");
-
-                        if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
-                            GL:debug("Cancel RollOff.CountDownTimer");
-
-                            GL.Ace:CancelTimer(self.CountDownTimer);
-                            self.CountDownTimer = nil;
-                        end
-                    end
-                end, .2);
-            end, time - numberOfSecondsToCountdown - 2);
-        end
-
-        local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
-        local itemOfInterestSound = GL.Settings:get("Rolling.itemOfInterestSound");
-
-        -- Play a raid warning sound
-        GL:playSound(SOUNDKIT.RAID_WARNING);
-
-        -- If this is an item of interest, play a different sound and post a message
-        local isItemOfInterest, reason = GL:isItemOfInterest(Details.id);
-        if (isItemOfInterest) then
-            local message = "";
-            local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
-            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", itemOfInterestSound);
-
-            -- We reserved there item
-            if (reason == ItemOfInterestReasons.RESERVE) then
-                message = L["You reserved %s!"];
-            end
-
-            -- We have the item on prio
-            if (reason == ItemOfInterestReasons.PRIOLIST) then
-                message = L["You have %s on prio!"];
-            end
-
-            -- We have the item on wishlist
-            if (reason == ItemOfInterestReasons.WISHLIST) then
-                message = L["You have %s on wishlist!"];
-            end
-
-            if (notifyOnItemOfInterest) then
-                GL:success((message):format(Details.link));
-            end
-
-            -- Play the notification sound after the raid warning has ended
-            GL:after(.8, nil, function ()
-                GL:playSound(sound);
-            end);
-
-            GL.Interface.Alerts:fire("GargulNotification", {
-                message = ("|c00BE3333%s|r"):format(L["Item of interest!"]),
-            });
-        end
-
-        -- Flash the game icon in case the player alt-tabbed
-        FlashClientIcon();
-
-        -- Flash the game icon in case the player alt-tabbed
-        FlashClientIcon();
-
-        self:refreshRollsTable();
-
-        -- Let the application know that a rolloff has started
-        GL.Events:fire("GL.ROLLOFF_STARTED");
-
-        -- Items should only contain 1 item but lets add a return just in case
-        return;
+            -- Items should only contain 1 item but lets add a return just in case
+            return;
+        end);
     end);
+end
+
+--- Hash a boosted-roll range map so senders/receivers can detect changes and dedupe resends
+---
+---@param RangePerPlayer table
+---@return number
+function RollOff:boostedRangeHash(RangePerPlayer)
+    local Parts = {};
+
+    for player, range in pairs(RangePerPlayer or {}) do
+        tinsert(Parts, player .. "=" .. range);
+    end
+
+    table.sort(Parts);
+
+    return GL:stringHash(table.concat(Parts, ";"));
+end
+
+--- Persist a boosted-roll range map from an initiator so a reload can reuse it
+---
+---@param CommMessage CommMessage
+---@param identifier string
+---@param hash number
+---@param RangePerPlayer table
+---@return nil
+function RollOff:storeBoostedRanges(CommMessage, identifier, hash, RangePerPlayer)
+    local initiatorFqn = CommMessage.senderFqn;
+    if (GL:empty(initiatorFqn)) then
+        return;
+    end
+
+    DB:set(("RollOff.BoostedRanges.%s"):format(initiatorFqn), {
+        identifier = identifier,
+        hash = hash,
+        RangePerPlayer = RangePerPlayer,
+        at = GetServerTime(),
+    });
+
+    -- Don't keep a map for every loot master we ever rolled with
+    local Cached = DB:get("RollOff.BoostedRanges", {});
+    local Entries = {};
+    for fqn, Entry in pairs(Cached) do
+        tinsert(Entries, { fqn, type(Entry) == "table" and tonumber(Entry.at) or 0, });
+    end
+
+    if (#Entries <= BOOSTED_RANGE_CACHE_LIMIT) then
+        return;
+    end
+
+    table.sort(Entries, function (a, b)
+        return a[2] > b[2];
+    end);
+
+    for i = BOOSTED_RANGE_CACHE_LIMIT + 1, #Entries do
+        Cached[Entries[i][1]] = nil;
+    end
+end
+
+--- Return a cached range map for the given initiator if its hash still matches
+---
+---@param CommMessage CommMessage
+---@param hash number
+---@return table|nil
+function RollOff:cachedBoostedRanges(CommMessage, hash)
+    local initiatorFqn = CommMessage.senderFqn;
+    if (GL:empty(initiatorFqn)) then
+        return;
+    end
+
+    local Cached = DB:get(("RollOff.BoostedRanges.%s"):format(initiatorFqn));
+    if (type(Cached) == "table" and Cached.hash == hash) then
+        return Cached.RangePerPlayer;
+    end
+end
+
+--- Ask the roll's initiator for a boosted-roll range map we don't have cached, throttled per initiator+hash.
+--- The roll still starts and runs on schedule; a late reply just redraws the roller UI if needed.
+---
+---@param CommMessage CommMessage
+---@param hash number
+---@return nil
+function RollOff:requestBoostedRanges(CommMessage, hash)
+    local initiatorFqn = CommMessage.senderFqn;
+    local initiatorID = CommMessage.Sender and CommMessage.Sender.id;
+    if (GL:empty(initiatorFqn)) then
+        return;
+    end
+
+    local requestKey = ("%s:%s"):format(initiatorFqn, hash);
+    if (self.pendingBoostedRangeRequests[requestKey]) then
+        return;
+    end
+    self.pendingBoostedRangeRequests[requestKey] = true;
+
+    GL.CommMessage.new({
+        action = CommActions.requestRollOffBoostedRanges,
+        channel = "WHISPER",
+        recipient = initiatorFqn,
+        acceptsResponse = true,
+        onResponse = function (Response)
+            self.pendingBoostedRangeRequests[requestKey] = nil;
+
+            Response = Response.content;
+            if (type(Response) ~= "table"
+                or GL:empty(Response.identifier)
+                or type(Response.RangePerPlayer) ~= "table"
+            ) then
+                return;
+            end
+
+            self:storeBoostedRanges(CommMessage, Response.identifier, Response.hash, Response.RangePerPlayer);
+
+            -- Roll off already ended or belongs to someone else, nothing to redraw
+            if (not self.inProgress
+                or self.CurrentRollOff.initiator ~= initiatorID
+            ) then
+                return;
+            end
+
+            if (appendBoostedRollBracket(self.CurrentRollOff.SupportedRolls, Response.identifier, Response.RangePerPlayer)) then
+                GL.RollerUI:hide();
+                GL.RollerUI:reopen();
+            end
+        end,
+    }):send();
+
+    GL.Ace:ScheduleTimer(function ()
+        self.pendingBoostedRangeRequests[requestKey] = nil;
+    end, 10);
+end
+
+--- Reply to a whispered request for our currently cached boosted-roll range map
+---
+---@param Message CommMessage
+---@return nil
+function RollOff:respondToBoostedRangesRequest(Message)
+    if (Message.Sender.isSelf) then
+        return;
+    end
+
+    -- Answer even when the map is empty, otherwise the requester keeps asking
+    local Cache = self.BoostedRangeCache;
+    if (not Cache.hash or type(Cache.RangePerPlayer) ~= "table") then
+        return;
+    end
+
+    Message:respond({
+        identifier = Cache.identifier,
+        hash = Cache.hash,
+        RangePerPlayer = Cache.RangePerPlayer,
+    });
 end
 
 --- Check whether the current rolloff was started by me (the user)

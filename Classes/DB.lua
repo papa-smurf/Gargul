@@ -18,6 +18,7 @@ local DB = {
         "MinimapButton",
         "PlusOnes",
         "RecentlyAwardedItems",
+        "RollOff",
         "Settings",
         "SoftRes",
         "TMB",

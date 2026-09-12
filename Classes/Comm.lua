@@ -137,6 +137,9 @@ Comm.Actions = {
     [Actions.shareEquippedGear] = function (Message)
         GL.RollOff:receiveSharedEquippedGear(Message);
     end,
+    [Actions.requestRollOffBoostedRanges] = function (Message)
+        GL.RollOff:respondToBoostedRangesRequest(Message);
+    end,
 };
 
 function Comm:_init()
