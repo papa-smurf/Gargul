@@ -1270,6 +1270,99 @@ function TMB:decompress(data)
     return data;
 end
 
+--- Pack TMB data for comms: Items entries become flat character/prio/type triples
+---
+---@param Data? table Defaults to our own TMB data
+---@return table
+function TMB:encodeForComm(Data)
+    Data = Data or GL.DB:get("TMB", {});
+
+    local Payload = {};
+    for key, value in pairs(Data) do
+        if (key ~= "Items") then
+            Payload[key] = value;
+        end
+    end
+
+    local Items = {};
+    for itemID, Entries in pairs(Data.Items or {}) do
+        local Stream = {};
+
+        for _, Entry in ipairs(Entries) do
+            -- A nil anywhere in the stream would shift every entry behind it
+            local prio = tonumber(Entry.prio);
+
+            if (prio and not GL:empty(Entry.character)) then
+                Stream[#Stream + 1] = Entry.character;
+                Stream[#Stream + 1] = prio;
+                Stream[#Stream + 1] = tonumber(Entry.type) or Constants.tmbTypeWish;
+            end
+        end
+
+        if (not GL:empty(Stream)) then
+            Items[tostring(itemID)] = Stream;
+        end
+    end
+
+    Payload.Items = Items;
+
+    return Payload;
+end
+
+--- Unpack what encodeForComm produced, back into the keyed shape the DB uses
+---
+---@param Data table
+---@return table|nil Nil when the payload is malformed
+function TMB:decodeFromComm(Data)
+    if (type(Data) ~= "table"
+        or type(Data.Items) ~= "table"
+        or GL:empty(Data.Items)
+        or GL:empty(GL:tableGet(Data, "MetaData.importedAt"))
+    ) then
+        return;
+    end
+
+    local Payload = {};
+    for key, value in pairs(Data) do
+        if (key ~= "Items") then
+            Payload[key] = value;
+        end
+    end
+
+    local Items = {};
+    for itemID, Stream in pairs(Data.Items) do
+        if (not GL:higherThanZero(tonumber(itemID))
+            or type(Stream) ~= "table"
+            or #Stream < 3
+            or #Stream % 3 ~= 0
+        ) then
+            return;
+        end
+
+        local Entries = {};
+        for i = 1, #Stream, 3 do
+            local character = Stream[i];
+            local prio = tonumber(Stream[i + 1]);
+            local entryType = tonumber(Stream[i + 2]);
+
+            if (GL:empty(character)
+                or not prio
+                or not entryType
+            ) then
+                return;
+            end
+
+            Entries[#Entries + 1] = { character = character, prio = prio, type = entryType, };
+        end
+
+        Items[tostring(itemID)] = Entries;
+    end
+
+    Payload.Items = Items;
+
+    return Payload;
+end
+
 --- Broadcast the TMB to the RAID / PARTY
 ---@param sendEmptyPayload boolean used to override your raider's TMB data
 ---@return boolean
@@ -1290,20 +1383,10 @@ function TMB:broadcast(sendEmptyPayload)
     if (sendEmptyPayload) then
         GL.CommMessage.new({
             action = CommActions.broadcastTMBData,
-            content = {
-                Items = {
-                    ["01"] = {
-                        {
-                            character = "_reset",
-                            prio = 1,
-                            type = 1,
-                        },
-                    },
-                },
-                MetaData = {
-                    importedAt = GetServerTime(),
-                },
-            },
+            content = self:encodeForComm({
+                Items = { ["01"] = { { character = "_reset", prio = 1, type = 1, }, }, },
+                MetaData = { importedAt = GetServerTime(), },
+            }),
             channel = "GROUP",
         }):send();
 
@@ -1370,10 +1453,11 @@ function TMB:broadcastToWhitelist()
 
         Events:fire("GL.TMB_BROADCAST_STARTED");
 
+        local Payload = self:encodeForComm();
         for _, player in pairs(WhitelistedPlayersInGroup) do
             GL.CommMessage.new({
                 action = CommActions.broadcastTMBData,
-                content = GL.DB.TMB,
+                content = Payload,
                 channel = "WHISPER",
                 recipient = player,
             }):send(function ()
@@ -1422,7 +1506,7 @@ function TMB:broadcastToGroup()
 
         GL.CommMessage.new({
             action = CommActions.broadcastTMBData,
-            content = GL.DB.TMB,
+            content = self:encodeForComm(),
             channel = "GROUP",
         }):send(function ()
             GL:success(L["Broadcast finished!"]);
@@ -1465,38 +1549,14 @@ function TMB:receiveBroadcast(CommMessage)
     if (not GL:empty(Data)) then
         GL:warning((L["Attempting to process incoming TMB data from %s"]):format(CommMessage.Sender.name));
 
-        if (type(Data) ~= "table" or GL:empty(Data)
-            or type(Data.Items) ~= "table" or GL:empty(Data.Items)
-            or GL:empty(GL:tableGet(Data, "MetaData.importedAt"))
-        ) then
+        local Decoded = self:decodeFromComm(Data);
+        if (not Decoded) then
             GL:debug("Invalid TMB data received from " .. CommMessage.Sender.name);
             return;
         end
 
-        -- Validate dataset
-        for itemID, Entries in pairs(Data.Items) do
-            itemID = tonumber(itemID);
-
-            if (GL:empty(itemID)) then
-                GL:debug("Invalid TMB data received from " .. CommMessage.Sender.name);
-                return;
-            end
-
-            for _, Entry in pairs(Entries) do
-                Entry.prio = tonumber(Entry.prio);
-
-                if (GL:empty(Entry.character)
-                    or GL:empty(Entry.type)
-                    or not Entry.prio
-                ) then
-                    GL:debug("Invalid TMB data received from " .. CommMessage.Sender.name);
-                    return;
-                end
-            end
-        end
-
         GL:success(L["TMB data synced"]);
-        GL.DB.TMB = Data;
+        GL.DB.TMB = Decoded;
     end
 end
 
@@ -1626,7 +1686,7 @@ function TMB:replyToDataRequest(CommMessage)
     -- Looks like you need my data, here it is!
     GL.CommMessage.new({
         action = CommActions.broadcastTMBData,
-        content = GL.DB.TMB,
+        content = self:encodeForComm(),
         channel = "WHISPER",
         recipient = CommMessage.senderFqn,
     }):send(function ()
