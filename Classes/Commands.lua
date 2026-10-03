@@ -337,6 +337,37 @@ GL.Commands = GL.Commands or {
 
 local Commands = GL.Commands; ---@type Commands
 
+--- Split arguments for commands that end in an item link, anchoring on the link itself
+--- so player names can contain spaces. Returns nil when there's no link to anchor on.
+---
+---@param argumentString string
+---@param numberOfArguments number
+---@return table|nil
+local function splitOnItemLink(argumentString, numberOfArguments)
+    local linkStart = strfind(argumentString, "|", 1, true);
+
+    -- No link, or no room for a name in front of it
+    if (not linkStart or linkStart < 2) then
+        return nil;
+    end
+
+    local itemLink = strsub(argumentString, linkStart);
+    local prefix = strtrim(strsub(argumentString, 1, linkStart - 1));
+
+    if (numberOfArguments < 3) then
+        return { prefix, itemLink, };
+    end
+
+    -- awardondate expects a date between the name and the link
+    local name, awardDate = strmatch(prefix, "^(.-)%s+(%S+)$");
+
+    if (not name) then
+        return nil;
+    end
+
+    return { name, awardDate, itemLink, };
+end
+
 --- Display the command help
 ---@return nil
 function Commands:help () Settings:draw("SlashCommands"); end
@@ -378,7 +409,6 @@ function Commands:_dispatch(str)
     -- Some commands allow itemlinks, some don't. Items can contain spaces
     -- at which point we need to make sure the item itself isn't split up.
     -- We do that by specifying the number of (expected) arguments per command
-    local arguments = {};
     local numberOfArguments;
 
     if (GL:inTable({ "rolloff", "auction", }, command)) then
@@ -389,7 +419,12 @@ function Commands:_dispatch(str)
         numberOfArguments = 3;
     end
 
-    arguments = { strsplit(" ", argumentString, numberOfArguments), };
+    local Arguments;
+    if (numberOfArguments and numberOfArguments > 1) then
+        Arguments = splitOnItemLink(argumentString, numberOfArguments);
+    end
+
+    local arguments = Arguments or { strsplit(" ", argumentString, numberOfArguments), };
 
     if (command and self.Dictionary[command] and type(self.Dictionary[command]) == "function") then
         return self.Dictionary[command](unpack(arguments));

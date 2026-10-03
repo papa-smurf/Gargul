@@ -9,6 +9,7 @@ GL.Data.Constants = {
         VANILLA = 11200,       -- Original 1.12.1
         VANILLA_WRATH = 30300, -- Original 3.3.5a
         ERA = 11509,
+        FOREVER = 16001,
         BCC = 20505,
         WRATH = 30405,
         TITAN = 38000,

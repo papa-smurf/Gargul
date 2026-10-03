@@ -1379,11 +1379,11 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local args = GL:explode(message, " ");
+    -- Everything after the command is the name, which can contain spaces
+    local name = GL:textAfterFirstWord(message);
+    local askingForSelf = GL:empty(name);
 
-    -- See if a name is given, otherwise look up the sender's own roll
-    local askingForSelf = #args <= 1;
-    local name = askingForSelf and GL:formatPlayerName(sender) or args[2];
+    name = askingForSelf and GL:formatPlayerName(sender) or name;
     name = self:normalizedName(name);
 
     local points = self:getPoints(name);

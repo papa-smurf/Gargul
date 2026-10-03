@@ -26,6 +26,8 @@ GL.elvUILoaded = false;
 GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.tocVersion = select(4, GetBuildInfo());
 GL.isEra = GL.tocVersion < 20000;
+-- Forever (Camelot): vanilla rules on the modern codebase, so Era behavior but not Era APIs.
+GL.isForever = GL.tocVersion >= 16000 and GL.tocVersion < 17000;
 -- C_Seasons only exists in Season of Discovery; wrap to avoid errors on Era/BCC/Wrath/etc.
 GL.isSoD = false;
 if (GL.isEra and C_Seasons and C_Seasons.GetActiveSeason and Enum and Enum.SeasonID) then
@@ -294,7 +296,8 @@ function GL:hookNativeWindowEvents()
 
     -- Era uses legacy events; other clients use PLAYER_INTERACTION_MANAGER_FRAME_* (types 5/8/10/17/21).
     -- Don't register both: 1.15.9 fires both, which would set window state twice.
-    if (not GL.isEra) then
+    -- Forever gets both: we don't know which it fires and setting these twice is harmless.
+    if (not GL.isEra or GL.isForever) then
         GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 5) then
                 self.merchantIsShown = true;
@@ -322,7 +325,9 @@ function GL:hookNativeWindowEvents()
                 self.auctionHouseIsShown = false;
             end
         end);
-    else
+    end
+
+    if (GL.isEra) then
         GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function ()
             self.auctionHouseIsShown = true;
         end);

@@ -6,12 +6,13 @@ alwaysApply: true
 
 # WoW Addon Multi-Version Development
 
-Gargul supports: **Era (11508)**, **BCC (20505)**, **Wrath (30405)**, **Titan (38000)**, **Cata (40402/3)**, **Mists (50503/4)**, **Retail (120000)**.
+Gargul supports: **Era (11508)**, **Forever (16001)**, **BCC (20505)**, **Wrath (30405)**, **Titan (38000)**, **Cata (40402/3)**, **Mists (50503/4)**, **Retail (120000)**.
 
 ## Version Detection
 
 Use existing flags from `bootstrap.lua`:
-- `GL.isEra` — tocVersion < 20000
+- `GL.isEra` — tocVersion < 20000 (true on Forever too)
+- `GL.isForever` — Forever/Camelot, tocVersion 16xxx. Era behavior, modern APIs: exclude it from Era branches that assume an API is missing. Untested in-game, no dump yet.
 - `GL.isClassic` — BCC/Wrath/Cata/Mists (not Era, not Retail)
 - `GL.isRetail` — tocVersion >= 90000
 - `GL.isSoD` — Era + Season of Discovery

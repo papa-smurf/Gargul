@@ -879,7 +879,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         local ruleTarget = strtrim(RuleThatApplies.target);
         local Targets = {};
 
-        local RuleTargets = GL:explode(ruleTarget, " ");
+        -- Commas separate entries so names can contain spaces, older rules use spaces
+        local RuleTargets = GL:explode(ruleTarget, strfind(ruleTarget, ",", 1, true) and "," or " ");
         local GroupMemberNames = GL.User:groupMemberNames(true);
 
         for _, ruleTarget in pairs(RuleTargets) do

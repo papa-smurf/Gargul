@@ -437,6 +437,16 @@ function GL:separateValues(s)
     return Segments;
 end
 
+--- Everything after the first word, e.g. the player name in "!br Raenore Dawnsong"
+---
+---@param s string
+---@return string
+function GL:textAfterFirstWord(s)
+    s = tostring(s);
+
+    return strtrim(strsub(s, (strfind(s, " ") or strlen(s)) + 1));
+end
+
 --- Turn a given wow pattern into something we can use in string.match
 ---
 ---@param pattern string

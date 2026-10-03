@@ -205,7 +205,8 @@ end
 function GL:normalizedName(playerName)
     GL:debug("GL:normalizedName");
 
-    if (GL.isEra and not strfind(playerName, "-")) then
+    -- Not on Forever: it has one mega-realm and last names, so a dash isn't a realm separator.
+    if (GL.isEra and not GL.isForever and not strfind(playerName, "-")) then
         playerName = ("%s-%s"):format(playerName, GL.User.realm);
     end
 

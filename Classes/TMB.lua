@@ -32,22 +32,19 @@ local OFFSPEC_IDENTIFIER = "%(os%)";
 ---@param name string
 ---@return string
 function TMB:normalizePlayerName(name)
-    name = name:lower();
+    name = strlower(tostring(name));
 
-    -- Remove whitespaces
-    name = name:gsub("%s+", "");
-
-    -- Remove consecutive hyphens, leaving the first intact
-    local firstHypenPosition = name:find("-");
+    local firstHypenPosition = strfind(name, "-", 1, true);
 
     if (not firstHypenPosition) then
-        return name;
+        return strtrim(name);
     end
 
-    local namePart = name:sub(1, firstHypenPosition);
-    local realmPart = name:sub(namePart:len() + 1, name:len());
+    local namePart = strtrim(strsub(name, 1, firstHypenPosition - 1));
+    local realmPart = strsub(name, firstHypenPosition + 1);
 
-    return namePart .. realmPart:gsub("-", "");
+    -- Only realms lose their spaces and extra hyphens, character names can contain spaces
+    return ("%s-%s"):format(namePart, (realmPart:gsub("[%s%-]", "")));
 end
 
 ---@return boolean

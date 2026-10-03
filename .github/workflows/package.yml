@@ -30,6 +30,11 @@ jobs:
         with:
           args: "-o -u -S -m .pkgmeta -g classic"
 
+      - name: Package and release Forever - Camelot
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g forever"
+
       - name: Package and release TBC
         uses: BigWigsMods/packager@master
         with:

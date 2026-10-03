@@ -159,11 +159,11 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local args = GL:explode(message, " ");
+    -- Everything after the command is the name, which can contain spaces
+    local nameArgument = GL:textAfterFirstWord(message);
 
-    -- See if name is given.
-    if (args[2]) then
-        local name = GL:formatPlayerName(args[2]);
+    if (not GL:empty(nameArgument)) then
+        local name = GL:formatPlayerName(nameArgument);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
             (L.CHAT["Player %s's +1 total is %d"]):format(GL:capitalize(name), plusOne),

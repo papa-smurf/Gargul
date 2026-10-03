@@ -79,7 +79,7 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     local SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00A79EFFSELF GREED|r");
+    SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00A79EFFSELF,GREED|r");
     SectionDescription:SetFontObject(_G.GameFontNormal);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);
@@ -189,11 +189,14 @@ function PackMuleRules:onClose()
 
     self._linkTargetEditBox = nil;
 
+    --- Commas separate entries, so names that contain spaces survive
     local sanitizeTarget = function (target)
-        target = target:gsub(",", " ");
-        target = target:gsub("  ", " ");
+        target = strtrim(target);
+        target = target:gsub("%s*,%s*", ","); -- no padding around separators
+        target = target:gsub(",+", ","); -- no empty entries
+        target = target:gsub("%s%s+", " "); -- no double spaces in space separated lists
 
-        return target;
+        return (target:gsub("^,", ""):gsub(",$", ""));
     end;
 
     -- Lower/higher than quality rules

@@ -1264,8 +1264,11 @@ function AwardedLoot:receiveAwardedItem(Award, Sender)
         return GL:warning("Couldn't process award result in AwardedLoot:receiveAwardedItem");
     end
 
-    -- Show an item won alert on TBC+. Hydrate, an ID would lose the bonus IDs
-    if (not GL.isEra and GL:iEquals(Award.awardedTo, GL.User.name)) then
+    -- Show an item won alert on TBC+ and Forever. Hydrate, an ID would lose the bonus IDs
+    if ((not GL.isEra or GL.isForever)
+        and _G.LootWonAlertFrame_SetUp
+        and GL:iEquals(Award.awardedTo, GL.User.name)
+    ) then
         GL:hydrateItemLink(Award.itemLink, function (itemLink)
             if (not itemLink) then
                 return;

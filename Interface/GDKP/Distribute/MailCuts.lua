@@ -46,7 +46,8 @@ function MailCuts:_init()
 
     -- Era uses MAIL_SHOW/CLOSED; other clients use PLAYER_INTERACTION_MANAGER_FRAME_* (type 17).
     -- Don't register both or the mailer opens twice.
-    if (not GL.isEra) then
+    -- Forever gets both: we don't know which it fires and opening twice is harmless.
+    if (not GL.isEra or GL.isForever) then
         Events:register("MailCutsPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
             if (type == 17) then
                 self:openIfCutsToMail();
@@ -58,7 +59,9 @@ function MailCuts:_init()
                 self:close();
             end
         end);
-    else
+    end
+
+    if (GL.isEra) then
         Events:register("MailCutsMailShowListener", "MAIL_SHOW", function ()
             self:openIfCutsToMail();
         end);
