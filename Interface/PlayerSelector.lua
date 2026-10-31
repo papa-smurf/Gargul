@@ -184,7 +184,7 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
         for _, playerName in pairs(PlayerNames) do
             local realmlessPlayerName = GL:stripRealm(playerName);
 
-            if (GL:iEquals(realmlessMemberName, realmlessPlayerName)) then
+            if (GL:playerNamesMatch(realmlessMemberName, realmlessPlayerName)) then
                 tinsert(TableRows, {
                     cols = {
                         {

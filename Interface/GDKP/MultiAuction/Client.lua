@@ -1039,7 +1039,7 @@ function ClientInterface:build()
                 BidInput:ClearFocus();
 
                 -- Player is already top bidder
-                if (GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID] or {}, "CurrentBid.player"), GL.User.fqn)) then
+                if (GL:playerNamesMatch(GL:tableGet(Client.AuctionDetails.Auctions[auctionID] or {}, "CurrentBid.player"), GL.User.fqn)) then
                     GL:notice((L["You're already the top bidder on %s"]):format(Client.AuctionDetails.Auctions[auctionID].link));
 
                     return;
@@ -1155,7 +1155,7 @@ function ClientInterface:build()
                         statusText = (L["|c00%sCLOSED\nNo bids"]):format(Interface.Colors.GRAY);
                     end
                 elseif (hasBid) then
-                    local bidByMe = GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn);
+                    local bidByMe = GL:playerNamesMatch(AuctionDetails.CurrentBid.player, GL.User.fqn);
 
                     if (bidByMe) then
                         statusText = (L["Bid |c00%s%s\nBy |c0092FF00YOU!"]):format(
@@ -1308,7 +1308,7 @@ function ClientInterface:updateBidDetails()
         local hasBid = AuctionDetails.CurrentBid and AuctionDetails.CurrentBid.amount;
 
         (function ()
-            local byMe = hasBid and GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn) or false;
+            local byMe = hasBid and GL:playerNamesMatch(AuctionDetails.CurrentBid.player, GL.User.fqn) or false;
 
             -- The auction was deleted by the LM
             if (endsAt == -1) then
@@ -1689,7 +1689,7 @@ end
 ---@return nil
 function ClientInterface:setAuctionBarColor(AuctionRow, Details)
     if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
-        if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
+        if (GL:playerNamesMatch(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
             AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
         elseif (Details.iWasOutBid) then
             AuctionRow.AutoBidButton.currentAmount = false;

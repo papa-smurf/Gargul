@@ -437,7 +437,7 @@ function E2E:step12_AssertBidWentThrough()
     local bidderName = topBid and topBid.Bidder and topBid.Bidder.name;
     local myName = GL.User and GL.User.name;
 
-    if (bidderName and GL:iEquals(bidderName, myName) and bid and bid >= 500) then
+    if (bidderName and GL:playerNamesMatch(bidderName, myName) and bid and bid >= 500) then
         self.retryCount = 0;
         self:success("Bid went through (min 500)");
         self:next();
@@ -498,7 +498,7 @@ function E2E:step14_AssertItemAwarded()
     local price = found.price;
     local myName = GL.User and GL.User.name;
 
-    if (not winnerName or not GL:iEquals(winnerName, myName)) then
+    if (not winnerName or not GL:playerNamesMatch(winnerName, myName)) then
         self:error("Award winner is not self");
         return;
     end

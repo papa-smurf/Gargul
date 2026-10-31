@@ -27,7 +27,7 @@ function AutoRoll:_init()
     end
 
     local function onItemWon(_, AwardEntry)
-        if (AwardEntry and GL:iEquals(AwardEntry.awardedTo, GL.User.fqn)) then
+        if (AwardEntry and GL:playerNamesMatch(AwardEntry.awardedTo, GL.User.fqn)) then
             local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
             if (itemID) then
                 -- Remove the rule for the item since we won it

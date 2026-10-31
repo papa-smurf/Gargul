@@ -378,7 +378,7 @@ function Client:updateBids(Message)
                 return;
             end
 
-            local bidderIsMe = GL:iEquals(bidder, GL.User.fqn);
+            local bidderIsMe = GL:playerNamesMatch(bidder, GL.User.fqn);
 
             -- The auctioneer already did this on his end before sending it to us
             if (not Message.Sender.isSelf) then
@@ -400,7 +400,7 @@ function Client:updateBids(Message)
                 -- We were top bidder but not anymore
                 elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
                     and not bidderIsMe
-                    and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
+                    and GL:playerNamesMatch(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
                 ) then
                     Client:outbidNotification();
 

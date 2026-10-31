@@ -467,7 +467,7 @@ function Pot:getPlayerRoles(Player)
 
     tinsert(PlayerRoles, strupper(GL:disambiguateName(Player.fqn)));
 
-    if (GL:iEquals(Player.fqn, GL.User.fqn)) then
+    if (GL:playerNamesMatch(Player.fqn, GL.User.fqn)) then
         tinsert(PlayerRoles, "SELF");
     end
 

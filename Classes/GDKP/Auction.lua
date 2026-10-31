@@ -1789,7 +1789,7 @@ function Auction:setAutoBid(max, queuedItemChecksum)
     self.maxBid = max;
 
     -- Make sure we're the highest bidder, if not then bid
-    if (GL:tableGet(self.Current, "TopBid.Bidder.name") ~= GL.User.name) then
+    if (not GL:playerNamesMatch(GL:tableGet(self.Current, "TopBid.Bidder.name"), GL.User.name)) then
         self:bid(lowestMinimumBid);
     end
 
@@ -1857,9 +1857,9 @@ end
 function Auction:userIsTopBidder()
     return self.Current.TopBid.bidder
         and (
-            GL:iEquals(self.Current.TopBid.bidder, GL.User.name)
+            GL:playerNamesMatch(self.Current.TopBid.bidder, GL.User.name)
             or self.Current.TopBid.Bidder.uuid == GL.User.id
-            or GL:iEquals(self.Current.TopBid.Bidder.name, GL.User.name)
+            or GL:playerNamesMatch(self.Current.TopBid.Bidder.name, GL.User.name)
         );
 end
 
@@ -1954,7 +1954,7 @@ function Auction:processBid(message, bidder)
         return;
     end
 
-    local Bidder = GL:iEquals(GL:formatPlayerName(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
+    local Bidder = GL:playerNamesMatch(GL:formatPlayerName(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
     local bidderGUID = GDKP:playerGUID(Bidder.fqn);
 
     BidEntry = {
@@ -2010,7 +2010,7 @@ function Auction:processBid(message, bidder)
 
     self.lastBidReceivedAt = GetTime();
 
-    if (GL:iEquals(Bidder.name, GL.User.name)) then
+    if (GL:playerNamesMatch(Bidder.name, GL.User.name)) then
         self.Current.iBid = true;
     end
 

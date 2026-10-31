@@ -335,7 +335,7 @@ function Bidder:refresh()
 
     -- We're the highest bidder, NICE!
     --if (strlower(TopBid.Bidder.name) == strlower(GL.User.name)) then
-    if (GL:iEquals(TopBid.bidder, GDKP:myGUID())) then
+    if (GL:playerNamesMatch(TopBid.bidder, GDKP:myGUID())) then
         local maxBidString = "";
 
         if (GDKPAuction.autoBiddingIsActive and GDKPAuction.maxBid) then

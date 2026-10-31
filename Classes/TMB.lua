@@ -206,8 +206,8 @@ function TMB:byItemIDAndPlayer(itemID, player)
     for key, Entry in pairs(Entries) do
         local playerName = GL:formatPlayerName(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
 
-        if (playerName ~= player
-            and playerName ~= playerWithoutRealm
+        if (not GL:playerNamesMatch(playerName, player)
+            and not GL:playerNamesMatch(playerName, playerWithoutRealm)
         ) then
             Entry = nil;
             Entries[key] = nil;
@@ -1427,7 +1427,7 @@ function TMB:broadcastToWhitelist()
     for _, name in pairs(Whitelist) do
         name = strlower(name);
 
-        if (not GL:iEquals(GL.User.name, name)
+        if (not GL:playerNamesMatch(GL.User.name, name)
             and GL:inTable(GroupMemberNames, name)
             and GL:unitIsConnected(name) -- Only send if player is online
         ) then
@@ -1659,7 +1659,7 @@ function TMB:replyToDataRequest(CommMessage)
             for _, name in pairs(Whitelist) do
                 name = strlower(name);
 
-                if (not GL:iEquals(GL.User.name, name)
+                if (not GL:playerNamesMatch(GL.User.name, name)
                     and GL:inTable(GroupMemberNames, name)
                 ) then
                     tinsert(WhitelistedPlayersInGroup, name);

@@ -262,7 +262,7 @@ function Auctioneer:syncWithRunningSession()
                     end
 
                     -- If we're not the initiator then make sure the initiator is in our group and online
-                    local initiatedBySelf = GL:iEquals(GL.User.fqn, initiator);
+                    local initiatedBySelf = GL:playerNamesMatch(GL.User.fqn, initiator);
                     if (not initiatedBySelf and (
                         -- The organizer is not part of our group, this is probably deprecated data
                         not GL.User:unitInGroup(initiator)
@@ -307,7 +307,7 @@ function Auctioneer:syncWithRunningSession()
 
         -- Request an update from the initiator
         local playerToFetchDataFrom = GL:explode(mostCommonHash, ".")[2];
-        local initiatedBySelf = GL:iEquals(GL.User.fqn, playerToFetchDataFrom);
+        local initiatedBySelf = GL:playerNamesMatch(GL.User.fqn, playerToFetchDataFrom);
 
         -- We can't fetch the data from ourselves, try and find a suitable target!
         if (initiatedBySelf) then
@@ -460,7 +460,7 @@ function Auctioneer:syncWithRunningSession()
     -- Check how many answers we're expecting on our next comm message
     GL:forEachGroupMember(function (Member)
         if (Member.online
-            and not GL:iEquals(Member.fqn, GL.User.fqn)
+            and not GL:playerNamesMatch(Member.fqn, GL.User.fqn)
         ) then
             numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
         end
@@ -845,7 +845,7 @@ function Auctioneer:processAutoBids(auctionID)
                 self:setBid(auctionID, Details.player, Details.bid);
 
             -- We've reached the last (the highest) auto bidder. Bid minimum over previous auto bidder unless we're already top bid!
-            elseif (not GL:iEquals(
+            elseif (not GL:playerNamesMatch(
                 GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
                 Details.player
             )) then
@@ -914,7 +914,7 @@ function Auctioneer:processBid(Message)
         return;
     end
 
-    local auctioneerWasTopBidder = GL:iEquals(
+    local auctioneerWasTopBidder = GL:playerNamesMatch(
         GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
         userGUID
     );
@@ -943,7 +943,7 @@ function Auctioneer:processBid(Message)
     -- LastBidAt functions as an extra anti-snipe failsafe
     self.LastBidAt[auctionID] = GetServerTime();
 
-    local auctioneerIsTopBidder = GL:iEquals(
+    local auctioneerIsTopBidder = GL:playerNamesMatch(
         GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
         userGUID
     );
@@ -988,7 +988,7 @@ function Auctioneer:auctionStartedByMe(auctionID)
         return false;
     end
 
-    return Client.AuctionDetails and GL:iEquals(Client.AuctionDetails.initiator, GL.User.fqn);
+    return Client.AuctionDetails and GL:playerNamesMatch(Client.AuctionDetails.initiator, GL.User.fqn);
 end
 
 --- Mark an auction as deleted

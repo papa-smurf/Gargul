@@ -621,7 +621,7 @@ function Award:populatePlayersTable(itemID)
             },
         });
 
-        if (topPrioForItem and topPrioForItem == strlower(Player.name)) then
+        if (topPrioForItem and GL:playerNamesMatch(topPrioForItem, Player.name)) then
             PlayersTable:SetSelection(row);
             local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 

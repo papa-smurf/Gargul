@@ -223,7 +223,7 @@ function AwardedLoot:winnersToTradeForItemID(itemID)
     for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- We didn't award this item
-            if (not GL:iEquals(Loot.awardedBy, GL.User.fqn)) then
+            if (not GL:playerNamesMatch(Loot.awardedBy, GL.User.fqn)) then
                 return;
             end
 
@@ -325,7 +325,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     winner = GL:addRealm(winner);
 
     -- Nothing changed, silly player stuff
-    if (GL:iEquals(winner, AwardEntry.awardedTo)) then
+    if (GL:playerNamesMatch(winner, AwardEntry.awardedTo)) then
         return;
     end
 
@@ -340,7 +340,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     AwardEntry.awardedBy = GL.User.fqn;
 
     -- If we awarded to ourselves then we should already have the item
-    if (strlower(winner) == strlower(GL.User.fqn)) then
+    if (GL:playerNamesMatch(winner, GL.User.fqn)) then
         AwardEntry.received = true;
     end
 
@@ -414,7 +414,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         and (GL.Settings:get("AwardingLoot.autoTradeInCombat") or
             not UnitAffectingCombat("player")
         )
-        and GL.User.fqn ~= winner
+        and not GL:playerNamesMatch(GL.User.fqn, winner)
     ) then
         self:initiateTrade(AwardEntry);
     end
@@ -595,7 +595,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = automaticallyAwarded or GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
+        received = automaticallyAwarded or GL:playerNamesMatch(winner, GL.User.name) or GL:playerNamesMatch(winner, GL.User.fqn),
         winnerClass = Constants.UnitClasses[class],
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),
@@ -620,7 +620,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     if (AwardEntry.itemGUID) then
         -- Insert the awarded itemGUID in the recently awarded item table for trade timer purposes
         DB:set("RecentlyAwardedItems." .. AwardEntry.itemGUID, AwardEntry);
-    elseif (GL:iEquals(winner, GL.User.name)) then
+    elseif (GL:playerNamesMatch(winner, GL.User.name)) then
         self.AwardedToSelfWithoutAnItemGUID[AwardEntry.checksum] = AwardEntry;
     end
 
@@ -704,7 +704,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         elseif (not GL.DroppedLoot.lootWindowIsOpened
 
             -- No need to trade with ourselves
-            and not GL:iEquals(GL.User.fqn, winner)
+            and not GL:playerNamesMatch(GL.User.fqn, winner)
 
             -- Auto trading is disabled
             and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
@@ -835,7 +835,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     local tradingPartner = AwardDetails.awardedTo;
 
     -- No need to trade with yourself
-    if (GL:iEquals(tradingPartner, GL.User.fqn)) then
+    if (GL:playerNamesMatch(tradingPartner, GL.User.fqn)) then
         return;
     end
 
@@ -853,7 +853,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     end
 
     if (not TradeFrame:IsShown()
-        and not GL:iEquals(tradingPartner, GL.User.fqn)
+        and not GL:playerNamesMatch(tradingPartner, GL.User.fqn)
     ) then
         -- Open a trade window with the winner
         GL.TradeWindow:open(tradingPartner, function (success)
@@ -890,7 +890,7 @@ function AwardedLoot:tradeInitiated()
     end
 
     -- Check if we're trading the designated disenchanter
-    local tradedPlayerIsDisenchanter = GL:iEquals(GL:addRealm(tradingPartner), GL.PackMule.disenchanter);
+    local tradedPlayerIsDisenchanter = GL:playerNamesMatch(GL:addRealm(tradingPartner), GL.PackMule.disenchanter);
 
     -- Check whether there are any awarded items that need to be traded to your trading partner
     local threeHoursAgo = GetServerTime() - 10800;
@@ -898,7 +898,7 @@ function AwardedLoot:tradeInitiated()
     -- Loop through our awarded loot table in reverse
     for _, Loot in pairs(DB:get("AwardHistory")) do
         -- Our trading partner changed in the meantime, stop!
-        if (not GL:iEquals(tradingPartner, GL:tableGet(GL.TradeWindow, "State.partner", ""))) then
+        if (not GL:playerNamesMatch(tradingPartner, GL:tableGet(GL.TradeWindow, "State.partner", ""))) then
             break;
         end
 
@@ -909,7 +909,7 @@ function AwardedLoot:tradeInitiated()
 
             -- Check whether this item is meant for our current trading partner
             if (Loot.received -- The item was already received by the winner, no need to check further
-                or (not GL:iEquals(Loot.awardedTo, tradingPartner)
+                or (not GL:playerNamesMatch(Loot.awardedTo, tradingPartner)
                     -- The item is marked as disenchanted and our trading partner is the designated enchanter
                     and (Loot.awardedTo ~= GL.Exporter.disenchantedItemIdentifier
                     or not tradedPlayerIsDisenchanter
@@ -958,7 +958,7 @@ function AwardedLoot:tradeCompleted(Details)
             end
 
             -- The item is not meant for the person we traded with, skip it
-            if (not GL:iEquals(Details.partner, Loot.awardedTo)
+            if (not GL:playerNamesMatch(Details.partner, Loot.awardedTo)
                 and (not tradedDisenchanter
                     or Loot.awardedTo ~= GL.Exporter.disenchantedItemIdentifier
                 )
@@ -1267,7 +1267,7 @@ function AwardedLoot:receiveAwardedItem(Award, Sender)
     -- Show an item won alert on TBC+ and Forever. Hydrate, an ID would lose the bonus IDs
     if ((not GL.isEra or GL.isForever)
         and _G.LootWonAlertFrame_SetUp
-        and GL:iEquals(Award.awardedTo, GL.User.name)
+        and GL:playerNamesMatch(Award.awardedTo, GL.User.name)
     ) then
         GL:hydrateItemLink(Award.itemLink, function (itemLink)
             if (not itemLink) then

@@ -145,7 +145,7 @@ function Auctioneer:_init()
 
         -- We're only interested in non bonus loot items that we ourselves received
         if (Details.isBonusLoot
-            or not GL:iEquals(Details.playerName, GL.User.name)
+            or not GL:playerNamesMatch(Details.playerName, GL.User.name)
         ) then
             return;
         end
@@ -678,7 +678,7 @@ function Auctioneer:removePlayerBid (bidder, bid)
 
     local bidRemoved = false;
     for key, Bid in pairs(Bids) do
-        if (Bid.bid == bid and GL:iEquals(Bid.bidder, bidder)) then
+        if (Bid.bid == bid and GL:playerNamesMatch(Bid.bidder, bidder)) then
             Bids[key] = nil;
             bidRemoved = true;
             break;

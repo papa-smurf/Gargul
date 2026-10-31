@@ -408,7 +408,7 @@ function LedgerList:refresh()
             local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
             local balanceText;
-            if (player ~= GL.User.name) then
+            if (not GL:playerNamesMatch(player, GL.User.name)) then
                 if (copperToGive > 0) then
                     balanceText = ("|c00F7922E%s|r"):format(copperToGive / 10000);
                 elseif (copperToGive < 0) then

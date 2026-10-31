@@ -290,7 +290,7 @@ function TradeWindow:open(playerName, callback, alwaysExecuteCallback)
 
     -- We're already trading with someone
     if (TradeFrame:IsShown()) then
-        local playerNameMatches = GL:iEquals(self.State.partner, playerName) or GL:iEquals(GL:stripRealm(self.State.partner), playerName);
+        local playerNameMatches = GL:playerNamesMatch(self.State.partner, playerName) or GL:playerNamesMatch(GL:stripRealm(self.State.partner), playerName);
 
         if (type(callback) == "function"
             and (alwaysExecuteCallback or playerNameMatches)
@@ -322,7 +322,7 @@ function TradeWindow:open(playerName, callback, alwaysExecuteCallback)
             GL.Ace:CancelTimer(timerID);
 
             -- Perform the callback
-            local playerNameMatches = GL:iEquals(self.State.partner, playerName) or GL:iEquals(GL:stripRealm(self.State.partner), playerName);
+            local playerNameMatches = GL:playerNamesMatch(self.State.partner, playerName) or GL:playerNamesMatch(GL:stripRealm(self.State.partner), playerName);
 
             if (alwaysExecuteCallback
                 or (TradeFrame:IsShown()

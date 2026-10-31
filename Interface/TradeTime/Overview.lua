@@ -429,7 +429,7 @@ function Overview:refreshNow()
         local AwardDetails = DB:get("RecentlyAwardedItems." .. Details.itemGUID);
         local disenchanted = AwardDetails and AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier;
         local awarded = not disenchanted and not not AwardDetails;
-        local awardedToSelf = awarded and not disenchanted and GL:iEquals(AwardDetails.awardedTo, GL.User.fqn);
+        local awardedToSelf = awarded and not disenchanted and GL:playerNamesMatch(AwardDetails.awardedTo, GL.User.fqn);
         local itemIsTooNew = Details.secondsRemaining > MAXIMUM_TRADE_TIME_LEFT;
 
         local shouldHide = itemIsTooNew

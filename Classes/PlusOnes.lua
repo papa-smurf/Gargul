@@ -74,7 +74,7 @@ function PlusOnes:playerIsTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:iEquals(GL:formatPlayerName(player), playerName)) then
+        if (GL:playerNamesMatch(GL:formatPlayerName(player), playerName)) then
             return true;
         end
     end
@@ -792,7 +792,7 @@ function PlusOnes:receiveUpdate(CommMessage)
     end
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (GL:playerNamesMatch(CommMessage.Sender.name, GL.User.name)) then
         GL:debug("PlusOnes:receiveUpdate received by self, skip");
         return;
     end

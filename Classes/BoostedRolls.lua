@@ -108,7 +108,7 @@ function BoostedRolls:playerIsTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:iEquals(player, GL:formatPlayerName(playerName))) then
+        if (GL:playerNamesMatch(player, GL:formatPlayerName(playerName))) then
             return true;
         end
     end
@@ -156,8 +156,8 @@ function BoostedRolls:removePlayerFromTrusted(playerName)
     local fqn = GL:addRealm(playerName);
 
     for _, trustedPlayer in pairs(TrustedPlayers) do
-        if (not GL:iEquals(trustedPlayer, nameFormatted)
-            and not GL:iEquals(trustedPlayer, fqn)
+        if (not GL:playerNamesMatch(trustedPlayer, nameFormatted)
+            and not GL:playerNamesMatch(trustedPlayer, fqn)
         ) then
             table.insert(NewTrustedPlayers, trustedPlayer);
         end

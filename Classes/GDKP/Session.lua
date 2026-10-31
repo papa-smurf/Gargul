@@ -174,7 +174,7 @@ function Session:copperOwedToPlayer(player, sessionID)
     local playerGUID = GDKP:playerGUID(player);
 
     -- You can't owe yourself anything
-    if (GL:iEquals(playerGUID, GL.User.fqn)) then
+    if (GL:playerNamesMatch(playerGUID, GL.User.fqn)) then
         return 0;
     end
 

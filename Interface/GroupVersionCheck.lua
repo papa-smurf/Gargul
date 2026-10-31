@@ -404,7 +404,7 @@ function GroupVersionCheck:refresh()
             return;
         end
 
-        if (Member.name == GL.User.name) then
+        if (GL:playerNamesMatch(Member.name, GL.User.name)) then
             Status:SetText(L["v"] .. GL.version);
 
             if (Version.isOutOfDate) then

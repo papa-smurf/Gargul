@@ -491,7 +491,7 @@ function MasterLooterUI:draw(itemLink)
                 for _, Roll in pairs(GL.RollOff.CurrentRollOff.Rolls or {}) do
                     if (Roll
                         and Roll.player
-                        and not GL:iEquals(GL:stripRealm(Roll.player), selectedPlayer)
+                        and not GL:playerNamesMatch(GL:stripRealm(Roll.player), selectedPlayer)
                         and Roll.amount == selectedRollAmount
                         and Roll.classification == selectedRollType
                     ) then

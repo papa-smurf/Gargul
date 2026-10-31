@@ -667,7 +667,7 @@ function PackMule:lootReady()
 
                 target = GL:formatPlayerName(target);
                 for playerIndex = 1, GetNumGroupMembers() do
-                    if (GL:iEquals(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
+                    if (GL:playerNamesMatch(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
                         self:giveMasterLoot(itemIndex, playerIndex, itemLink, target);
                         return;
                     end
@@ -1289,7 +1289,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
         if (candidate) then
             candidate = GL:addRealm(candidate);
 
-            if (candidate and GL:iEquals(candidate, playerName)) then
+            if (candidate and GL:playerNamesMatch(candidate, playerName)) then
                 playerIndex = Player.index;
                 break;
             end
