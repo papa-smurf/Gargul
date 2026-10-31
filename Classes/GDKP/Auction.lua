@@ -484,7 +484,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
 
     -- Make sure the item is valid
     if (not GL:higherThanZero(itemID)
-        or not GL:higherThanZero(GetItemInfoInstant(GL.GDKP.Auction.Current.itemLink))
+        or not GL:higherThanZero(GL.GetItemInfoInstant(GL.GDKP.Auction.Current.itemLink))
     ) then
         GL:warning((L["Unknown itemID in Auction:create: %s"]):format(tostring(itemID)));
         return false;

@@ -1271,7 +1271,7 @@ function Test:gdkpTestFixture()
     for itemID in pairs(GL.Data.NormalModeHardModeLinks or {}) do
         checked = checked + 1;
         if (checked > 2000) then break; end
-        local _, itemLink = GetItemInfo(itemID);
+        local _, itemLink = GL.GetItemInfo(itemID);
         if (itemLink) then
             table.insert(Items, { id = itemID, link = itemLink, });
             if (#Items >= 120) then break; end
@@ -1283,7 +1283,7 @@ function Test:gdkpTestFixture()
         for itemIDStr in pairs(GL.Data.ItemLinks or {}) do
             local itemID = tonumber(itemIDStr);
             if (itemID) then
-                local _, itemLink = GetItemInfo(itemID);
+                local _, itemLink = GL.GetItemInfo(itemID);
                 if (itemLink) then
                     table.insert(Items, { id = itemID, link = itemLink, });
                     if (#Items >= 120) then break; end
