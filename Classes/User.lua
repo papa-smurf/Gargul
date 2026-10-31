@@ -13,7 +13,7 @@ GL.User = {
     playerClassByName = {},
 
     id = UnitGUID("player"),
-    name = UnitName("player"),
+    name = GL:playerNameFromUnit("player"),
     level = 1,
     zone = "",
     Guild = {},
@@ -130,9 +130,10 @@ function User:refresh()
             local name, rank, _, _, _, classFile,
             _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
+            name = GL:groupMemberIdentity(name);
             GL.Player:cacheClass(name, classFile); -- We cache player classes wherever we can
 
-            if (name == self.name) then
+            if (GL:playerNamesMatch(name, self.name)) then
                 self.role = role;
                 self.raidIndex = index;
                 self.isLead = rank == 2;
@@ -247,7 +248,7 @@ function User:guildMembers()
         local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, classFile = GetGuildRosterInfo(index)
 
         if (name) then
-            local fqn = strlower(name);
+            local fqn = strlower(GL:storedPlayerName(name));
             self.GuildMemberNames[fqn] = fqn;
 
             tinsert(Roster, {
@@ -281,11 +282,11 @@ function User:playerIsGuildMember(playerName)
     self:guildMembers();
     self:guildMembers();
 
-    if (not strfind(playerName, "-")) then
+    if (not GL.isForever and not strfind(playerName, "-")) then
         playerName = ("%s-%s"):format(playerName, GL.User.realm);
     end
 
-    playerName = strlower(playerName);
+    playerName = strlower(GL:storedPlayerName(playerName));
     return GL:toboolean(self.GuildMemberNames[playerName]);
 end
 
@@ -306,6 +307,7 @@ function User:groupMembers()
 
             if (name) then
                 classFile = classFile or "PRIEST";
+                name = GL:groupMemberIdentity(name);
                 GL.Player:cacheClass(name, classFile); -- We cache player classes wherever we can
                 local realmLessName, realm = GL:stripRealm(name);
                 realm = realm or self.realm;
@@ -394,7 +396,7 @@ function User:unitInGroup(unit)
         return true;
     end
 
-    return GL:toboolean(UnitInParty(GL:formatPlayerName(unit)));
+    return GL:toboolean(UnitInParty(GL:unitPlayerName(GL:formatPlayerName(unit))));
 end
 
 --- Return the names of everyone in your party/raid

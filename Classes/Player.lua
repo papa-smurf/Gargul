@@ -34,8 +34,16 @@ function Player.fromID(GUID)
 
     self.id = GUID;
     self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name, self.realm = GetPlayerInfoByGUID(self.id);
-    self.realm = not GL:empty(self.realm) and self.realm or GL.User.realm;
-    self.fqn = GL:addRealm(self.name, self.realm);
+
+    if (GL.isForever) then
+        -- Assumed, not verified: the last name is returned where the realm goes, like UnitName does
+        self.name = self.name and GL:addRealm(self.name, self.realm);
+        self.realm = nil;
+        self.fqn = self.name;
+    else
+        self.realm = not GL:empty(self.realm) and self.realm or GL.User.realm;
+        self.fqn = GL:addRealm(self.name, self.realm);
+    end
     self.race = strlower(self.race);
 
     -- The GUID turns out to be invalid, destroy the player object
@@ -55,7 +63,7 @@ function Player.fromID(GUID)
         self.Guild.index = GL.User.Guild.index;
     elseif (GL.User.isInGroup) then
         for _, Member in pairs(GL.User:groupMembers()) do
-            if (Member.name == self.name) then
+            if (GL:playerNamesMatch(Member.name, self.name)) then
                 local groupType = "raid";
                 local groupIndex = Member.index;
 
@@ -83,13 +91,21 @@ function Player:fromName(name)
     end
 
     name = GL:formatPlayerName(name);
-    local playerID = UnitGUID(name);
+    local playerID = UnitGUID(GL:unitPlayerName(name));
 
     if (not playerID) then
         return false;
     end
 
-    return Player.fromID(playerID);
+    local Instance = Player.fromID(playerID);
+
+    -- In case GetPlayerInfoByGUID doesn't return the last name on Forever
+    if (Instance and GL.isForever and strfind(name, " ", 1, true)) then
+        Instance.name = name;
+        Instance.fqn = name;
+    end
+
+    return Instance;
 end
 
 --- Instantiate a new player object for the addon actor (current player)
@@ -138,7 +154,7 @@ function Player:hasAssist(playerNameOrID)
         local name, rank = GetRaidRosterInfo(index);
 
         -- Rank 1 = assist, 2 = lead
-        if (name == playerName) then
+        if (GL:playerNamesMatch(GL:groupMemberIdentity(name), playerName)) then
             return rank > 0;
         end
     end
@@ -177,7 +193,7 @@ function Player:hasLead(playerNameOrID)
         local name, rank = GetRaidRosterInfo(index);
 
         -- Rank 1 = assist, 2 = lead
-        if (GL:iEquals(GL:formatPlayerName(name), playerName)) then
+        if (GL:playerNamesMatch(GL:groupMemberIdentity(GL:formatPlayerName(name)), playerName)) then
             return rank == 2;
         end
     end
@@ -216,7 +232,9 @@ function Player:isMasterLooter(playerNameOrID)
 
     -- Master looting is active and this player is the master looter
     if (lootMethod == "master") then
-        return GL:iEquals(GetRaidRosterInfo(masterLooterIndex), GL:formatPlayerName(playerName));
+        local masterLooterName = GetRaidRosterInfo(masterLooterIndex);
+
+        return GL:playerNamesMatch(GL:groupMemberIdentity(masterLooterName), playerName);
     end
 
     return false;
@@ -240,7 +258,7 @@ function Player:classByName(playerName, default)
     end
 
     -- Attempt to fetch the player class
-    local classFile = UnitClassBase(playerName);
+    local classFile = UnitClassBase(GL:unitPlayerName(playerName));
 
     -- Player names can be stored for the entire session since
     -- it's impossible for them to change during runtime

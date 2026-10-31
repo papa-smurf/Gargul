@@ -216,7 +216,7 @@ function CommMessage:confirm()
         GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceID) or 0, "N"));
     end
 
-    GL.Ace:SendCommMessage(GL.Data.Constants.Comm.channel, encoded, "WHISPER", recipient, "ALERT");
+    GL.Ace:SendCommMessage(GL.Data.Constants.Comm.channel, encoded, "WHISPER", GL:unitPlayerName(recipient), "ALERT");
     return self;
 end
 

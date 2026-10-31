@@ -312,7 +312,7 @@ function GL:bugReport()
     for i = 1, GL.GetNumAddOns() do
         local name = GL.GetAddOnInfo(i);
         local version = GL.GetAddOnMetadata(i, "Version");
-        local loaded = GL.GetAddOnEnableState(GL.User.name, name) == 2;
+        local loaded = GL.GetAddOnEnableState(UnitName("player"), name) == 2;
 
         AddonData[name] = { version, loaded, };
     end
@@ -599,7 +599,7 @@ function GL:unitIsConnected(player)
         return UnitIsConnected(player);
     end
 
-    return UnitIsConnected(FQN);
+    return UnitIsConnected(self:unitPlayerName(FQN));
 end
 
 --- Play a sound

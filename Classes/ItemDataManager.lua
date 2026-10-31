@@ -36,7 +36,7 @@ function ItemDataManager:isEnabled()
     end
 
     -- Otherwise check enable state
-    local enableState = GL.GetAddOnEnableState(GL.User.name, name);
+    local enableState = GL.GetAddOnEnableState(UnitName("player"), name);
     return enableState == 2;
 end
 
@@ -46,10 +46,10 @@ end
 function ItemDataManager:enable()
     if (C_AddOns and C_AddOns.EnableAddOn) then
         -- Retail: enable for this character
-        C_AddOns.EnableAddOn("Gargul_ItemData", GL.User.name);
+        C_AddOns.EnableAddOn("Gargul_ItemData", UnitName("player"));
     elseif (EnableAddOn) then
         -- Classic: enable for this character
-        EnableAddOn("Gargul_ItemData", GL.User.name);
+        EnableAddOn("Gargul_ItemData", UnitName("player"));
     else
         return false;
     end

@@ -1148,12 +1148,12 @@ function RollOff:processRoll(message)
             RollType[4] = 10;
         end
 
-        local rollerName = GL:formatPlayerName(roller);
+        local rollerName = GL:groupMemberIdentity(GL:formatPlayerName(roller));
 
         --- Make sure the person who rolled is in our group
         for _, Player in pairs(GL.User:groupMembers()) do
             -- Rolls don't include a realm reference of any sort sadly
-            if (GL:iEquals(rollerName, Player.name)) then
+            if (GL:playerNamesMatch(rollerName, Player.name)) then
                 Roll = {
                     player = GL:nameIsUnique(Player.name) and GL:formatPlayerName(Player.fqn) or roller, -- Make sure to not assume the wrong realm-specific name!
                     class = Player.class,
@@ -1184,8 +1184,8 @@ function RollOff:processRoll(message)
         GL.BoostedRolls:consumeSoftresBonus(Roll.player, self.CurrentRollOff.itemID);
     end
 
-    if (GL:iEquals(Roll.player, GL.User.fqn)
-        or GL:iEquals(Roll.player, GL.User.name)
+    if (GL:playerNamesMatch(Roll.player, GL.User.fqn)
+        or GL:playerNamesMatch(Roll.player, GL.User.name)
     ) then
         self:sendEquippedGearIfNeeded(self.CurrentRollOff.initiator);
     end
@@ -1564,8 +1564,8 @@ end
 ---@param playerFQN string
 ---@return string|nil
 function RollOff:inspectUnitForPlayer(playerFQN)
-    if (GL:iEquals(playerFQN, GL.User.fqn)
-        or GL:iEquals(playerFQN, GL.User.name)
+    if (GL:playerNamesMatch(playerFQN, GL.User.fqn)
+        or GL:playerNamesMatch(playerFQN, GL.User.name)
     ) then
         return "player";
     end

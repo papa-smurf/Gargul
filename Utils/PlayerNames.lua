@@ -1,6 +1,185 @@
 ---@type GL
 local _, GL = ...;
 
+-- Forever has no realms, every character has a last name instead: "Cline Gloomhaunt".
+-- UnitName returns the last name where the realm normally goes, GetRealmName() is just a server label.
+-- Gargul stores "Cline Gloomhaunt", WoW functions that take a name (whisper, invite, Unit*) get "Cline-Gloomhaunt".
+
+local function capitalizeWords(value)
+    local Words = {};
+
+    for word in tostring(value):gmatch("%S+") do
+        table.insert(Words, (word:gsub("^%l", strupper)));
+    end
+
+    return table.concat(Words, " ");
+end
+
+--- Is this the server label GetRealmName() returns (spaces and hyphens ignored)?
+---
+---@param value? string
+---@return boolean
+local function isRealmName(value)
+    if (type(value) ~= "string" or value == "") then
+        return false;
+    end
+
+    local realm = (GetRealmName() or ""):gsub("[%s%-]", "");
+
+    return realm ~= "" and GL:iEquals(value:gsub("[%s%-]", ""), realm);
+end
+
+--- "Cline", "Gloomhaunt" becomes "Cline Gloomhaunt". A server label instead of a last name is dropped.
+---
+---@param firstName? string
+---@param lastName? string
+---@return string
+local function combineFirstAndLastName(firstName, lastName)
+    if (type(firstName) ~= "string" or firstName == "") then
+        return "";
+    end
+
+    if (type(lastName) == "string"
+        and lastName ~= ""
+        and not isRealmName(lastName)
+        and not strfind(firstName, " ", 1, true)
+        and not strfind(firstName, "-", 1, true)
+    ) then
+        return firstName .. " " .. lastName;
+    end
+
+    return firstName;
+end
+
+--- The spelling Gargul stores, e.g. "Cline-Gloomhaunt-ClassicBetaPvP2" becomes "Cline Gloomhaunt". No-op outside Forever.
+---
+---@param playerName? string
+---@return string
+function GL:storedPlayerName(playerName)
+    if (type(playerName) ~= "string" or playerName == "") then
+        return "";
+    end
+
+    if (not GL.isForever) then
+        return playerName;
+    end
+
+    playerName = strtrim(playerName);
+
+    local beforeHyphen, afterHyphen = strmatch(playerName, "^(.*)%-(.+)$");
+
+    if (beforeHyphen and beforeHyphen ~= "" and isRealmName(afterHyphen)) then
+        playerName = beforeHyphen;
+    end
+
+    if (not strfind(playerName, " ", 1, true)) then
+        local firstName, lastName = strmatch(playerName, "^([^%-]+)%-(.+)$");
+
+        if (firstName and lastName) then
+            playerName = firstName .. " " .. lastName;
+        end
+    end
+
+    return playerName;
+end
+
+--- The spelling WoW functions want (whisper, invite, mail, Unit*), e.g. "Cline Gloomhaunt" becomes "Cline-Gloomhaunt". No-op outside Forever.
+---
+---@param playerName? string
+---@return string?
+function GL:unitPlayerName(playerName)
+    if (not GL.isForever or type(playerName) ~= "string" or playerName == "") then
+        return playerName;
+    end
+
+    local storedName = self:storedPlayerName(playerName);
+    local firstName, lastName = strmatch(storedName, "^(%S+)%s+(.+)$");
+
+    if (firstName and lastName) then
+        return firstName .. "-" .. lastName;
+    end
+
+    return storedName;
+end
+
+--- A unit's name, including the last name on Forever
+---
+---@param unit string
+---@return string?
+function GL:playerNameFromUnit(unit)
+    local firstName, lastName = UnitName(unit);
+
+    if (not firstName or firstName == "") then
+        return nil;
+    end
+
+    if (not GL.isForever) then
+        return firstName;
+    end
+
+    return self:storedPlayerName(combineFirstAndLastName(firstName, lastName));
+end
+
+--- Use this instead of iEquals when comparing player names
+---
+---@param left? string
+---@param right? string
+---@return boolean
+function GL:playerNamesMatch(left, right)
+    if (not GL.isForever) then
+        return self:iEquals(left, right);
+    end
+
+    if (type(left) ~= "string" or type(right) ~= "string") then
+        return false;
+    end
+
+    return self:iEquals(self:storedPlayerName(left), self:storedPlayerName(right));
+end
+
+--- On Forever, turn a first name like "Cline" into "Cline Gloomhaunt" if exactly one group member is called Cline
+---
+---@param rosterName? string
+---@return string?
+function GL:groupMemberIdentity(rosterName)
+    if (not GL.isForever or type(rosterName) ~= "string" or rosterName == "") then
+        return rosterName;
+    end
+
+    local storedName = self:storedPlayerName(rosterName);
+
+    if (strfind(storedName, " ", 1, true)) then
+        return storedName;
+    end
+
+    local Matches = {};
+    local function consider(unit)
+        local fullName = self:playerNameFromUnit(unit);
+
+        if (fullName
+            and strfind(fullName, " ", 1, true)
+            and self:playerNamesMatch(UnitName(unit), rosterName)
+        ) then
+            Matches[strlower(fullName)] = fullName;
+        end
+    end
+
+    consider("player");
+
+    local unitPrefix = IsInRaid() and "raid" or "party";
+    for index = 1, GetNumGroupMembers() do
+        consider(unitPrefix .. index);
+    end
+
+    local match, numberOfMatches = nil, 0;
+    for _, fullName in pairs(Matches) do
+        match = fullName;
+        numberOfMatches = numberOfMatches + 1;
+    end
+
+    return numberOfMatches == 1 and match or storedName;
+end
+
 ---@class FormatPlayerNameOptions
 ---@field realm? string Override the realm value
 ---@field includeRealm? "always"|"never"|"auto" Realm inclusion (default: "auto")
@@ -12,7 +191,7 @@ local _, GL = ...;
 ---@field class? string Class file for colorizing (e.g. "DRUID")
 ---@field decorator? function|function[] Post-process functions (e.g. strlower)
 
---- Format player name with optional styling and realm handling.
+--- Format player name with optional styling and realm handling (on Forever Options.realm is treated as a last name).
 --- Usage: GL:formatPlayerName("PlayerName") or GL:formatPlayerName("PlayerName", { colorize = true, })
 ---
 ---@param name string Required player name
@@ -33,32 +212,44 @@ function GL:formatPlayerName(name, Options)
     local Decorators = Options.decorator;
     Decorators = (type(Decorators) == "table" and Decorators) or (Decorators and { Decorators } or {});
 
-    local realm;
-    name, realm = self:stripRealm(name);
-    local nameWithoutRealm = name;
-    realm = realmOverride or realm;
-    name = realm and ("%s-%s"):format(self:capitalize(name), self:capitalize(realm)) or self:capitalize(name);
+    if (GL.isForever) then
+        name = capitalizeWords(self:storedPlayerName(combineFirstAndLastName(name, realmOverride)));
 
-    -- Handle realm inclusion mode
-    if (includeRealm == "never") then
-        name = self:stripRealm(name);
-    elseif (includeRealm == "always") then
-        name, realm = self:addRealm(name);
-    elseif (includeRealm == "auto") then
-        -- Include realm only if different from ours
-        if (realm and self:iEquals(realm, GL.User.realm)) then
-            name = self:stripRealm(name);
+        if (colorize) then
+            class = class or UnitClassBase(self:unitPlayerName(name));
         end
+    else
+        local realm;
+        name, realm = self:stripRealm(name);
+        local nameWithoutRealm = name;
+        realm = realmOverride or realm;
+        name = realm and ("%s-%s"):format(self:capitalize(name), self:capitalize(realm)) or self:capitalize(name);
+
+        -- Handle realm inclusion mode
+        if (includeRealm == "never") then
+            name = self:stripRealm(name);
+        elseif (includeRealm == "always") then
+            name, realm = self:addRealm(name);
+        elseif (includeRealm == "auto") then
+            -- Include realm only if different from ours
+            if (realm and self:iEquals(realm, GL.User.realm)) then
+                name = self:stripRealm(name);
+            end
+        end
+
+        if (colorize) then
+            class = class or UnitClassBase(name);
+
+            -- UnitClassBase doesn't work on FQNs on the same realm
+            if (not class and realm and self:iEquals(realm, GL.User.realm)) then
+                class = UnitClassBase(nameWithoutRealm);
+            end
+        end
+
+        name = self:capitalize(name);
     end
 
     if (colorize) then
-        class = class or UnitClassBase(name);
-
-        -- UnitClassBase doesn't work on FQNs on the same realm
-        if (not class and realm and self:iEquals(realm, GL.User.realm)) then
-            class = UnitClassBase(nameWithoutRealm);
-        end
-
         if (not class) then
             name = ("|c00%s%s|r"):format(defaultColor or "FFFFFF", name);
         else
@@ -66,7 +257,7 @@ function GL:formatPlayerName(name, Options)
         end
     end
 
-    name = strtrim(self:capitalize(name));
+    name = strtrim(name);
     for _, strFunc in pairs(Decorators) do
         if (strFunc) then
             name = strFunc(name);
@@ -100,6 +291,11 @@ function GL:stripRealm(playerName)
         return "";
     end
 
+    -- On Forever "Cline-Gloomhaunt" is a last name, not a realm
+    if (GL.isForever) then
+        return self:storedPlayerName(playerName), nil;
+    end
+
     local separator = playerName:match("-");
 
     -- No realm separator was found, return the original message
@@ -111,13 +307,17 @@ function GL:stripRealm(playerName)
     return Parts[1], Parts[2];
 end
 
---- Add a realm to a player name if one isn't present
+--- Add a realm to a player name if one isn't present (on Forever only a last name is added, never the server label)
 ---
 ---@param name string
 ---@param realm? string
 ---@param fromGroup? boolean
 ---@return string, string?
 function GL:addRealm(name, realm, fromGroup)
+    if (GL.isForever) then
+        return self:storedPlayerName(combineFirstAndLastName(name, realm)), nil;
+    end
+
     realm = not self:empty(realm) and realm or nil;
     fromGroup = fromGroup ~= false;
     name = tostring(name);
@@ -165,6 +365,13 @@ function GL:getRealmFromName(playerName)
         return false;
     end
 
+    -- On Forever "Cline-Gloomhaunt" is a last name, only a trailing server label counts
+    if (GL.isForever) then
+        local _, afterHyphen = strmatch(playerName, "^(.*)%-(.+)$");
+
+        return isRealmName(afterHyphen) and afterHyphen or false;
+    end
+
     local separator = playerName:match("-");
 
     -- No realm separator was found, return the original message
@@ -185,7 +392,7 @@ function GL:nameIsUnique(playerName)
     playerName = GL:stripRealm(playerName);
     local nameEncountered = false;
     for _, groupMemberName in pairs(GL.User:groupMemberNames()) do
-        if (self:iEquals(playerName, groupMemberName)) then
+        if (self:playerNamesMatch(playerName, groupMemberName)) then
             -- We already encountered this name before, NOT UNIQUE!
             if (nameEncountered) then
                 return false;
@@ -205,8 +412,11 @@ end
 function GL:normalizedName(playerName)
     GL:debug("GL:normalizedName");
 
-    -- Not on Forever: it has one mega-realm and last names, so a dash isn't a realm separator.
-    if (GL.isEra and not GL.isForever and not strfind(playerName, "-")) then
+    if (GL.isForever) then
+        return strlower(self:storedPlayerName(playerName));
+    end
+
+    if (GL.isEra and not strfind(playerName, "-")) then
         playerName = ("%s-%s"):format(playerName, GL.User.realm);
     end
 
@@ -219,7 +429,7 @@ end
 ---@param default? string Default class if not found (default: "PRIEST")
 ---@return string
 function GL:playerClassByName(name, default)
-    local class = UnitClassBase(name);
+    local class = UnitClassBase(self:unitPlayerName(name));
 
     if (class) then
         return class;

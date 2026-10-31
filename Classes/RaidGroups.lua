@@ -228,12 +228,12 @@ function RaidGroups:drawImporter()
             question = L["Are you sure?"],
             OnYes = function ()
                 GL:forEachGroupMember(function (Member)
-                    if (GL:iEquals(strlower(Member.name), GL.User.name)) then
+                    if (GL:playerNamesMatch(Member.name, GL.User.name)) then
                         return;
                     end
 
                     -- Kick the player!
-                    UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
+                    UninviteUnit(GL:unitPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
                 end);
             end
         });
@@ -434,9 +434,9 @@ function RaidGroups:listPlayerNames(raidGroupCsv)
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
-                and strlower(playerName) ~= strlower(GL.User.name) -- No need to invite ourselves
+                and not GL:playerNamesMatch(playerName, GL.User.name) -- No need to invite ourselves
             ) then
-                tinsert(PlayerNames, playerName);
+                tinsert(PlayerNames, GL:storedPlayerName(playerName));
             end
         end
     end
@@ -469,7 +469,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
         Player.name = strlower(Player.name);
         PlayersInRaid[Player.name] = true;
 
-        if (not GL:iEquals(GL.User.name, Player.name)
+        if (not GL:playerNamesMatch(GL.User.name, Player.name)
             and not GL:inTable(PlayersOnRoster, Player.name)
         ) then
             tinsert(UnknownPlayers, Player.name);
@@ -509,11 +509,11 @@ function RaidGroups:kickUnwanted(raidGroupCsv)
     WantedPlayers = GL:tableFlip(WantedPlayers);
 
     GL:forEachGroupMember(function (Member)
-        if (not GL:iEquals(strlower(Member.name), GL.User.name)
+        if (not GL:playerNamesMatch(Member.name, GL.User.name)
             and not WantedPlayers[strlower(Member.name)]
         ) then
             -- Kick the player!
-            UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
+            UninviteUnit(GL:unitPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
         end
     end);
 end
@@ -761,8 +761,8 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         for index = 1, _G.MAX_RAID_MEMBERS do
             local nameOnIndex = GetRaidRosterInfo(index);
 
-            if (GL:iEquals(name, nameOnIndex)
-                or GL:iEquals(name, GL:disambiguateName(nameOnIndex))
+            if (GL:playerNamesMatch(name, nameOnIndex)
+                or GL:playerNamesMatch(name, GL:disambiguateName(nameOnIndex))
             ) then
                 leftIndex = index;
                 break;

@@ -36,6 +36,11 @@ local hasOverrides = false;
 --- Dots are stripped since they're the settings path separator
 ---@return string
 local function characterKey()
+    -- Forever has no realms, the server label isn't part of the name there
+    if (GL.isForever) then
+        return ((GL:playerNameFromUnit("player") or ""):gsub("%.", ""));
+    end
+
     local realm = (GetRealmName() or ""):gsub("[%s%-%.]", "");
     return ("%s-%s"):format(UnitName("player") or "", realm);
 end
@@ -171,6 +176,7 @@ end
 ---@return nil
 function Settings:refreshCharacterOverrides()
     Overrides = GL:tableGet(self.Active, ("PerCharacter.%s"):format(characterKey()));
+
     hasOverrides = Overrides ~= nil and next(Overrides) ~= nil;
 end
 

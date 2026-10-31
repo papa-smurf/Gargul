@@ -39,7 +39,10 @@ GL.LE_ITEM_BIND_QUEST = (Enum and Enum.ItemBind and Enum.ItemBind.Quest) or 4;
 GL.LE_ITEM_MISCELLANEOUS_SUBCLASS_COMPANION_PET = (Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.CompanionPet) or 2;
 
 -- PartyInfo
-GL.InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
+local inviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
+GL.InviteUnit = function (name)
+    return inviteUnit(GL:unitPlayerName(name));
+end;
 
 -- UI reload: C_UI.Reload exists from 1.13.2+, ReloadUI is legacy alias
 GL.ReloadUI = C_UI and C_UI.Reload or ReloadUI;
@@ -50,6 +53,8 @@ GL.ReloadUI = C_UI and C_UI.Reload or ReloadUI;
 ---
 ---@test /script _G.Gargul.SetLootMethod("master", _G.Gargul.User.name, "common");
 GL.SetLootMethod = function (method, player, threshold)
+    player = GL:unitPlayerName(player);
+
     if (not GL.User.isInGroup) then
         return print(ERR_NOT_IN_GROUP);
     end

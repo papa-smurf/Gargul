@@ -308,6 +308,10 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
         end
     end
 
+    if (chatType == "WHISPER") then
+        channel = GL:unitPlayerName(channel);
+    end
+
     if (not pretend and not GL.isMuted) then
         SendChatMessage(
             message,

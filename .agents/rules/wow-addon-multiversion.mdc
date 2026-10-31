@@ -12,7 +12,7 @@ Gargul supports: **Era (11508)**, **Forever (16001)**, **BCC (20505)**, **Wrath 
 
 Use existing flags from `bootstrap.lua`:
 - `GL.isEra` — tocVersion < 20000 (true on Forever too)
-- `GL.isForever` — Forever/Camelot, tocVersion 16xxx. Era behavior, modern APIs: exclude it from Era branches that assume an API is missing. Untested in-game, no dump yet.
+- `GL.isForever` — Forever/Camelot, tocVersion 16xxx. Era rules, modern client. No realms, characters have a last name instead: `UnitName` returns it where the realm normally goes, `GetRealmName()` is just a server label and never part of a name. Gargul stores "Cline Gloomhaunt" (`GL:storedPlayerName`), WoW functions that take a name (whisper, invite, mail, `Unit*`) get "Cline-Gloomhaunt" (`GL:unitPlayerName`). Compare player names with `GL:playerNamesMatch`, never `GL:iEquals`. Exclude Forever from Era branches that assume an API is missing. Last name behavior is from player reports, not verified in-game.
 - `GL.isClassic` — BCC/Wrath/Cata/Mists (not Era, not Retail)
 - `GL.isRetail` — tocVersion >= 90000
 - `GL.isSoD` — Era + Season of Discovery

@@ -228,8 +228,9 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local traceID = CommMessage.traceID;
     GL.CommRecorder:recordSend(action, priority, distribution, recipient, stringLength, traceID);
     local sendStartedAt = GetTime();
+    local wowRecipient = distribution == "WHISPER" and GL:unitPlayerName(recipient) or recipient;
 
-    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, priority, function (_, sent, textlen)
+    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, wowRecipient, priority, function (_, sent, textlen)
         -- Cancel the throttle reset timer if it exists
         if (throttleResetTimer) then
             GL.Ace:CancelTimer(throttleResetTimer);
@@ -296,8 +297,8 @@ function Comm:listen(payload, distribution, playerName)
     if (type(payload) ~= "table"
         -- This message is not meant for us (this can happen when whispers are forcefully sent on raid/group etc
         or (payload.recipient and (
-            not GL:iEquals(payload.recipient, GL.User.fqn)
-            and not GL:iEquals(payload.recipient, GL.User.name)
+            not GL:playerNamesMatch(payload.recipient, GL.User.fqn)
+            and not GL:playerNamesMatch(payload.recipient, GL.User.name)
         ))
     ) then
         GL.CommRecorder:recordDrop(GL.CommRecorder.DropReason.notForMe, type(payload) == "table" and payload.action or nil, playerName);
@@ -309,8 +310,9 @@ function Comm:listen(payload, distribution, playerName)
     if (not payload.senderFqn and playerName) then
         payload.senderFqn = GL:formatPlayerName(playerName, { includeRealm = "always", });
     elseif (payload.senderFqn) then
-        local ciSenderFqn = strlower(strtrim(payload.senderFqn));
-        local ciPlayerName = strlower(strtrim(playerName));
+        -- On Forever the sender can be "Cline Gloomhaunt" or "Cline-Gloomhaunt"
+        local ciSenderFqn = strlower(strtrim(GL:storedPlayerName(payload.senderFqn)));
+        local ciPlayerName = strlower(strtrim(GL:storedPlayerName(playerName)));
 
         -- This indicates potential source code tampering
         if (not GL:strStartsWith(ciSenderFqn, ciPlayerName)) then
@@ -337,8 +339,8 @@ function Comm:listen(payload, distribution, playerName)
 
     -- Was this sent by ourself?
     Sender.isSelf = GL:iEquals(Sender.id, GL.User.id)
-        or GL:iEquals(playerName, GL.User.name)
-        or GL:iEquals(Sender.name, GL.User.name);
+        or GL:playerNamesMatch(playerName, GL.User.name)
+        or GL:playerNamesMatch(Sender.name, GL.User.name);
 
     -- The person sending us the message has an old version that's not compatible with ours, let him know!
     if (not Sender.isSelf

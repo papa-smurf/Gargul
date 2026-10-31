@@ -462,7 +462,8 @@ function MailCuts:mailPlayerCut(player, callback)
     SetSendMailMoney(outstandingCopper);
 
     player = GL:formatPlayerName(player);
-    SendMail(player, (self.cutMailSubject):format(gold), GL:printfn(self.cutMailBody, {
+    -- Assumed, not verified: Forever mail wants "Cline-Gloomhaunt" like whispers do
+    SendMail(GL:unitPlayerName(player), (self.cutMailSubject):format(gold), GL:printfn(self.cutMailBody, {
         cut = gold,
         player = player,
     }));
