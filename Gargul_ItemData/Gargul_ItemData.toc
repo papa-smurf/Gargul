@@ -30,7 +30,7 @@
 ## Notes-zhTW: Gargul 的可選物品快取。允許玩家搜尋物品。
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## Author: Gargul
-## Version: 1.0.1
+## Version: 1.0.2
 ## Dependencies: Gargul
 ## DefaultState: enabled
 ## LoadOnDemand: 1
