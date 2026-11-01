@@ -1,4 +1,4 @@
-## Interface: 120100, 120001
+## Interface: 120105, 120107
 ## Interface-Classic: 11509
 ## Interface-Camelot: 16001
 ## Interface-BCC: 20506
@@ -42,7 +42,7 @@
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## OptionalDeps: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibDeflate, LibSerialize, Masque, LibCustomGlow, ChatThrottleLib
 ## Author: Zhorax - Firemaw
-## Version: 8.0.1
+## Version: 8.0.2
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul

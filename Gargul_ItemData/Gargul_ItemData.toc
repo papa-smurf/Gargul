@@ -1,4 +1,4 @@
-## Interface: 120100, 120001
+## Interface: 120105, 120107
 ## Interface-Classic: 11509
 ## Interface-Camelot: 16001
 ## Interface-BCC: 20506
