@@ -15,13 +15,15 @@ Map the request to a level:
 
 Git network access is required (`git fetch`/`push` to origin). Run everything from the repo root.
 
+Every commit and push must be made as `papa-smurf <4224975+papa-smurf@users.noreply.github.com>`, never a real name or email. The script forces that identity and refuses to push unpushed commits made by anyone else. Never commit, tag, or push for a release outside the script, and never bypass its identity check (e.g. by amending or rebasing other commits) without the user explicitly asking.
+
 ## 1. Preview
 
 ```bash
 python3 .agents/skills/release/scripts/release.py <level>
 ```
 
-This changes nothing. It aborts if HEAD is detached, the branch is behind its upstream, `Gargul.toc` or `Data/Constants.lua` has uncommitted changes, or the tag already exists. On error, report the message and stop; don't work around it.
+This changes nothing. It aborts if HEAD is detached, the branch is behind its upstream, an unpushed commit has a different author or committer, `Gargul.toc` or `Data/Constants.lua` has uncommitted changes, or the tag already exists. On error, report the message and stop; don't work around it.
 
 ## 2. Confirm
 
@@ -38,6 +40,7 @@ About to release v8.0.3, you sure?
 - Version: 8.0.2 → 8.0.3
 - minimumAppVersion: 8.0.0 → 8.0.1
 - Commit "Version v8.0.3" pushed to origin/master, tag v8.0.3 pushed
+- As papa-smurf <4224975+papa-smurf@users.noreply.github.com>
 ```
 
 Without changed files, start with "About to release vX.Y.Z, you sure?".

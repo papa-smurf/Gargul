@@ -9,9 +9,13 @@ Bumps "## Version" in Gargul.toc and raises Comm.minimumAppVersion in Data/Const
 to the newest vX.Y.Z tag that is at least one calendar month old (never lowers it).
 Commits only those two files as "Version vX.Y.Z", pushes, then creates and pushes tag vX.Y.Z.
 Without --confirm nothing is changed; --confirm must match the previewed tag.
+
+Every git call runs as IDENTITY regardless of git config or environment, and nothing is pushed
+unless all unpushed commits are authored and committed by IDENTITY.
 """
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -26,13 +30,23 @@ TOC_VERSION_RE = re.compile(r"^(## Version: )(\d+\.\d+\.\d+)[ \t]*$", re.MULTILI
 MIN_VERSION_RE = re.compile(r'^([ \t]*minimumAppVersion = ")(\d+\.\d+\.\d+)(",)', re.MULTILINE)
 TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 
+IDENTITY_NAME = "papa-smurf"
+IDENTITY_EMAIL = "4224975+papa-smurf@users.noreply.github.com"
+GIT_ENV = {
+    **os.environ,
+    "GIT_AUTHOR_NAME": IDENTITY_NAME,
+    "GIT_AUTHOR_EMAIL": IDENTITY_EMAIL,
+    "GIT_COMMITTER_NAME": IDENTITY_NAME,
+    "GIT_COMMITTER_EMAIL": IDENTITY_EMAIL,
+}
+
 
 class ReleaseError(Exception):
     pass
 
 
 def run(*cmd):
-    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env=GIT_ENV)
     if result.returncode != 0:
         raise ReleaseError(f"`{' '.join(cmd)}` failed: {result.stderr.strip() or result.stdout.strip()}")
     return result.stdout.strip()
@@ -75,6 +89,20 @@ def newest_tag_older_than(cutoff):
     return best
 
 
+def assert_unpushed_identity(upstream):
+    expected = f"{IDENTITY_NAME} <{IDENTITY_EMAIL}>"
+    log = run("git", "log", f"{upstream}..HEAD", "--format=%h%x00%an <%ae>%x00%cn <%ce>%x00%s")
+    offenders = []
+    for line in log.splitlines():
+        sha, author, committer, subject = line.split("\x00", 3)
+        if author != expected or committer != expected:
+            offenders.append(f"    {sha} author: {author}, committer: {committer} ({subject})")
+    if offenders:
+        raise ReleaseError(
+            f"Unpushed commits not made by {expected} would be pushed; nothing pushed:\n" + "\n".join(offenders)
+        )
+
+
 def single_match(regex, text, path):
     matches = regex.findall(text)
     if len(matches) != 1:
@@ -97,6 +125,7 @@ def main():
     behind = int(run("git", "rev-list", "--count", f"HEAD..{upstream}"))
     if behind:
         raise ReleaseError(f"{branch} is {behind} commit(s) behind {upstream}; pull first")
+    assert_unpushed_identity(upstream)
 
     for path in (TOC, CONSTANTS):
         relative = str(path.relative_to(ROOT))
@@ -129,6 +158,7 @@ def main():
     print(f"Month-old cutoff:  {cutoff:%Y-%m-%d} (newest tag before it: {'v' + fmt(candidate) if candidate else 'none'})")
     print(f"minimumAppVersion: {fmt(current_minimum)} -> {fmt(new_minimum)}")
     print(f"Commit + tag:      Version {tag} / {tag}")
+    print(f"Git identity:      {IDENTITY_NAME} <{IDENTITY_EMAIL}>")
 
     if args.confirm is None:
         print(f"Preview only: nothing changed. Release with --confirm {tag}")
@@ -143,7 +173,8 @@ def main():
 
     files = [str(TOC.relative_to(ROOT)), str(CONSTANTS.relative_to(ROOT))]
     run("git", "add", "--", *files)
-    run("git", "commit", "--only", "-m", f"Version {tag}", "--", *files)
+    run("git", "-c", "commit.gpgsign=false", "commit", "--only", "-m", f"Version {tag}", "--", *files)
+    assert_unpushed_identity(upstream)
     run("git", "push", "origin", branch)
     run("git", "tag", tag)
     run("git", "push", "origin", tag)
