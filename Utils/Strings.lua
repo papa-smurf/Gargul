@@ -430,8 +430,15 @@ end
 function GL:separateValues(s)
     local Segments = {};
 
-    for match in string.gmatch(s, "[^%s,]+") do
-        tinsert(Segments, match);
+    -- Forever names contain a space ("Cline Gloomhaunt"), so only commas and tabs separate values there
+    local pattern = GL.isForever and "[^\t,]+" or "[^%s,]+";
+
+    for match in string.gmatch(s, pattern) do
+        match = strtrim(match);
+
+        if (match ~= "") then
+            tinsert(Segments, match);
+        end
     end
 
     return Segments;

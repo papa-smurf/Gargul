@@ -203,7 +203,7 @@ GL.Commands = GL.Commands or {
                 winner = nil;
             end
 
-            if (not winner or winner == "" or not itemLink) then
+            if (not winner or winner == "" or not GL:getItemIDFromLink(itemLink)) then
                 if (GL:getItemIDFromLink(winner)) then
                     itemLink = winner;
                 end
@@ -275,7 +275,7 @@ GL.Commands = GL.Commands or {
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
 
         -- sets the disenchanter
-        setdisenchanter = function (...) GL.PackMule:setDisenchanter(...); end,
+        setdisenchanter = function (...) GL.PackMule:setDisenchanter(strjoin(" ", ...)); end,
 
         -- Clear all plus ones
         clearplusones = function () GL.PlusOnes:clearPlusOnes(); end,

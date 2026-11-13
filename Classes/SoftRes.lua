@@ -138,7 +138,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
 
     -- Fetch everything soft-reserved by the sender
     local Reserves = GL:tableGet(self.MaterializedData.DetailsByPlayerName, ("%s.Items"):format(
-        strlower(name)
+        GL:playerNameKey(name)
     ), {});
 
     -- Nothing reserved
@@ -350,7 +350,7 @@ function SoftRes:materializeData()
 
     for _, SoftResEntry in pairs(DB:get("SoftRes.SoftReserves", {})) do
         local class = strlower(SoftResEntry.class or "");
-        local name = strlower(SoftResEntry.name or "");
+        local name = GL:playerNameKey(SoftResEntry.name or "");
         local note = SoftResEntry.note or "";
         local plusOnes = SoftResEntry.plusOnes or 0;
 
@@ -500,7 +500,7 @@ end
 ---@param name string The name of the player
 ---@return table
 function SoftRes:getDetailsForPlayer(name)
-    name = strlower(name);
+    name = GL:playerNameKey(name);
 
     if (GL:empty(name)) then
         return {};
@@ -514,7 +514,7 @@ end
 ---@param name string The name of the player
 ---@param defaultClass string|nil The default class in case the player's class could not be determined
 function SoftRes:getPlayerClass(name, defaultClass)
-    name = strlower(name);
+    name = GL:playerNameKey(name);
     defaultClass = defaultClass or "priest";
 
     -- We try to fetch the class from the softreserve data first
@@ -638,7 +638,7 @@ function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
     for _, itemID in pairs(AllLinkedItemIDs or {}) do
         if (GL:inTable(
             SoftResData[tostring(itemID)] or {},
-            strlower(GL:disambiguateName(playerName))
+            GL:playerNameKey(GL:disambiguateName(playerName))
         )) then
             return true;
         end
@@ -880,7 +880,7 @@ function SoftRes:playerReservesOnItem(idOrLink, playerName)
 
     for _, itemID in pairs(AllLinkedItemIDs or {}) do
         reserved = reserved + GL:tableGet(self.MaterializedData.DetailsByPlayerName, ("%s.Items.%s"):format(
-            strlower(playerName),
+            GL:playerNameKey(playerName),
             itemID
         ), 0);
     end
@@ -1380,7 +1380,7 @@ function SoftRes:importCSVData(data, reportStatus)
                     class = "death knight";
                 end
 
-                playerName = strlower(playerName);
+                playerName = GL:playerNameKey(playerName);
 
                 if (not SoftReserveData[playerName]) then
                     SoftReserveData[playerName] = {
@@ -1472,7 +1472,7 @@ function SoftRes:proposeNameFixes()
     local MemberByFoldedName = {};
     local ambiguousFold = {};
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        playerName = strlower(playerName);
+        playerName = GL:playerNameKey(playerName);
         local folded = GL:foldName(playerName);
 
         tinsert(GroupMemberNames, playerName);
@@ -1498,7 +1498,7 @@ function SoftRes:proposeNameFixes()
     local Variants = {};
     local VariantsByFold = {};
     for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
-        local member = MemberByName[strlower(Reservation.name)];
+        local member = MemberByName[GL:playerNameKey(Reservation.name)];
 
         if (member) then
             MemberReserved[member] = true;
@@ -1516,6 +1516,11 @@ function SoftRes:proposeNameFixes()
     for _, Reservation in pairs(Variants) do
         local folded = GL:foldName(Reservation.name);
         local member = not ambiguousFold[folded] and MemberByFoldedName[folded] or nil;
+
+        -- Forever reserves often only hold a first name, groupMemberIdentity links it if one member has that first name
+        if (not member and GL.isForever) then
+            member = MemberByName[GL:playerNameKey(GL:groupMemberIdentity(Reservation.name))];
+        end
 
         if (member
             and not MemberReserved[member]
@@ -1771,7 +1776,7 @@ function SoftRes:playersWithoutSoftReserves()
     -- Materialized data is available, use it!
     if (not GL:empty(self.MaterializedData.DetailsByPlayerName)) then
         for _, playerName in pairs(GL.User:groupMemberNames()) do
-            if (not self.MaterializedData.DetailsByPlayerName[strlower(playerName)]) then
+            if (not self.MaterializedData.DetailsByPlayerName[GL:playerNameKey(playerName)]) then
                 tinsert(PlayerNames, GL:capitalize(playerName));
             end
         end
@@ -1782,11 +1787,11 @@ function SoftRes:playersWithoutSoftReserves()
     -- No materialized data yet, use the raw softres data instead
     local GroupMemberReserved = {};
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        GroupMemberReserved[strlower(playerName)] = false;
+        GroupMemberReserved[GL:playerNameKey(playerName)] = false;
     end
 
     for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
-        GroupMemberReserved[strlower(Reservation.name)] = true;
+        GroupMemberReserved[GL:playerNameKey(Reservation.name)] = true;
     end
 
     for name, reserved in pairs(GroupMemberReserved) do

@@ -22,19 +22,23 @@ function MasterLooting:draw(Parent)
         LootThresholdLabel:SetFullWidth(true);
         Parent:AddChild(LootThresholdLabel);
 
+        -- Poor and common items are never master looted, regardless of the threshold
         local DropdownItems = {
-            [0] = "0 - Poor",
-            [1] = "1 - Common",
             [2] = "2 - Uncommon",
             [3] = "3 - Rare",
             [4] = "4 - Epic",
             [5] = "5 - Legendary",
         };
 
+        local preferredThreshold = GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2);
+        if (not DropdownItems[preferredThreshold]) then
+            preferredThreshold = 2;
+        end
+
         local LootThreshold = GL.AceGUI:Create("Dropdown");
-        LootThreshold:SetValue(GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2));
+        LootThreshold:SetValue(preferredThreshold);
         LootThreshold:SetList(DropdownItems);
-        LootThreshold:SetText(DropdownItems[GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2)]);
+        LootThreshold:SetText(DropdownItems[preferredThreshold]);
         LootThreshold:SetWidth(150);
         LootThreshold:SetCallback("OnValueChanged", function ()
             GL.Settings:set("MasterLooting.preferredMasterLootingThreshold", LootThreshold:GetValue());

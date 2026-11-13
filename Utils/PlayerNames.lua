@@ -3,7 +3,8 @@ local _, GL = ...;
 
 -- Forever has no realms, every character has a last name instead: "Cline Gloomhaunt".
 -- UnitName returns the last name where the realm normally goes, GetRealmName() is just a server label.
--- Gargul stores "Cline Gloomhaunt", WoW functions that take a name (whisper, invite, Unit*) get "Cline-Gloomhaunt".
+-- Gargul stores "Cline Gloomhaunt". Whispers, invites and mail get "Cline-Gloomhaunt" (see unitPlayerName),
+-- Unit* functions and anything that targets a group member (SetLootMethod, UninviteUnit) only resolve "Cline Gloomhaunt".
 
 local function capitalizeWords(value)
     local Words = {};
@@ -83,7 +84,8 @@ function GL:storedPlayerName(playerName)
     return playerName;
 end
 
---- The spelling WoW functions want (whisper, invite, mail, Unit*), e.g. "Cline Gloomhaunt" becomes "Cline-Gloomhaunt". No-op outside Forever.
+--- The spelling whisper, invite and mail functions want, e.g. "Cline Gloomhaunt" becomes "Cline-Gloomhaunt". No-op outside Forever.
+--- Never pass this to Unit* functions, those need the stored spelling (see storedPlayerName).
 ---
 ---@param playerName? string
 ---@return string?
@@ -118,6 +120,40 @@ function GL:playerNameFromUnit(unit)
     end
 
     return self:storedPlayerName(combineFirstAndLastName(firstName, lastName));
+end
+
+--- A player's name by GUID, including the last name on Forever
+---
+---@param GUID string
+---@return string?
+function GL:playerNameFromGUID(GUID)
+    if (type(GUID) ~= "string" or GUID == "") then
+        return nil;
+    end
+
+    -- GetPlayerInfoByGUID isn't guaranteed to return the last name, a unit's UnitName is
+    if (GL.isForever) then
+        if (UnitGUID("player") == GUID) then
+            return self:playerNameFromUnit("player");
+        end
+
+        local unitPrefix = IsInRaid() and "raid" or "party";
+        for index = 1, GetNumGroupMembers() do
+            local unit = unitPrefix .. index;
+
+            if (UnitGUID(unit) == GUID) then
+                return self:playerNameFromUnit(unit);
+            end
+        end
+    end
+
+    local _, _, _, _, _, name, realm = GetPlayerInfoByGUID(GUID);
+
+    if (type(name) ~= "string" or name == "") then
+        return nil;
+    end
+
+    return self:formatPlayerName(name, { realm = realm, });
 end
 
 --- Use this instead of iEquals when comparing player names
@@ -216,7 +252,7 @@ function GL:formatPlayerName(name, Options)
         name = capitalizeWords(self:storedPlayerName(combineFirstAndLastName(name, realmOverride)));
 
         if (colorize) then
-            class = class or UnitClassBase(self:unitPlayerName(name));
+            class = class or UnitClassBase(name);
         end
     else
         local realm;
@@ -423,13 +459,21 @@ function GL:normalizedName(playerName)
     return strlower(playerName);
 end
 
+--- Lowercased stored spelling, use this for table keys so "Cline-Gloomhaunt" and "Cline Gloomhaunt" share one on Forever. Plain strlower elsewhere.
+---
+---@param playerName? string
+---@return string
+function GL:playerNameKey(playerName)
+    return strlower(self:storedPlayerName(playerName));
+end
+
 --- Get a player's class by name
 ---
 ---@param name string
 ---@param default? string Default class if not found (default: "PRIEST")
 ---@return string
 function GL:playerClassByName(name, default)
-    local class = UnitClassBase(self:unitPlayerName(name));
+    local class = UnitClassBase(self:storedPlayerName(name));
 
     if (class) then
         return class;

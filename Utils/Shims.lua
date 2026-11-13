@@ -53,7 +53,7 @@ GL.ReloadUI = C_UI and C_UI.Reload or ReloadUI;
 ---
 ---@test /script _G.Gargul.SetLootMethod("master", _G.Gargul.User.name, "common");
 GL.SetLootMethod = function (method, player, threshold)
-    player = GL:unitPlayerName(player);
+    player = player and GL:storedPlayerName(player) or nil;
 
     if (not GL.User.isInGroup) then
         return print(ERR_NOT_IN_GROUP);

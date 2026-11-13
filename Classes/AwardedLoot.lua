@@ -816,7 +816,7 @@ function AwardedLoot:byWinner(winner, after)
     local Entries = {};
     for checksum, AwardEntry in pairs(DB:get("AwardHistory")) do
         if ((not after or AwardEntry.timestamp > after)
-            and AwardEntry.awardedTo == winner
+            and GL:playerNamesMatch(AwardEntry.awardedTo, winner)
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
         ) then

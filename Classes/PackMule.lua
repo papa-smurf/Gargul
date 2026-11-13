@@ -667,7 +667,7 @@ function PackMule:lootReady()
 
                 target = GL:formatPlayerName(target);
                 for playerIndex = 1, GetNumGroupMembers() do
-                    if (GL:playerNamesMatch(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
+                    if (GL:playerNamesMatch(GL:groupMemberIdentity(GetMasterLootCandidate(itemIndex, playerIndex)) or "", target)) then
                         self:giveMasterLoot(itemIndex, playerIndex, itemLink, target);
                         return;
                     end
@@ -880,7 +880,21 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         local Targets = {};
 
         -- Commas separate entries so names can contain spaces, older rules use spaces
-        local RuleTargets = GL:explode(ruleTarget, strfind(ruleTarget, ",", 1, true) and "," or " ");
+        local separator = strfind(ruleTarget, ",", 1, true) and "," or " ";
+
+        -- Forever names contain a space ("Cline Gloomhaunt"), so a comma-less rule is one name unless it only holds placeholders
+        if (GL.isForever and separator == " ") then
+            local Placeholders = { L["SELF"], L["DE"], L["RR"], L["RANDOM"], L["PASS"], L["GREED"], L["NEED"], L["IGNORE"], };
+
+            for _, word in pairs(GL:explode(ruleTarget, " ")) do
+                if (word ~= "" and not GL:inTable(Placeholders, (word:gsub("!", "")))) then
+                    separator = ",";
+                    break;
+                end
+            end
+        end
+
+        local RuleTargets = GL:explode(ruleTarget, separator);
         local GroupMemberNames = GL.User:groupMemberNames(true);
 
         for _, ruleTarget in pairs(RuleTargets) do
@@ -1287,7 +1301,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
         local candidate = GetMasterLootCandidate(itemIndex, Player.index);
 
         if (candidate) then
-            candidate = GL:addRealm(candidate);
+            candidate = GL:addRealm(GL:groupMemberIdentity(candidate));
 
             if (candidate and GL:playerNamesMatch(candidate, playerName)) then
                 playerIndex = Player.index;

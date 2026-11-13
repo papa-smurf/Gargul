@@ -1104,6 +1104,8 @@ function RollOff:processRoll(message)
         low = tonumber(low) or 0;
         high = tonumber(high) or 0;
 
+        local rollerName = GL:groupMemberIdentity(GL:formatPlayerName(roller));
+
         local RollType = (function ()
             for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
                 if (low == RollType[2]
@@ -1122,7 +1124,7 @@ function RollOff:processRoll(message)
             and GL.BoostedRolls:available()
             and GL.BoostedRolls:isBoostedRoll(low, high)
         ) then
-            local points = GL.BoostedRolls:getPoints(roller);
+            local points = GL.BoostedRolls:getPoints(rollerName);
             local allowedMinimumRoll = GL.BoostedRolls:minBoostedRoll(points);
             local allowedMaximumRoll = GL.BoostedRolls:maxBoostedRoll(points);
 
@@ -1147,8 +1149,6 @@ function RollOff:processRoll(message)
             RollType[1] = ("%s-%s"):format(low, high);
             RollType[4] = 10;
         end
-
-        local rollerName = GL:groupMemberIdentity(GL:formatPlayerName(roller));
 
         --- Make sure the person who rolled is in our group
         for _, Player in pairs(GL.User:groupMembers()) do

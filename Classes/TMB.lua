@@ -32,6 +32,11 @@ local OFFSPEC_IDENTIFIER = "%(os%)";
 ---@param name string
 ---@return string
 function TMB:normalizePlayerName(name)
+    -- Forever has no realms, "cline-gloomhaunt" is a first and last name
+    if (GL.isForever) then
+        return GL:playerNameKey(strtrim(tostring(name)));
+    end
+
     name = strlower(tostring(name));
 
     local firstHypenPosition = strfind(name, "-", 1, true);
@@ -303,7 +308,7 @@ function TMB:groupByPlayerName(player)
         return false, false;
     end
 
-    player = player:lower();
+    player = GL:playerNameKey(player);
     local groupID = GL.DB:get("TMB.PlayerGroup." .. player);
 
     if (groupID) then
@@ -807,7 +812,7 @@ function TMB:import(data, triedToDecompress, source)
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
-                    characterName = strlower(stringParts[Keys.name]);
+                    characterName = GL:playerNameKey(stringParts[Keys.name]);
                     order = tonumber(stringParts[Keys.order]) or order;
                 end
 
@@ -1425,7 +1430,7 @@ function TMB:broadcastToWhitelist()
     local WhitelistedPlayersInGroup = {};
     local GroupMemberNames = GL.User:groupMemberNames();
     for _, name in pairs(Whitelist) do
-        name = strlower(name);
+        name = GL:playerNameKey(name);
 
         if (not GL:playerNamesMatch(GL.User.name, name)
             and GL:inTable(GroupMemberNames, name)
@@ -1657,7 +1662,7 @@ function TMB:replyToDataRequest(CommMessage)
             local WhitelistedPlayersInGroup = {};
             local GroupMemberNames = GL.User:groupMemberNames();
             for _, name in pairs(Whitelist) do
-                name = strlower(name);
+                name = GL:playerNameKey(name);
 
                 if (not GL:playerNamesMatch(GL.User.name, name)
                     and GL:inTable(GroupMemberNames, name)

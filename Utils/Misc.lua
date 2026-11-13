@@ -599,7 +599,7 @@ function GL:unitIsConnected(player)
         return UnitIsConnected(player);
     end
 
-    return UnitIsConnected(self:unitPlayerName(FQN));
+    return UnitIsConnected(self:storedPlayerName(FQN));
 end
 
 --- Play a sound

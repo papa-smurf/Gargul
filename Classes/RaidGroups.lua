@@ -233,7 +233,7 @@ function RaidGroups:drawImporter()
                     end
 
                     -- Kick the player!
-                    UninviteUnit(GL:unitPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
+                    UninviteUnit(GL:storedPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
                 end);
             end
         });
@@ -513,7 +513,7 @@ function RaidGroups:kickUnwanted(raidGroupCsv)
             and not WantedPlayers[strlower(Member.name)]
         ) then
             -- Kick the player!
-            UninviteUnit(GL:unitPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
+            UninviteUnit(GL:storedPlayerName(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn));
         end
     end);
 end
@@ -553,7 +553,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
-            playerName = strlower(playerName);
+            playerName = GL:playerNameKey(playerName);
 
             if (group < 9 -- group 9 is a group we reserve for specifying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
@@ -699,7 +699,7 @@ function RaidGroups:updateTankAssignmentButton()
             local Players = GL:explode(Segments[2], ",");
 
             for _, playerName in pairs(Players) do
-                tinsert(Tanks, playerName);
+                tinsert(Tanks, GL:storedPlayerName(playerName));
             end
 
             break;
@@ -721,7 +721,7 @@ function RaidGroups:updateTankAssignmentButton()
         local name = GetRaidRosterInfo(index);
 
         if (name) then
-            MainTanksByName[name] = true;
+            MainTanksByName[GL:storedPlayerName(name)] = true;
         end
     end
 

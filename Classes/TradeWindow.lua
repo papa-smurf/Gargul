@@ -503,7 +503,9 @@ function TradeWindow:updateState()
     -- If the frame doesn't hold the player name that we set earlier then override it
     -- This should never happen and is nothing but a failsafe
     -- An empty frame is no reason to wipe a perfectly good partner name though
+    -- On Forever UnitName("NPC") holds the full name, the frame text might be hyphenated which the sanitizer mangles
     if (not GL:empty(partnerName)
+        and not (GL.isForever and not GL:empty(self.State.partner))
         and not GL:strStartsWith(self.State.partner, partnerName)
     ) then
         self.State.partner = partnerName;

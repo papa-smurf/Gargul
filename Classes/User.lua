@@ -396,7 +396,7 @@ function User:unitInGroup(unit)
         return true;
     end
 
-    return GL:toboolean(UnitInParty(GL:unitPlayerName(GL:formatPlayerName(unit))));
+    return GL:toboolean(UnitInParty(GL:formatPlayerName(unit)));
 end
 
 --- Return the names of everyone in your party/raid

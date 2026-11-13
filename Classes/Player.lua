@@ -36,8 +36,7 @@ function Player.fromID(GUID)
     self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name, self.realm = GetPlayerInfoByGUID(self.id);
 
     if (GL.isForever) then
-        -- Assumed, not verified: the last name is returned where the realm goes, like UnitName does
-        self.name = self.name and GL:addRealm(self.name, self.realm);
+        self.name = self.name and GL:playerNameFromGUID(self.id);
         self.realm = nil;
         self.fqn = self.name;
     else
@@ -91,7 +90,7 @@ function Player:fromName(name)
     end
 
     name = GL:formatPlayerName(name);
-    local playerID = UnitGUID(GL:unitPlayerName(name));
+    local playerID = UnitGUID(name);
 
     if (not playerID) then
         return false;
@@ -131,10 +130,8 @@ function Player:hasAssist(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
-    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:formatPlayerName(playerName, { realm = realm, });
+        playerName = GL:playerNameFromGUID(playerNameOrID);
     else
         playerName = GL:formatPlayerName(playerNameOrID);
     end
@@ -172,10 +169,8 @@ function Player:hasLead(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
-    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:formatPlayerName(playerName, { realm = realm, });
+        playerName = GL:playerNameFromGUID(playerNameOrID);
     end
 
     if (not playerName) then
@@ -211,10 +206,8 @@ function Player:isMasterLooter(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
-    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:formatPlayerName(playerName, { realm = realm, });
+        playerName = GL:playerNameFromGUID(playerNameOrID);
     else
         playerName = GL:formatPlayerName(playerNameOrID);
     end
@@ -258,7 +251,7 @@ function Player:classByName(playerName, default)
     end
 
     -- Attempt to fetch the player class
-    local classFile = UnitClassBase(GL:unitPlayerName(playerName));
+    local classFile = UnitClassBase(playerName);
 
     -- Player names can be stored for the entire session since
     -- it's impossible for them to change during runtime
