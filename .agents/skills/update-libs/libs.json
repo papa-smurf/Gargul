@@ -1,0 +1,224 @@
+{
+  "libs": [
+    {
+      "name": "Ace3",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/WoWUIDev/Ace3",
+        "track": "branch"
+      },
+      "files": [
+        {
+          "from": "LibStub/",
+          "to": "Libs/LibStub/"
+        },
+        {
+          "from": "CallbackHandler-1.0/",
+          "to": "Libs/CallbackHandler-1.0/"
+        },
+        {
+          "from": "AceAddon-3.0/",
+          "to": "Libs/AceAddon-3.0/"
+        },
+        {
+          "from": "AceComm-3.0/",
+          "to": "Libs/AceComm-3.0/"
+        },
+        {
+          "from": "AceConfig-3.0/",
+          "to": "Libs/AceConfig-3.0/"
+        },
+        {
+          "from": "AceConsole-3.0/",
+          "to": "Libs/AceConsole-3.0/"
+        },
+        {
+          "from": "AceEvent-3.0/",
+          "to": "Libs/AceEvent-3.0/"
+        },
+        {
+          "from": "AceGUI-3.0/",
+          "to": "Libs/AceGUI-3.0/"
+        },
+        {
+          "from": "AceTimer-3.0/",
+          "to": "Libs/AceTimer-3.0/"
+        }
+      ],
+      "vendored": "ac3d1225037e0dc74e025a72342c0f7824aae147",
+      "notes": "Unpatched. Local files were a mix of upstream versions, so no single base; first update overwrites. Tracks master for Forever fixes. AceComm ships ChatThrottleLib (comm-critical).",
+      "vendoredLabel": "Release-r1403-21-gac3d122"
+    },
+    {
+      "name": "LibCandyBar-3.0",
+      "source": {
+        "type": "svn",
+        "url": "https://repos.wowace.com/wow/libcandybar-3-0",
+        "path": "trunk"
+      },
+      "files": [
+        {
+          "from": "LibCandyBar-3.0/LibCandyBar-3.0.lua",
+          "to": "Libs/LibCandyBar-3.0/LibCandyBar-3.0/LibCandyBar-3.0.lua"
+        }
+      ],
+      "transforms": [
+        [
+          "\"LibCandyBar-3.0\"",
+          "\"LibCandyBarGargul-3.0\""
+        ]
+      ],
+      "vendored": "232",
+      "vendoredLabel": "r232",
+      "notes": "FORK. Renamed so other addons' CandyBar can't touch Gargul bars (1384c374). Gargul patches, all marked '-- Gargul:': barUpdate only reformats the time text when the shown value changes (trade timer performance, 5f02d4f2); ClearText/ClearScripts guarded with a fallback for clients that lack them; scripts cleared after Hide so OnLeave still hides tooltips."
+    },
+    {
+      "name": "LibCustomGlow-1.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/Stanzilla/LibCustomGlow",
+        "track": "branch"
+      },
+      "files": [
+        {
+          "from": "LibCustomGlow-1.0.lua",
+          "to": "Libs/LibCustomGlow-1.0/LibCustomGlow-1.0.lua"
+        }
+      ],
+      "transforms": [
+        [
+          "\"LibCustomGlow-1.0\"",
+          "\"LibCustomGlowGargul-1.0\""
+        ]
+      ],
+      "vendored": "4f8f5c2607d7384b26df9175bb99fa3df891b015",
+      "vendoredLabel": "1.0.4-10-g4f8f5c2",
+      "notes": "FORK (rename only). Renamed because ElvUI strips the shared glow (d5de9b98)."
+    },
+    {
+      "name": "LibDataBroker-1.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/tekkub/libdatabroker-1-1",
+        "track": "branch"
+      },
+      "files": [
+        {
+          "from": "LibDataBroker-1.1.lua",
+          "to": "Libs/LibDataBroker-1.1/LibDataBroker-1.1.lua"
+        }
+      ],
+      "vendored": "1a63ede0248c11aa1ee415187c1f9c9489ce3e02",
+      "vendoredLabel": "v1.1.4"
+    },
+    {
+      "name": "LibDBIcon-1.0",
+      "source": {
+        "type": "svn",
+        "url": "https://repos.wowace.com/wow/libdbicon-1-0",
+        "path": "trunk"
+      },
+      "files": [
+        {
+          "from": "LibDBIcon-1.0/LibDBIcon-1.0.lua",
+          "to": "Libs/LibDBIcon-1.0/LibDBIcon-1.0/LibDBIcon-1.0.lua"
+        }
+      ],
+      "vendored": "168",
+      "vendoredLabel": "r168"
+    },
+    {
+      "name": "LibDeflate",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/SafeteeWoW/LibDeflate",
+        "track": "tag"
+      },
+      "files": [
+        {
+          "from": "LibDeflate.lua",
+          "to": "Libs/LibDeflate/LibDeflate.lua"
+        }
+      ],
+      "vendored": "6831edcaa915154e7769d622e0de72ee5d25a882",
+      "vendoredLabel": "1.0.2-release",
+      "notes": "Comm-critical. Tracks release tags; main is only reformatting since 1.0.2."
+    },
+    {
+      "name": "LibSerialize",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/rossnichols/LibSerialize",
+        "track": "tag"
+      },
+      "files": [
+        {
+          "from": "LibSerialize.lua",
+          "to": "Libs/LibSerialize/LibSerialize.lua"
+        }
+      ],
+      "vendored": "aa6e50dddad28f8dfa6c27c9b1e15ae40262b4a5",
+      "notes": "Comm-critical. Local was v1.1.3 re-indented plus an assert message, nothing worth keeping; first update overwrites. Older Gargul clients must still read new output: SERIALIZATION_VERSION must stay 1.",
+      "vendoredLabel": "v1.2.3"
+    },
+    {
+      "name": "LibSharedMedia-3.0",
+      "source": {
+        "type": "svn",
+        "url": "https://repos.wowace.com/wow/libsharedmedia-3-0",
+        "path": "trunk"
+      },
+      "files": [
+        {
+          "from": "LibSharedMedia-3.0/",
+          "to": "Libs/LibSharedMedia-3.0/LibSharedMedia-3.0/"
+        }
+      ],
+      "vendored": "186",
+      "vendoredLabel": "r186",
+      "notes": "Gargul patch: C_UIFileAsset.IsKnownFile is guarded (missing on Wrath/Titan/Cata). Register() now errors on media files that don't exist."
+    },
+    {
+      "name": "LibUIDropDownMenu",
+      "source": {
+        "type": "svn",
+        "url": "https://repos.wowace.com/wow/libuidropdownmenu",
+        "path": "trunk"
+      },
+      "files": [
+        {
+          "from": "LibUIDropDownMenu/",
+          "to": "Libs/LibUIDropDownMenu/"
+        }
+      ],
+      "vendored": "148",
+      "vendoredLabel": "r148",
+      "notes": "Used for taint-free dropdowns. Test dropdowns in-game on Era and Retail after updating. Upstream dropped Wrath/Titan in r140; the user chose to follow upstream anyway, so don't patch them back in."
+    },
+    {
+      "name": "lib-st",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/ddumont/lib-st",
+        "track": "branch"
+      },
+      "files": [
+        {
+          "from": "Core.lua",
+          "to": "Libs/lib-st/Core.lua"
+        },
+        {
+          "from": "lib-st.xml",
+          "to": "Libs/lib-st/lib-st.xml"
+        }
+      ],
+      "vendored": "78691a1f7e7a78c7ce173b5cf87f840ad3800d07",
+      "vendoredLabel": "v4.1.3"
+    },
+    {
+      "name": "LibDeformat-3.0",
+      "pinned": true,
+      "notes": "Upstream is gone (last release 2010). Never update."
+    }
+  ]
+}
