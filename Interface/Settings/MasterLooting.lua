@@ -22,8 +22,9 @@ function MasterLooting:draw(Parent)
         LootThresholdLabel:SetFullWidth(true);
         Parent:AddChild(LootThresholdLabel);
 
-        -- Poor and common items are never master looted, regardless of the threshold
         local DropdownItems = {
+            [0] = "0 - Poor",
+            [1] = "1 - Common",
             [2] = "2 - Uncommon",
             [3] = "3 - Rare",
             [4] = "4 - Epic",
