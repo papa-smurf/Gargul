@@ -50,6 +50,21 @@ GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
 ---@type GDKPMultiAuctionClientInterface
 local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
 
+--- Return the row's countdown bar if it's still running and still ours (stopped bars get recycled)
+---
+---@param AuctionRow Frame
+---@return table|nil
+local function activeCountDownBar(AuctionRow)
+    local CountDownBar = AuctionRow.CountDownBar;
+    if (type(CountDownBar) == "table"
+        and CountDownBar.running
+        and CountDownBar:Get("owner") == AuctionRow
+        and not CountDownBar:Get("stopping")
+    ) then
+        return CountDownBar;
+    end
+end
+
 --[[ CONSTANTS ]]
 local ITEM_ROW_HEIGHT = 30;
 local WINDOW_WIDTH = 625;
@@ -1198,6 +1213,7 @@ function ClientInterface:build()
                 CountDownBar:SetDuration(time);
                 CountDownBar:SetColor(.8, .8, .8, .3); -- Reset color to gray
                 CountDownBar:Set("type", "GDKP_MULTI_AUCTION_COUNTDOWN");
+                CountDownBar:Set("owner", AuctionRow);
                 --CountDownBar:Set("originalDuration", time);
                 CountDownBar:Start();
                 CountDownBar:SetFrameStrata(AuctionRow:GetFrameStrata());
@@ -1207,20 +1223,11 @@ function ClientInterface:build()
             end
 
             AuctionRow.stopCountdown = function ()
-                local CountDownBar = AuctionRow.CountDownBar;
-                if (type(CountDownBar) == "table"
-                    and CountDownBar.Get
-                    and CountDownBar:Get("type") == "GDKP_MULTI_AUCTION_COUNTDOWN"
-                    and not CountDownBar:Get("stopping")
-                ) then
+                local CountDownBar = activeCountDownBar(AuctionRow);
+                if (CountDownBar) then
                     CountDownBar:SetParent(UIParent);
                     CountDownBar:Set("stopping", true);
-
-                    if (CountDownBar.running) then
-                        CountDownBar:Stop();
-                    end
-
-                    CountDownBar = nil;
+                    CountDownBar:Stop();
                 end
             end
 
@@ -1565,18 +1572,8 @@ end
 function ClientInterface:clear()
     ---@param ItemRow Frame
     for key, ItemRow in pairs(self.AuctionRows or {}) do
-        local CountDownBar = ItemRow.CountDownBar;
-        if (type(CountDownBar) == "table"
-            and CountDownBar.Get
-            and CountDownBar:Get("type") == "GDKP_MULTI_AUCTION_COUNTDOWN"
-            and not CountDownBar:Get("stopping")
-        ) then
-            CountDownBar:SetParent(UIParent);
-            CountDownBar:Set("stopping", true);
-
-            if (CountDownBar.running) then
-                CountDownBar:Stop();
-            end
+        if (ItemRow.stopCountdown) then
+            ItemRow.stopCountdown();
         end
 
         Interface:release(ItemRow);
@@ -1632,16 +1629,10 @@ function ClientInterface:refresh(forceFilterAndSort)
                     return;
                 end
 
-                local CountDownBar = AuctionRow.CountDownBar;
+                local CountDownBar = activeCountDownBar(AuctionRow);
 
                 -- Make absolutely sure the bar is not stopped or stopping before we increase its duration
-                if (type(CountDownBar) == "table"
-                    and CountDownBar.Get
-                    and CountDownBar:Get("type") == "GDKP_MULTI_AUCTION_COUNTDOWN"
-                    and not CountDownBar:Get("stopping")
-                    and CountDownBar.running
-                    and CountDownBar.remaining > 0
-                ) then
+                if (CountDownBar and CountDownBar.remaining > 0) then
                     local duration = Details.endsAt - serverTime;
                     CountDownBar:SetDuration(duration);
                     CountDownBar:Start();
@@ -1688,19 +1679,27 @@ end
 ---
 ---@return nil
 function ClientInterface:setAuctionBarColor(AuctionRow, Details)
-    if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
-        if (GL:playerNamesMatch(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
-            AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
-        elseif (Details.iWasOutBid) then
-            AuctionRow.AutoBidButton.currentAmount = false;
-            AuctionRow.CountDownBar:SetColor(1, 0, 0, .5); -- Set to red
-        else
-            AuctionRow.AutoBidButton.currentAmount = false;
-            AuctionRow.CountDownBar:SetColor(.8, .8, .8, .3); -- Set to gray
-        end
-
-        AuctionRow.AutoBidButton.updateText();
+    if (not AuctionRow.CountDownBar) then
+        return;
     end
+
+    local r, g, b, a = .8, .8, .8, .3; -- Gray
+    if (GL:playerNamesMatch(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
+        r, g, b, a = 0, 1, 0, .5; -- Green
+    else
+        AuctionRow.AutoBidButton.currentAmount = false;
+
+        if (Details.iWasOutBid) then
+            r, g, b, a = 1, 0, 0, .5; -- Red
+        end
+    end
+
+    local CountDownBar = activeCountDownBar(AuctionRow);
+    if (CountDownBar) then
+        CountDownBar:SetColor(r, g, b, a);
+    end
+
+    AuctionRow.AutoBidButton.updateText();
 end
 
 ---@return Frame
