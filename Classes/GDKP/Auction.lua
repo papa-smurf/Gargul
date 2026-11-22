@@ -536,6 +536,7 @@ function Auction:sanitize(Instance)
     end
 
     --[[ Auction.CreatedBy ]]
+    -- Forever has no realms
     if (type (Instance.CreatedBy.class) ~= "string"
         or type (Instance.CreatedBy.name) ~= "string"
         or GL:empty(Instance.CreatedBy.name)
@@ -543,7 +544,7 @@ function Auction:sanitize(Instance)
         or type (Instance.CreatedBy.uuid) ~= "string"
         or not strmatch(Instance.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
         or type (Instance.CreatedBy.realm) ~= "string"
-        or GL:empty(Instance.CreatedBy.realm)
+        or (not GL.isForever and GL:empty(Instance.CreatedBy.realm))
     ) then
         GL:xd("Auction:sanitize step 2 failed, contact support!");
         GL:xd(Instance);
@@ -610,7 +611,7 @@ function Auction:sanitize(Instance)
                 or type (Bidder.uuid) ~= "string"
                 or not strmatch(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
                 or type (Bidder.realm) ~= "string"
-                or GL:empty(Bidder.realm)
+                or (not GL.isForever and GL:empty(Bidder.realm))
             ) then
                 GL:xd("Auction:sanitize step 6 failed, contact support!\n" .. GL.JSON:encode(Bidder));
                 return false;
