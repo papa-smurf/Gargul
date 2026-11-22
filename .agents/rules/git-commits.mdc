@@ -1,0 +1,17 @@
+---
+description: How to write git commits for Gargul
+alwaysApply: true
+---
+
+# Git Commits
+
+- **Split commits** where it makes sense: one commit per logical change (e.g. a rule update and a bug fix are separate commits).
+- **Keep messages short.** One line, no body unless truly needed.
+- **Never use em dashes** (—) in commit messages.
+- **Write for players, not programmers.** Describe what changed for the player, not how the code changed.
+- Only stage files belonging to the change; leave unrelated work in the tree untouched.
+
+## Examples
+
+- ✅ `Fix: GDKP multi-auction error when a bid arrives right as the timer ends`
+- ❌ `Guard stopCountdown against recycled LibCandyBar bars with nil data`
