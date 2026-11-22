@@ -21,7 +21,7 @@ Tests/
 - **Tests/E2E/Base.lua** – Base for E2E scenarios: step runner, Runner UI integration, `startWith`, `next`, `retry`, `success`, `error`. Scenarios set metatable to `GL.Tests.E2E.Base`.
 - **Tests/E2E/PackMule.lua** – PackMule master-loot E2E (fake master-loot group, six-item loot window, handout success, failure reporting, close cleanup).
 - **Tests/E2E/GDKPAuction.lua** – GDKP single-item auction E2E (create session, open Auctioneer via item, start auction, bid minimum, assert award, cleanup).
-- **Tests/E2E/GDKPMultiAuction.lua** – GDKP MultiAuction E2E (create session, open MultiAuction, fill items, version check, terminate, cleanup).
+- **Tests/E2E/GDKPMultiAuction.lua** – GDKP MultiAuction E2E (create session, open MultiAuction, fill items, version check, expired countdown bar, terminate, cleanup).
 
 ## Quick start
 
@@ -70,7 +70,8 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 2. Close GDKP windows  
 3. Open MultiAuction → fill from inventory → select items → Next  
 4. Version check → click Start → wait for client  
-5. Terminate → confirm → verify termination → close windows → delete session  
+5. Expire a countdown bar and hand it to another owner → stop, recolor and refresh its old row without errors → assert the row gets a new bar  
+6. Terminate → confirm → verify termination → close windows → delete session  
 
 ### PackMule
 

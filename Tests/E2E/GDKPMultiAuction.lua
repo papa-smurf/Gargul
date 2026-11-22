@@ -2,7 +2,7 @@
 local _, GL = ...;
 local L = Gargul_L;
 
---- End-to-End Test for GDKP MultiAuction: creates a session, opens MultiAuction, fills items, runs version check, then terminates.
+--- End-to-End Test for GDKP MultiAuction: creates a session, opens MultiAuction, fills items, runs version check, expires a countdown bar, then terminates.
 --- Run with: /run Gargul.Tests.E2E.GDKPMultiAuction:start()
 --- Stop with: /run Gargul.Tests.E2E.GDKPMultiAuction:stop()
 
@@ -16,6 +16,8 @@ local E2E = {
     sessionName = nil,
     sessionID = nil,
     retryCount = 0,
+    ExpiredRow = nil,
+    RecycledBar = nil,
 };
 setmetatable(E2E, { __index = GL.Tests.E2E.Base });
 GL.Tests.E2E.GDKPMultiAuction = E2E; ---@type GDKPMultiAuction
@@ -23,9 +25,12 @@ GL.Tests.E2E.GDKPMultiAuction = E2E; ---@type GDKPMultiAuction
 local MAX_RETRIES = {
     step10 = 15,   -- Start button (30s)
     step11 = 30,   -- Wait for MultiAuction client (60s)
-    step13 = 20,   -- Confirm dialog (10s)
-    step14 = 10,   -- Verify termination (10s)
+    step13 = 10,   -- Replacement countdown bar (5s)
+    step15 = 20,   -- Confirm dialog (10s)
+    step16 = 10,   -- Verify termination (10s)
 };
+
+local BAR_TEXTURE = "Interface/AddOns/Gargul/Assets/Textures/timer-bar";
 
 local E2E_STEPS = {
     { title = "Open GDKP Overview", fn = "step1_OpenGDKPOverview", },
@@ -39,10 +44,12 @@ local E2E_STEPS = {
     { title = "Click Next", fn = "step9_ClickNext", },
     { title = "Click Start in Version Check", fn = "step10_ClickStartInVersionCheck", },
     { title = "Wait for MultiAuction Client", fn = "step11_WaitForMultiAuctionClient", },
-    { title = "Click Terminate", fn = "step12_ClickTerminate", },
-    { title = "Confirm Terminate", fn = "step13_ClickYesOnConfirmation", },
-    { title = "Verify Termination", fn = "step14_VerifyTermination", },
-    { title = "Close Windows", fn = "step15_CloseWindows", },
+    { title = "Expire a Countdown Bar", fn = "step12_ExpireCountdownBar", },
+    { title = "Verify Countdown Bar Replaced", fn = "step13_VerifyCountdownBarReplaced", },
+    { title = "Click Terminate", fn = "step14_ClickTerminate", },
+    { title = "Confirm Terminate", fn = "step15_ClickYesOnConfirmation", },
+    { title = "Verify Termination", fn = "step16_VerifyTermination", },
+    { title = "Close Windows", fn = "step17_CloseWindows", },
 };
 
 ---@return table Array of step title strings (used when Launcher opens Runner for queue).
@@ -57,6 +64,13 @@ end
 ---@return nil
 function E2E:stop()
     self:resetRunnerState();
+
+    local RecycledBar = self.RecycledBar;
+    if (RecycledBar and RecycledBar.running and RecycledBar:Get("owner") == self) then
+        RecycledBar:Stop();
+    end
+    self.RecycledBar = nil;
+    self.ExpiredRow = nil;
 
     if (self.sessionID) then
         local sessionID = self.sessionID;
@@ -405,12 +419,145 @@ function E2E:step11_WaitForMultiAuctionClient()
     end
 end
 
---- Step 12: Click Terminate Button
+--- Step 12: Let a countdown bar expire, hand it to someone else and make sure its old row leaves it alone
 ---@return nil
-function E2E:step12_ClickTerminate()
+function E2E:step12_ExpireCountdownBar()
     if (not self.isRunning) then return; end
 
-    self:log("Step 12: Clicking Terminate button...");
+    self:log("Step 12: Expiring a countdown bar...");
+
+    local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
+    local Row, ExpiredBar;
+    local serverTime = GetServerTime();
+    for _, AuctionRow in pairs(ClientInterface.AuctionRows or {}) do
+        if (AuctionRow.CountDownBar
+            and AuctionRow.CountDownBar.running
+            and AuctionRow._Details.endsAt - serverTime > 5
+        ) then
+            Row = AuctionRow;
+            ExpiredBar = AuctionRow.CountDownBar;
+            break;
+        end
+    end
+
+    if (not Row) then
+        self:error("No running auction with more than 5 seconds left (is the auction time set too low?)");
+        return;
+    end
+
+    -- Let LibCandyBar stop it on its next update, just like a timer running out
+    ExpiredBar.exp = GetTime();
+    self.ExpiredRow = Row;
+
+    GL:after(.2, "E2E.GDKPMultiAuction.ExpireCountdownBar", function ()
+        if (not self.isRunning) then return; end
+
+        if (ExpiredBar.running) then
+            self:error("Countdown bar did not expire");
+            return;
+        end
+
+        -- Take the recycled bar like another auction row would
+        local CandyBar = LibStub("LibCandyBarGargul-3.0");
+        local Skipped = {};
+        for _ = 1, 20 do
+            local Bar = CandyBar:New(BAR_TEXTURE, 10, 10);
+            if (Bar == ExpiredBar) then
+                self.RecycledBar = Bar;
+                break;
+            end
+
+            tinsert(Skipped, Bar);
+        end
+
+        for _, Bar in pairs(Skipped) do
+            Bar:Stop();
+        end
+
+        local RecycledBar = self.RecycledBar;
+        if (RecycledBar) then
+            RecycledBar:Set("type", "GDKP_MULTI_AUCTION_COUNTDOWN");
+            RecycledBar:Set("owner", self);
+            RecycledBar:SetDuration(60);
+            RecycledBar:Start();
+            RecycledBar:SetColor(0, 0, 1, 1);
+        else
+            self:log("Couldn't get the recycled bar back, skipping the ownership checks");
+        end
+
+        -- These all errored when a bid came in after the bar expired
+        local ok, err = pcall(function ()
+            Row.stopCountdown();
+            ClientInterface:setAuctionBarColor(Row, Row._Details);
+
+            -- Make refresh think the auction was extended
+            Row._Details.endsAt = Row._Details.endsAt - 1;
+            ClientInterface:refresh();
+        end);
+
+        if (not ok) then
+            self:error("Updating a row with an expired countdown bar failed: " .. tostring(err));
+            return;
+        end
+
+        if (RecycledBar) then
+            if (not RecycledBar.running) then
+                self:error("The expired row stopped a countdown bar it no longer owns");
+                return;
+            end
+
+            local r, g, b = RecycledBar.candyBarBar:GetStatusBarColor();
+            if (r > .01 or g > .01 or b < .99) then
+                self:error("The expired row recolored a countdown bar it no longer owns");
+                return;
+            end
+        end
+
+        self:success("Expired countdown bar handled without errors");
+        self:next(0);
+    end);
+end
+
+--- Step 13: The refresh should give the expired row a new countdown bar
+---@return nil
+function E2E:step13_VerifyCountdownBarReplaced()
+    if (not self.isRunning) then return; end
+
+    self.retryCount = (self.retryCount or 0) + 1;
+    self:log("Step 13: Waiting for a new countdown bar... (attempt " .. self.retryCount .. ")");
+
+    local Row = self.ExpiredRow;
+    local Bar = Row and Row.CountDownBar;
+    if (Bar and Bar.running and Bar:Get("owner") == Row) then
+        self.retryCount = 0;
+
+        local RecycledBar = self.RecycledBar;
+        if (RecycledBar and (not RecycledBar.running or RecycledBar:Get("owner") ~= self)) then
+            self:error("The recycled countdown bar was taken over during the refresh");
+            return;
+        end
+
+        if (RecycledBar) then
+            RecycledBar:Stop();
+            self.RecycledBar = nil;
+        end
+
+        self.ExpiredRow = nil;
+        self:success("Row got a new countdown bar");
+        self:next();
+    elseif (self.retryCount >= MAX_RETRIES.step13) then
+        self:error(("Row did not get a new countdown bar after %d attempts"):format(MAX_RETRIES.step13));
+    else
+        self:retry(.5);
+    end
+end
+
+--- Step 14: Click Terminate Button
+---@return nil
+function E2E:step14_ClickTerminate()
+    if (not self.isRunning) then return; end
+
+    self:log("Step 14: Clicking Terminate button...");
 
     local clientWindow = _G["Gargul.Interface.GDKP.MultiAuction.Client.Window"];
     if (not clientWindow) then
@@ -429,13 +576,13 @@ function E2E:step12_ClickTerminate()
     end
 end
 
---- Step 13: Click Yes on Confirmation (StaticPopup)
+--- Step 15: Click Yes on Confirmation (StaticPopup)
 ---@return nil
-function E2E:step13_ClickYesOnConfirmation()
+function E2E:step15_ClickYesOnConfirmation()
     if (not self.isRunning) then return; end
 
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 13: Looking for StaticPopup confirmation dialog... (attempt " .. self.retryCount .. ")");
+    self:log("Step 15: Looking for StaticPopup confirmation dialog... (attempt " .. self.retryCount .. ")");
 
     ---@diagnostic disable-next-line: undefined-field
     local dialog = _G.StaticPopup1;
@@ -443,8 +590,8 @@ function E2E:step13_ClickYesOnConfirmation()
     if (dialog and dialog:IsShown()) then
         local dialogText = dialog.Text and dialog.Text:GetText() or "";
         if (not dialogText:match("Remove all")) then
-            if (self.retryCount >= MAX_RETRIES.step13) then
-                self:error(("Wrong or unexpected dialog shown after %d attempts: '%s'"):format(MAX_RETRIES.step13, strsub(dialogText, 1, 80)));
+            if (self.retryCount >= MAX_RETRIES.step15) then
+                self:error(("Wrong or unexpected dialog shown after %d attempts: '%s'"):format(MAX_RETRIES.step15, strsub(dialogText, 1, 80)));
                 return;
             end
             self:log("Wrong dialog shown: '" .. strsub(dialogText, 1, 50) .. "', waiting...");
@@ -466,40 +613,40 @@ function E2E:step13_ClickYesOnConfirmation()
         else
             self:error("OnButton1 callback not found on terminate confirmation dialog");
         end
-    elseif (self.retryCount >= MAX_RETRIES.step13) then
-        self:error(("StaticPopup confirmation dialog did not appear after %d attempts"):format(MAX_RETRIES.step13));
+    elseif (self.retryCount >= MAX_RETRIES.step15) then
+        self:error(("StaticPopup confirmation dialog did not appear after %d attempts"):format(MAX_RETRIES.step15));
     else
         self:log("StaticPopup dialog not visible yet, waiting...");
         self:retry(.5);
     end
 end
 
---- Step 14: Verify Termination Completed
+--- Step 16: Verify Termination Completed
 ---@return nil
-function E2E:step14_VerifyTermination()
+function E2E:step16_VerifyTermination()
     if (not self.isRunning) then return; end
 
     self.retryCount = (self.retryCount or 0) + 1;
-    self:log("Step 14: Verifying auction terminated... (attempt " .. self.retryCount .. ")");
+    self:log("Step 16: Verifying auction terminated... (attempt " .. self.retryCount .. ")");
 
     if (not GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
         self.retryCount = 0;
         self:success("MultiAuction successfully terminated");
         self:next();
-    elseif (self.retryCount >= MAX_RETRIES.step14) then
-        self:error(("Auction did not terminate after %d attempts"):format(MAX_RETRIES.step14));
+    elseif (self.retryCount >= MAX_RETRIES.step16) then
+        self:error(("Auction did not terminate after %d attempts"):format(MAX_RETRIES.step16));
     else
         self:log("Auction still running, waiting...");
         self:retry(1);
     end
 end
 
---- Step 15: Close Windows
+--- Step 17: Close Windows
 ---@return nil
-function E2E:step15_CloseWindows()
+function E2E:step17_CloseWindows()
     if (not self.isRunning) then return; end
 
-    self:log("Step 15: Closing MultiAuction windows...");
+    self:log("Step 17: Closing MultiAuction windows...");
 
     GL.Interface.GDKP.MultiAuction.Auctioneer:close();
 
