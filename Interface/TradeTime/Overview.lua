@@ -561,6 +561,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     );
     CountDownBar:Set("type", "TRADE_TIME_LEFT");
     CountDownBar:Set("itemGUID", Details.itemGUID);
+    CountDownBar:Set("owner", ItemRow);
     CountDownBar:SetParent(ItemRow);
     CountDownBar:SetDuration(Details.secondsRemaining);
     CountDownBar:SetColor(0, 1, 0, .3); -- Reset color to green
@@ -779,18 +780,16 @@ function Overview:releaseItemRow(ItemRow)
         return;
     end
 
+    -- Stopped bars get recycled, so only stop it if it's still running and still ours
     local CountDownBar = ItemRow.CountDownBar;
     if (type(CountDownBar) == "table"
-        and CountDownBar.Get
-        and CountDownBar:Get("type") == "TRADE_TIME_LEFT"
+        and CountDownBar.running
+        and CountDownBar:Get("owner") == ItemRow
         and not CountDownBar:Get("stopping")
     ) then
         CountDownBar:SetParent(UIParent);
         CountDownBar:Set("stopping", true);
-
-        if (CountDownBar.running) then
-            CountDownBar:Stop();
-        end
+        CountDownBar:Stop();
     end
 
     Interface:release(ItemRow);
