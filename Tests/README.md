@@ -8,18 +8,28 @@ This directory contains automated tests for Gargul.
 Tests/
   Base.lua              -- Shared base for all tests: Assert helpers, generic log (GL.Tests.Assert, GL.Tests.log)
   Fakes/
-    Loot.lua            -- Native-first loot harness for E2E scenarios
+    Env.lua             -- Private global environment for Gargul code, so fakes never write to _G
+    Loot.lua            -- Loot harness for E2E scenarios
+    GroupLoot.lua       -- Group-loot roll harness (START_LOOT_ROLL, RollOnLoot, ConfirmLootRoll)
   E2E/
     Base.lua            -- E2E-specific base: Runner integration, startWith, next, retry, runStep, success, error
-    PackMule.lua        -- PackMule master-loot E2E (GL.Tests.E2E.PackMule)
+    PackMuleBase.lua    -- Table-driven case runner shared by the PackMule scenarios
+    PackMule.lua        -- PackMule handout & error reporting (GL.Tests.E2E.PackMule)
+    PackMuleRules.lua   -- PackMule rule matching, targets and guards (GL.Tests.E2E.PackMuleRules)
+    PackMuleForever.lua -- PackMule Forever name handling (GL.Tests.E2E.PackMuleForever)
+    PackMuleAward.lua   -- Award-driven assignLootToPlayer and disenchant (GL.Tests.E2E.PackMuleAward)
+    PackMuleGroupLoot.lua -- Group-loot auto rolls and auto confirm (GL.Tests.E2E.PackMuleGroupLoot)
     GDKPAuction.lua     -- Single-item GDKP auction E2E (GL.Tests.E2E.GDKPAuction)
     GDKPMultiAuction.lua -- MultiAuction E2E (GL.Tests.E2E.GDKPMultiAuction)
 ```
 
 - **Tests/Base.lua** – Loaded first (TOC). Provides `GL.Tests.Assert` (assert, assertEquals, isNil) and `GL.Tests.log(message)` for any test type.
-- **Tests/Fakes/Loot.lua** – Scoped loot harness that drives native loot frames/events where possible and temporarily shims master-loot server responses for E2E tests.
+- **Tests/Fakes/Env.lua** – While a fake is installed, Gargul's functions (root, PackMule, DroppedLoot, AwardedLoot, User, Events and all event listeners) run with a proxy environment via `setfenv`. Fakes register API overrides there with `Env:set(name, value)`. Never assign fakes to `_G`: an addon write to a Blizzard global taints it for the whole session, even after restoring it, and tainted Blizzard UI errors on secret values on Forever.
+- **Tests/Fakes/Loot.lua** – Scoped loot harness that fakes master-loot server responses, group membership, error/warning output and (opt-in) `UnitName` for E2E tests. It shows its own `GargulTestsLootFrame` instead of Blizzard's loot frame. Fires `LOOT_READY`/`LOOT_OPENED` so PackMule runs through its real `GL.LOOT_ANNOUNCED` timer. Set `Loot.verbose = true` to dump every harness call.
+- **Tests/Fakes/GroupLoot.lua** – Requires the Loot fake. Starts fake group-loot rolls and records `RollOnLoot`, `ConfirmLootRoll` and the confirm popup hide.
 - **Tests/E2E/Base.lua** – Base for E2E scenarios: step runner, Runner UI integration, `startWith`, `next`, `retry`, `success`, `error`. Scenarios set metatable to `GL.Tests.E2E.Base`.
-- **Tests/E2E/PackMule.lua** – PackMule master-loot E2E (fake master-loot group, six-item loot window, handout success, failure reporting, close cleanup).
+- **Tests/E2E/PackMuleBase.lua** – Builds Setup, one Runner step per case, and Cleanup from a `CASES` table. Saves and restores every touched setting, resets PackMule and harness state between cases, and asserts both what should happen and what shouldn't (no extra handouts, errors, messages or rolls).
+- **Tests/E2E/PackMule*.lua** – The PackMule scenarios, see [PackMule scenarios](#packmule-scenarios).
 - **Tests/E2E/GDKPAuction.lua** – GDKP single-item auction E2E (create session, open Auctioneer via item, start auction, bid minimum, assert award, cleanup).
 - **Tests/E2E/GDKPMultiAuction.lua** – GDKP MultiAuction E2E (create session, open MultiAuction, fill items, version check, expired countdown bar, terminate, cleanup).
 
@@ -27,7 +37,7 @@ Tests/
 
 ### E2E tests (Launcher)
 
-Open the E2E launcher (via the addon’s test entry point), select scenarios, and click **Start**. The Runner window shows step progress; when running multiple scenarios, the active one is expanded and the previous one collapses when the next starts. PackMule is unchecked by default because it temporarily shims loot/group globals.
+Open the E2E launcher (via the addon’s test entry point), select scenarios, and click **Start**. The Runner window shows step progress; when running multiple scenarios, the active one is expanded and the previous one collapses when the next starts. All scenarios are checked by default. The Forever names scenario is only listed on the Forever client.
 
 ### E2E tests (manual)
 
@@ -40,16 +50,19 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 /run Gargul.Tests.E2E.GDKPMultiAuction:start()
 /run Gargul.Tests.E2E.GDKPMultiAuction:stop()
 
--- PackMule E2E
+-- PackMule E2Es (swap PackMule for PackMuleRules, PackMuleForever, PackMuleAward or PackMuleGroupLoot)
 /run Gargul.Tests.E2E.PackMule:start()
 /run Gargul.Tests.E2E.PackMule:stop()
+
+-- Dump every loot harness call while a PackMule E2E runs
+/run Gargul.Tests.Fakes.Loot.verbose = true
 ```
 
 ## Prerequisites
 
 - **GDKP Auction E2E:** Tradeable item in bags, active GDKP session (test creates one).
 - **GDKP MultiAuction E2E:** Be in a group (2+ players), tradeable items in bags.
-- **PackMule E2E:** No real group or loot required; run it by itself because it temporarily replaces loot and group APIs until cleanup.
+- **PackMule E2Es:** No real group or loot required. They temporarily replace loot and group APIs until cleanup, so don't queue them with scenarios that need real state. Item data is warmed in the Setup step; the Award scenario adds and removes its own award history entries.
 
 ## E2E scenario flow (examples)
 
@@ -73,13 +86,33 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 5. Expire a countdown bar and hand it to another owner → stop, recolor and refresh its old row without errors → assert the row gets a new bar  
 6. Terminate → confirm → verify termination → close windows → delete session  
 
-### PackMule
+## PackMule scenarios
 
-1. Install fake master-loot group and scoped loot harness
-2. Open a six-item loot window and assert all matching items are handed out
-3. Simulate a bags-full handout failure and assert PackMule records it
-4. Simulate a silent handout failure and assert the still-in-window fallback reports it
-5. Close the loot window while a handout is pending and assert pending handouts are cleared without a late fallback report
+Every PackMule scenario runs Setup (install harness, save settings, warm item cache), one step per case, then Cleanup (restore settings and shimmed APIs).
+
+- **PackMule Handout & Errors** – multi-page windows, slow successes, every error category, batching, retries reported once, delayed errors matched in order, silent failures, unrelated UI errors, closing with pending handouts or errors.
+- **PackMule Rules** – item ID, name and wildcard rules, every quality operator, priorities, `IGNORE`, any-of and `!` targets, `SELF`/`DE`/`RR`/`RANDOM`, ineligible and absent players, BoP, legendary, (un)tradable lists, recipes, disabled/Shift/not master looter, locked slots, gold, timer lifecycle and window changes.
+- **PackMule Forever Names** (Forever only) – multi-word names, comma separation, placeholders, hyphenated and first-name-only candidates, ambiguous first names.
+- **PackMule Award** – `addWinner` auto-assign (and marking the award received), auto-assign off, items outside the window, non-candidate winners, disenchant, failed handouts.
+- **PackMule Group Loot** – NEED/GREED/PASS, disabled and master-loot guards, BoP assist rules, pet/recipe/quest filters, item-ID bypass, roll confirmation, solo and group container auto loot, auto-disable after leaving the group.
+
+### Adding a PackMule case
+
+Add a table to the scenario's `CASES`. The field reference lives at the top of `Tests/E2E/PackMuleBase.lua`.
+
+```lua
+{
+    title = "Quality rule hands uncommon items to the target",
+    rules = { { operator = ">=", quality = 2, target = "PackMuleTarget", }, },
+    items = { { id = 25, quality = 2, }, { id = 35, quality = 1, }, },
+    expect = {
+        handouts = { [25] = "PackMuleTarget", }, -- itemID = player or { players }, "SELF" for the master looter
+        untouched = { 35, },                     -- never attempted, still in the window
+    },
+},
+```
+
+Anything not listed in `expect` fails the case: unexpected handouts, loot errors, error/warning messages and group-loot rolls. Use `arrange` to shape the harness (fail a handout, lock a slot, mark a player ineligible) and `check` for custom assertions.
 
 ## Adding a new E2E scenario
 
@@ -102,8 +135,10 @@ For any test that uses `GL.Tests`:
 ## Troubleshooting
 
 - **E2E test stuck:** `/run Gargul.Tests.E2E.GDKPAuction:stop()` or `GDKPMultiAuction:stop()` to cleanup.
-- **PackMule E2E interrupted:** `/run Gargul.Tests.E2E.PackMule:stop()` should restore the shimmed APIs. If a script error interrupts teardown, `/reload` restores the native client state.
-- **PackMule E2E queueing:** Run PackMule separately from GDKP E2Es; it temporarily shims loot/group globals and should not share a launcher queue with scenarios that expect real state.
+- **PackMule E2E interrupted:** `/run Gargul.Tests.E2E.PackMule:stop()` (or the scenario you ran) restores settings and shimmed APIs. If a script error interrupts teardown, `/reload` restores the native client state.
+- **PackMule E2E queueing:** The queue runs one scenario at a time and PackMule restores its shimmed loot/group globals in Cleanup, so the GDKP E2Es after it see real state. If a PackMule scenario errors before Cleanup, `/reload` before running the GDKP ones.
+- **PackMule case failed:** The failure dumps the harness log, captured messages and PackMule state via `Gargul:xd`. Rerun with `Gargul.Tests.Fakes.Loot.verbose = true` for a call-by-call trace.
+- **Item not cached:** Setup retries item info for a while; if it still fails, mouse over the item once or rerun.
 - **Runner not updating:** Ensure TOC order is Base.lua → E2E/Base.lua → E2E scenario files.
 - **Check state:** `/run print(Gargul.Tests.E2E.GDKPAuction.isRunning)` (or the scenario you ran).
 - **Script errors:** `/console scriptErrors 1` and run again.

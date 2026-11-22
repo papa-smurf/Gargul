@@ -27,11 +27,33 @@ local REFRESH_TIMER_ID = "GargulTestsLauncher.Refresh";
 local NEXT_SCENARIO_TIMER_ID = "GargulTestsLauncher.NextScenario";
 
 --- List of E2E scenarios: key in GL.Tests.E2E, display label. Scenario ref resolved at open.
+--- Entries with an available function are only listed when it returns true.
 local E2E_SCENARIOS = {
-    { key = "PackMule", label = "PackMule E2E", checked = false, },
+    { key = "PackMule", label = "PackMule Handout & Errors E2E", },
+    { key = "PackMuleRules", label = "PackMule Rules E2E", },
+    { key = "PackMuleForever", label = "PackMule Forever Names E2E", available = function ()
+        return GL.isForever;
+    end, },
+    { key = "PackMuleAward", label = "PackMule Award E2E", },
+    { key = "PackMuleGroupLoot", label = "PackMule Group Loot E2E", },
     { key = "GDKPMultiAuction", label = "GDKP Multi-Auction E2E", },
     { key = "GDKPAuction", label = "GDKP Auction E2E", },
 };
+
+local CHECKBOX_ROW_HEIGHT = 28;
+local WINDOW_CHROME_HEIGHT = 120;
+
+---@return table
+local function availableScenarios()
+    local Scenarios = {};
+    for _, entry in ipairs(E2E_SCENARIOS) do
+        if (type(entry.available) ~= "function" or entry.available()) then
+            tinsert(Scenarios, entry);
+        end
+    end
+
+    return Scenarios;
+end
 
 ---@return boolean
 function Launcher:isAnyRunning()
@@ -224,10 +246,11 @@ function Launcher:open()
         return;
     end
 
+    local Scenarios = availableScenarios();
     local Window = Interface:createWindow({
         name = "GargulTestsLauncher",
         width = 280,
-        height = 200,
+        height = WINDOW_CHROME_HEIGHT + #Scenarios * CHECKBOX_ROW_HEIGHT,
         hideMinimizeButton = true,
         hideResizeButton = true,
         hideWatermark = true,
@@ -245,7 +268,7 @@ function Launcher:open()
     local leftMargin = 20;
     local topOffset = 50;
 
-    for i, entry in ipairs(E2E_SCENARIOS) do
+    for i, entry in ipairs(Scenarios) do
         ---@type CheckButton
         local Checkbox = Interface:createCheckbox({
             Parent = Window,
@@ -259,7 +282,7 @@ function Launcher:open()
         if (i == 1) then
             Checkbox:SetPoint("TOPLEFT", Window, "TOPLEFT", leftMargin, -topOffset);
         else
-            local prev = self.checkboxes[E2E_SCENARIOS[i - 1].key];
+            local prev = self.checkboxes[Scenarios[i - 1].key];
             Checkbox:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, -8);
         end
         self.checkboxes[entry.key] = Checkbox;

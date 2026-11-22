@@ -8,24 +8,42 @@ GL.Tests.Fakes = GL.Tests.Fakes or {};
 ---@class LootFake
 local Loot = {
     installed = false,
+    verbose = false,
+    directLootReady = false,
+    passthroughMessages = false,
+    successLatency = 0,
+    failureLatency = 0,
+    shiftDown = false,
+    lootMethod = nil,
+    unitShimsInstalled = false,
     items = {},
     itemDetails = {},
     log = {},
+    messages = {},
     page = 1,
     pageSize = 4,
     players = {},
+    UserFlags = {},
+    ineligible = {},
     failuresByItemID = {},
     silentFailuresByItemID = {},
     nextFailure = nil,
     nextSilentFailure = false,
+    PendingTimerIDs = {},
+    QueuedErrors = {},
+    MessageIDByConstant = {},
     Originals = {},
     UserState = {},
     FakeGameMessageIDs = {},
+    Frame = nil,
     CreatedButtons = {},
     CreatedPageControls = {},
 };
 
 GL.Tests.Fakes.Loot = Loot; ---@type LootFake
+
+assert(GL.Tests.Fakes.Env, "GL.Tests.Fakes.Env missing (TOC: Tests/Fakes/Env.lua before this file)");
+local Env = GL.Tests.Fakes.Env;
 
 local QUALITY_COLOR = {
     [0] = "9D9D9D",
@@ -42,7 +60,29 @@ local ERROR_CONSTANT_BY_REASON = {
     outOfRange = "ERR_LOOT_TOO_FAR",
     notEligible = "ERR_LOOT_PLAYER_NOT_FOUND",
     other = "ERR_LOOT_MASTER_OTHER",
+    unrelated = "GARGUL_TEST_UNRELATED_ERROR",
 };
+
+local DEFAULT_USER_FLAGS = {
+    isMasterLooter = true,
+    isInGroup = true,
+    isInRaid = true,
+    isInParty = false,
+    hasAssist = true,
+    isLead = true,
+};
+
+local DIRECT_LOOT_READY_TIMER_ID = "Tests.Fakes.Loot.PackMuleLootReady";
+
+--- Dump harness internals, only when Loot.verbose is enabled (the PackMule timer polls every .2s)
+---
+---@param Data table
+---@return nil
+function Loot:trace(Data)
+    if (self.verbose) then
+        Gargul:xd(Data);
+    end
+end
 
 ---@param name string
 ---@param data table|nil
@@ -50,27 +90,91 @@ local ERROR_CONSTANT_BY_REASON = {
 function Loot:record(name, data)
     data = data or {};
     data.action = name;
+    data.time = GetTime();
     table.insert(self.log, data);
 end
 
+--- Run a callback later, cancelled automatically by resetCase/uninstall
+---
+---@param delay number
+---@param callback function
 ---@return nil
-function Loot:reset()
+function Loot:schedule(delay, callback)
+    local timerID = "Tests.Fakes.Loot." .. GL:uuid();
+    self.PendingTimerIDs[timerID] = true;
+
+    GL:after(delay, timerID, function ()
+        self.PendingTimerIDs[timerID] = nil;
+
+        if (self.installed) then
+            callback();
+        end
+    end);
+end
+
+---@return nil
+function Loot:cancelPendingTimers()
+    for timerID in pairs(self.PendingTimerIDs) do
+        GL:cancelTimer(timerID);
+    end
+
+    self.PendingTimerIDs = {};
+    self.QueuedErrors = {};
+    GL:cancelTimer(DIRECT_LOOT_READY_TIMER_ID);
+end
+
+--- Clear everything a single test case touches, keeping the shims and group installed
+---@return nil
+function Loot:resetCase()
+    self:cancelPendingTimers();
     self.items = {};
     self.itemDetails = {};
     self.log = {};
+    self.messages = {};
     self.page = 1;
-    self.players = {};
+    self.ineligible = {};
     self.failuresByItemID = {};
     self.silentFailuresByItemID = {};
     self.nextFailure = nil;
     self.nextSilentFailure = false;
+    self.successLatency = 0;
+    self.failureLatency = 0;
+    self.shiftDown = false;
+
+    if (self.installed) then
+        self:refreshNativeLootButtons();
+    end
+end
+
+---@return nil
+function Loot:reset()
+    self:resetCase();
+    self.players = {};
+    self.UserFlags = {};
     self.FakeGameMessageIDs = {};
+    self.MessageIDByConstant = {};
 end
 
 ---@param item table
 ---@return table
 function Loot:normalizeItem(item)
     item = item or {};
+
+    if (item.money) then
+        return {
+            money = true,
+            id = 0,
+            itemID = 0,
+            name = item.name or "1 Silver",
+            quality = 0,
+            quantity = 0,
+            icon = item.icon or 133784,
+            locked = item.locked == true,
+            removed = false,
+            source = item.source,
+        };
+    end
+
     local itemID = math.floor(tonumber(item.id or item.itemID) or 0);
     local realName, realLink, realQuality, realLevel, _, _, _, _, realInventoryType, realIcon, _, realClassID, realSubclassID, realBindType = GL.GetItemInfo(itemID);
     local _, _, _, _, instantIcon, instantClassID, instantSubclassID = GL.GetItemInfoInstant(itemID);
@@ -94,6 +198,7 @@ function Loot:normalizeItem(item)
         inventoryType = item.inventoryType or realInventoryType or "",
         level = item.level or realLevel or 1,
         removed = item.removed == true,
+        source = item.source,
     };
 end
 
@@ -108,6 +213,10 @@ end
 ---@return table
 function Loot:registerItem(item)
     local Item = self:normalizeItem(item);
+    if (Item.money) then
+        return Item;
+    end
+
     self.itemDetails[Item.id] = {
         id = Item.id,
         bindType = Item.bindType,
@@ -119,7 +228,7 @@ function Loot:registerItem(item)
         name = Item.name,
         subclassID = Item.subclassID,
         quality = Item.quality,
-        isBOE = true,
+        isBOE = Item.bindType ~= GL.LE_ITEM_BIND_ON_ACQUIRE,
     };
     return Item;
 end
@@ -192,60 +301,128 @@ function Loot:loadFakeItems(items, callback, sorter)
     callback(Details);
 end
 
+---@param Player table
+---@param playerName string
+---@return boolean
+local function playerMatchesName(Player, playerName)
+    if (type(playerName) ~= "string" or playerName == "") then
+        return false;
+    end
+
+    local key = strlower(GL:storedPlayerName(playerName));
+    return key == strlower(Player.fqn or "")
+        or key == strlower(Player.name or "")
+        or key == strlower(GL:stripRealm(Player.fqn or ""));
+end
+
+---@param playerName string
+---@return table|nil
+function Loot:playerByName(playerName)
+    for _, Player in ipairs(self.players) do
+        if (playerMatchesName(Player, playerName)) then
+            return Player;
+        end
+    end
+end
+
+--- Make GetMasterLootCandidate return nil for this player on slots holding itemID
+---
+---@param itemID number
+---@param playerName string
+---@return nil
+function Loot:setIneligible(itemID, playerName)
+    itemID = math.floor(tonumber(itemID) or 0);
+    self.ineligible[itemID] = self.ineligible[itemID] or {};
+    table.insert(self.ineligible[itemID], playerName);
+end
+
+---@param itemID number
+---@param Player table
+---@return boolean
+function Loot:playerIsIneligible(itemID, Player)
+    for _, playerName in ipairs(self.ineligible[itemID] or {}) do
+        if (playerMatchesName(Player, playerName)) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+---@param down boolean
+---@return nil
+function Loot:setShiftDown(down)
+    self.shiftDown = down == true;
+end
+
+---@param level string "error"|"warning"|"alert"
+---@vararg any
+---@return nil
+function Loot:captureMessage(level, ...)
+    local Parts = {};
+    for i = 1, select("#", ...) do
+        local value = select(i, ...);
+        if (type(value) == "table") then
+            value = value.message or "";
+        end
+        table.insert(Parts, tostring(value));
+    end
+
+    table.insert(self.messages, {
+        level = level,
+        text = table.concat(Parts, " "),
+        time = GetTime(),
+    });
+end
+
+---@param text? string Plain substring
+---@param level? string
+---@return number
+function Loot:countMessages(text, level)
+    local count = 0;
+    for _, Message in ipairs(self.messages) do
+        if ((not level or Message.level == level)
+            and (not text or strfind(Message.text, text, 1, true))
+        ) then
+            count = count + 1;
+        end
+    end
+
+    return count;
+end
+
 ---@return nil
 function Loot:install()
     if (self.installed) then
         self:uninstall();
     end
 
-    self.installed = true;
     self:reset();
+    self.installed = true;
 
-    self.Originals.GetNumLootItems = _G.GetNumLootItems;
-    self.Originals.GetLootSlotInfo = _G.GetLootSlotInfo;
-    self.Originals.GetLootSlotLink = _G.GetLootSlotLink;
-    self.Originals.GetLootSlotType = _G.GetLootSlotType;
-    self.Originals.GetLootSourceInfo = _G.GetLootSourceInfo;
-    self.Originals.GetMasterLootCandidate = _G.GetMasterLootCandidate;
-    self.Originals.GetNumGroupMembers = _G.GetNumGroupMembers;
-    self.Originals.GiveMasterLoot = _G.GiveMasterLoot;
-    self.Originals.LootSlot = _G.LootSlot;
-    self.Originals.ConfirmLootSlot = _G.ConfirmLootSlot;
-    self.Originals.IsShiftKeyDown = _G.IsShiftKeyDown;
-    self.Originals.LOOTFRAME_NUMBUTTONS = _G.LOOTFRAME_NUMBUTTONS;
     self.Originals.GLGetLootMethod = GL.GetLootMethod;
     self.Originals.GLGetItemInfoInstant = GL.GetItemInfoInstant;
     self.Originals.GLOnItemLoadDo = GL.onItemLoadDo;
     self.Originals.GLIsGameMessageID = GL.isGameMessageID;
-    self.Originals.LootButtons = {};
-    for buttonIndex = 1, self.pageSize do
-        self.Originals.LootButtons[buttonIndex] = _G["LootButton" .. buttonIndex];
-    end
+    self.Originals.GLError = GL.error;
+    self.Originals.GLWarning = GL.warning;
+    self.Originals.AlertsFire = GL.Interface.Alerts and GL.Interface.Alerts.fire;
 
-    _G.LOOTFRAME_NUMBUTTONS = self.pageSize;
+    Env:activate();
+    Env:set("LOOTFRAME_NUMBUTTONS", self.pageSize);
 
-    _G.GetNumLootItems = function ()
-        Gargul:xd({
-            event = "Tests.Fakes.Loot:GetNumLootItems",
-            count = #self.items,
-        });
+    Env:set("GetNumLootItems", function ()
+        self:trace({ event = "Tests.Fakes.Loot:GetNumLootItems", count = #self.items, });
         return #self.items;
-    end;
+    end);
 
-    _G.GetLootSlotInfo = function (itemIndex)
+    Env:set("GetLootSlotInfo", function (itemIndex)
         local Item = self.items[itemIndex];
         if (not Item or Item.removed) then
-            Gargul:xd({
-                event = "Tests.Fakes.Loot:GetLootSlotInfo",
-                itemIndex = itemIndex,
-                removed = Item and Item.removed or nil,
-                found = Item ~= nil,
-                locked = true,
-            });
             return nil, nil, 0, nil, nil, true;
         end
 
-        Gargul:xd({
+        self:trace({
             event = "Tests.Fakes.Loot:GetLootSlotInfo",
             itemIndex = itemIndex,
             itemLink = Item.link,
@@ -253,93 +430,80 @@ function Loot:install()
             locked = Item.locked,
         });
         return Item.icon, Item.name, Item.quantity, nil, Item.quality, Item.locked;
-    end;
+    end);
 
-    _G.GetLootSlotLink = function (itemIndex)
+    Env:set("GetLootSlotLink", function (itemIndex)
         local Item = self.items[itemIndex];
-        if (not Item or Item.removed) then
-            Gargul:xd({
-                event = "Tests.Fakes.Loot:GetLootSlotLink",
-                itemIndex = itemIndex,
-                removed = Item and Item.removed or nil,
-                found = Item ~= nil,
-            });
+        if (not Item or Item.removed or Item.money) then
             return nil;
         end
 
-        Gargul:xd({
-            event = "Tests.Fakes.Loot:GetLootSlotLink",
-            itemIndex = itemIndex,
-            itemLink = Item.link,
-        });
         return Item.link;
-    end;
+    end);
 
-    _G.GetLootSlotType = function (itemIndex)
+    Env:set("GetLootSlotType", function (itemIndex)
         local Item = self.items[itemIndex];
         if (not Item or Item.removed) then
             return 0;
         end
 
-        return _G.LOOT_SLOT_ITEM or (Enum and Enum.LootSlotType and Enum.LootSlotType.Item) or 1;
-    end;
+        if (Item.money) then
+            return GL.LOOT_SLOT_MONEY;
+        end
 
-    _G.GetLootSourceInfo = function ()
-        return "Creature-0-0-0-0-0";
-    end;
+        return LOOT_SLOT_ITEM or (Enum and Enum.LootSlotType and Enum.LootSlotType.Item) or 1;
+    end);
 
-    _G.GetMasterLootCandidate = function (itemIndex, playerIndex)
+    Env:set("GetLootSourceInfo", function (itemIndex)
+        local Item = self.items[itemIndex];
+        return Item and Item.source or "Creature-0-0-0-0-0";
+    end);
+
+    Env:set("GetMasterLootCandidate", function (itemIndex, playerIndex)
         local Player = self.players[playerIndex];
-        local candidate = Player and GL:formatPlayerName(Player.fqn) or nil;
-        Gargul:xd({
+        local Item = self.items[itemIndex];
+        if (not Player or (Item and self:playerIsIneligible(Item.id, Player))) then
+            return nil;
+        end
+
+        local candidate = Player.candidateName or GL:formatPlayerName(Player.fqn);
+        self:trace({
             event = "Tests.Fakes.Loot:GetMasterLootCandidate",
             itemIndex = itemIndex,
             playerIndex = playerIndex,
-            rawCandidate = Player and Player.fqn or nil,
             candidate = candidate,
         });
         return candidate;
-    end;
+    end);
 
-    _G.GetNumGroupMembers = function ()
-        Gargul:xd({
-            event = "Tests.Fakes.Loot:GetNumGroupMembers",
-            count = #self.players,
-        });
+    Env:set("GetNumGroupMembers", function ()
         return #self.players;
-    end;
+    end);
 
-    _G.GiveMasterLoot = function (itemIndex, playerIndex)
+    Env:set("GiveMasterLoot", function (itemIndex, playerIndex)
         self:giveMasterLoot(itemIndex, playerIndex);
-    end;
+    end);
 
-    _G.LootSlot = function (itemIndex)
+    Env:set("LootSlot", function (itemIndex)
         self:clearSlot(itemIndex, "LootSlot");
-    end;
+    end);
 
-    _G.ConfirmLootSlot = function (itemIndex)
+    Env:set("ConfirmLootSlot", function (itemIndex)
         self:record("ConfirmLootSlot", { itemIndex = itemIndex, });
-    end;
+    end);
 
-    _G.IsShiftKeyDown = function ()
-        return false;
-    end;
+    Env:set("IsShiftKeyDown", function ()
+        return self.shiftDown == true;
+    end);
 
     GL.GetLootMethod = function ()
-        return "master";
+        return self.lootMethod or "master";
     end;
 
     GL.GetItemInfoInstant = function (itemLinkOrID)
         local itemID = self:itemIDFromIdentifier(itemLinkOrID);
         local Details = itemID and self.itemDetails[itemID];
         if (Details) then
-            Gargul:xd({
-                event = "Tests.Fakes.Loot:GetItemInfoInstant",
-                itemLinkOrID = itemLinkOrID,
-                itemID = Details.id,
-                classID = Details.classID,
-                subclassID = Details.subclassID,
-            });
             return Details.id, "Armor", "Miscellaneous", Details.inventoryType, Details.icon, Details.classID, Details.subclassID;
         end
 
@@ -365,7 +529,72 @@ function Loot:install()
         return self.Originals.GLIsGameMessageID(GL, constant, messageID);
     end;
 
+    GL.error = function (_, ...)
+        self:captureMessage("error", ...);
+        if (self.passthroughMessages) then
+            self.Originals.GLError(GL, ...);
+        end
+    end;
+
+    GL.warning = function (_, ...)
+        self:captureMessage("warning", ...);
+        if (self.passthroughMessages) then
+            self.Originals.GLWarning(GL, ...);
+        end
+    end;
+
+    if (GL.Interface.Alerts) then
+        GL.Interface.Alerts.fire = function (Alerts, frameType, ...)
+            self:captureMessage("alert", ...);
+            if (self.passthroughMessages and self.Originals.AlertsFire) then
+                return self.Originals.AlertsFire(Alerts, frameType, ...);
+            end
+            return true;
+        end;
+    end
+
     self:ensureNativeLootButtons();
+end
+
+--- Opt-in: resolve raidN/partyN units to fake players so groupMemberIdentity can see them (Forever)
+---@return nil
+function Loot:installUnitShims()
+    if (self.unitShimsInstalled) then
+        return;
+    end
+
+    self.unitShimsInstalled = true;
+
+    Env:set("UnitName", function (unit)
+        local index = type(unit) == "string" and tonumber(strmatch(unit, "^raid(%d+)$") or strmatch(unit, "^party(%d+)$"));
+        local Player = index and self.players[index];
+        if (Player) then
+            local fullName = GL:storedPlayerName(Player.fqn);
+            local firstName, lastName = strmatch(fullName, "^(%S+)%s+(.+)$");
+            return firstName or fullName, lastName;
+        end
+
+        return UnitName(unit);
+    end);
+
+    Env:set("IsInRaid", function (...)
+        if (self.UserFlags.isInGroup ~= nil) then
+            return self.UserFlags.isInRaid == true;
+        end
+
+        return IsInRaid(...);
+    end);
+end
+
+---@return nil
+function Loot:uninstallUnitShims()
+    if (not self.unitShimsInstalled) then
+        return;
+    end
+
+    Env:clear("UnitName");
+    Env:clear("IsInRaid");
+    self.unitShimsInstalled = false;
 end
 
 ---@return nil
@@ -375,76 +604,91 @@ function Loot:uninstall()
     end
 
     self:close();
+    self:cancelPendingTimers();
+    self:uninstallUnitShims();
 
-    _G.GetNumLootItems = self.Originals.GetNumLootItems;
-    _G.GetLootSlotInfo = self.Originals.GetLootSlotInfo;
-    _G.GetLootSlotLink = self.Originals.GetLootSlotLink;
-    _G.GetLootSlotType = self.Originals.GetLootSlotType;
-    _G.GetLootSourceInfo = self.Originals.GetLootSourceInfo;
-    _G.GetMasterLootCandidate = self.Originals.GetMasterLootCandidate;
-    _G.GetNumGroupMembers = self.Originals.GetNumGroupMembers;
-    _G.GiveMasterLoot = self.Originals.GiveMasterLoot;
-    _G.LootSlot = self.Originals.LootSlot;
-    _G.ConfirmLootSlot = self.Originals.ConfirmLootSlot;
-    _G.IsShiftKeyDown = self.Originals.IsShiftKeyDown;
-    _G.LOOTFRAME_NUMBUTTONS = self.Originals.LOOTFRAME_NUMBUTTONS;
-    for buttonIndex = 1, self.pageSize do
-        local Button = self.CreatedButtons[buttonIndex];
-        if (Button) then
-            Button:Hide();
-        end
-        _G["LootButton" .. buttonIndex] = self.Originals.LootButtons and self.Originals.LootButtons[buttonIndex] or nil;
+    if (self.Frame) then
+        self.Frame:Hide();
     end
-    for _, Button in pairs(self.CreatedPageControls) do
-        if (Button and Button.Hide) then
-            Button:Hide();
-        end
-    end
+
     GL.GetLootMethod = self.Originals.GLGetLootMethod;
     GL.GetItemInfoInstant = self.Originals.GLGetItemInfoInstant;
     GL.onItemLoadDo = self.Originals.GLOnItemLoadDo;
     GL.isGameMessageID = self.Originals.GLIsGameMessageID;
+    GL.error = self.Originals.GLError;
+    GL.warning = self.Originals.GLWarning;
+    if (GL.Interface.Alerts and self.Originals.AlertsFire) then
+        GL.Interface.Alerts.fire = self.Originals.AlertsFire;
+    end
 
     self:restoreUserState();
+    Env:deactivate();
     self.installed = false;
-    self.CreatedButtons = {};
-    self.CreatedPageControls = {};
+    self.lootMethod = nil;
     self.Originals = {};
 end
 
----@param players table
 ---@return nil
-function Loot:setMasterLootGroup(players)
+function Loot:applyUserFlags()
+    for key, value in pairs(self.UserFlags) do
+        GL.User[key] = value;
+    end
+end
+
+--- Install a fake group. Flags override the default master looter state (see DEFAULT_USER_FLAGS)
+---
+---@param players table
+---@param Flags? table
+---@return nil
+function Loot:setGroup(players, Flags)
     self.players = players or {};
 
-    self.UserState.isMasterLooter = GL.User.isMasterLooter;
-    self.UserState.isInGroup = GL.User.isInGroup;
-    self.UserState.isInRaid = GL.User.isInRaid;
-    self.UserState.isInParty = GL.User.isInParty;
-    self.UserState.hasAssist = GL.User.hasAssist;
-    self.UserState.isLead = GL.User.isLead;
-    self.UserState.groupMembers = GL.User.groupMembers;
-    self.UserState.groupMemberNamesCachedAt = GL.User.groupMemberNamesCachedAt;
-    self.UserState.groupSetupChangedAt = GL.User.groupSetupChangedAt;
-    self.UserState.GroupMemberNames = GL.User.GroupMemberNames;
+    if (not self.UserState.saved) then
+        self.UserState = {
+            saved = true,
+            isMasterLooter = GL.User.isMasterLooter,
+            isInGroup = GL.User.isInGroup,
+            isInRaid = GL.User.isInRaid,
+            isInParty = GL.User.isInParty,
+            hasAssist = GL.User.hasAssist,
+            isLead = GL.User.isLead,
+            groupMembers = rawget(GL.User, "groupMembers"),
+            unitInGroup = rawget(GL.User, "unitInGroup"),
+            groupMemberNamesCachedAt = GL.User.groupMemberNamesCachedAt,
+            groupSetupChangedAt = GL.User.groupSetupChangedAt,
+            GroupMemberNames = GL.User.GroupMemberNames,
+        };
+    end
 
-    GL.User.isMasterLooter = true;
-    GL.User.isInGroup = true;
-    GL.User.isInRaid = true;
-    GL.User.isInParty = false;
-    GL.User.hasAssist = true;
-    GL.User.isLead = true;
+    self.UserFlags = {};
+    for key, value in pairs(DEFAULT_USER_FLAGS) do
+        self.UserFlags[key] = value;
+    end
+    for key, value in pairs(Flags or {}) do
+        self.UserFlags[key] = value;
+    end
+    self:applyUserFlags();
+
     GL.User.groupSetupChangedAt = GetServerTime();
     GL.User.groupMemberNamesCachedAt = -1;
     GL.User.GroupMemberNames = {};
     GL.User.groupMembers = function ()
         return self.players;
     end;
+    GL.User.unitInGroup = function (_, unit)
+        return self:playerByName(unit) ~= nil;
+    end;
+end
+
+---@param players table
+---@return nil
+function Loot:setMasterLootGroup(players)
+    self:setGroup(players);
 end
 
 ---@return nil
 function Loot:restoreUserState()
-    if (not self.UserState.groupMembers) then
+    if (not self.UserState.saved) then
         return;
     end
 
@@ -455,10 +699,12 @@ function Loot:restoreUserState()
     GL.User.hasAssist = self.UserState.hasAssist;
     GL.User.isLead = self.UserState.isLead;
     GL.User.groupMembers = self.UserState.groupMembers;
+    GL.User.unitInGroup = self.UserState.unitInGroup;
     GL.User.groupMemberNamesCachedAt = self.UserState.groupMemberNamesCachedAt;
     GL.User.groupSetupChangedAt = self.UserState.groupSetupChangedAt;
     GL.User.GroupMemberNames = self.UserState.GroupMemberNames;
     self.UserState = {};
+    self.UserFlags = {};
 end
 
 ---@param mode string|nil "auto" enables PackMule rules
@@ -469,28 +715,30 @@ function Loot:openPackMuleManual(mode)
     end
 
     local realm = GL.User.realm or "";
-    local playerName = GL.User.name or "Addontest";
     local target = GL:addRealm("PackMuleTarget", realm, false);
     local itemIDs = { 6948, 25, 35, 36, 159, 117, };
     local items = {};
     local rules = {};
 
-    self:setMasterLootGroup({
+    self:setGroup({
         {
-            name = playerName,
-            fqn = GL:addRealm(playerName, realm, false),
+            name = GL.User.name,
+            fqn = GL.User.fqn,
             index = 1,
+            online = true,
             isML = true,
         },
         {
             name = "PackMuleTarget",
             fqn = target,
             index = 2,
+            online = true,
         },
         {
             name = "PackMuleBackup",
             fqn = GL:addRealm("PackMuleBackup", realm, false),
             index = 3,
+            online = true,
         },
     });
 
@@ -512,54 +760,71 @@ function Loot:openPackMuleManual(mode)
     self:open(items);
 end
 
+--- Open a loot window. Fires LOOT_READY and LOOT_OPENED like the client does.
+---
 ---@param items table
----@return nil
+---@return table skipped Item IDs that were left out because they weren't cached
 function Loot:open(items)
     self.items = {};
     self.page = 1;
-    GL.User.isMasterLooter = true;
-    GL.User.isInGroup = true;
-    GL.User.isInRaid = true;
-    GL.User.isInParty = false;
-    GL.User.hasAssist = true;
-    GL.User.isLead = true;
+    self:applyUserFlags();
 
+    local Skipped = {};
     for _, item in ipairs(items or {}) do
         local itemID = math.floor(tonumber(item.id or item.itemID) or 0);
-        if (item.allowSynthetic or item.name or item.link or self:itemHasRealData(itemID)) then
+        if (item.money or item.allowSynthetic or item.name or item.link or self:itemHasRealData(itemID)) then
             table.insert(self.items, self:registerItem(item));
         else
-            Gargul:xd({
-                event = "Tests.Fakes.Loot:openSkippedUncachedItem",
-                itemID = itemID,
-            });
+            table.insert(Skipped, itemID);
         end
     end
 
-    self:record("OpenLoot", { itemCount = #self.items, });
-
-    if (_G.LootFrame and _G.LootFrame.Show) then
-        _G.LootFrame:Show();
-    end
+    self:record("OpenLoot", { itemCount = #self.items, skipped = Skipped, });
 
     self:refreshNativeLootButtons();
+    self.Frame:Show();
     GL.Events:fire("LOOT_READY");
-    GL:after(.1, "Tests.Fakes.Loot.PackMuleLootReady", function ()
-        if (self.installed
-            and GL.PackMule
-            and GL.PackMule.lootReady
-            and GL.Settings:get("PackMule.enabledForMasterLoot")
-        ) then
-            Gargul:xd({
-                event = "Tests.Fakes.Loot:directPackMuleLootReady",
-                itemCount = #self.items,
-                isMasterLooter = GL.User.isMasterLooter,
-                enabledForMasterLoot = GL.Settings:get("PackMule.enabledForMasterLoot"),
-                rules = GL.PackMule.Rules,
-            });
-            GL.PackMule:lootReady();
-        end
-    end);
+    GL.Events:fire("LOOT_OPENED");
+
+    if (self.directLootReady) then
+        GL:after(.1, DIRECT_LOOT_READY_TIMER_ID, function ()
+            if (self.installed
+                and GL.PackMule
+                and GL.PackMule.lootReady
+                and GL.Settings:get("PackMule.enabledForMasterLoot")
+            ) then
+                GL.PackMule:lootReady();
+            end
+        end);
+    end
+
+    return Skipped;
+end
+
+--- Add an item to the open loot window (e.g. another addon or the server updating the window)
+---
+---@param item table
+---@return table
+function Loot:addItem(item)
+    local Item = self:registerItem(item);
+    table.insert(self.items, Item);
+    self:record("AddItem", { itemIndex = #self.items, itemID = Item.id, });
+    self:refreshNativeLootButtons();
+    GL.Events:fire("GL.LOOT_CHANGED");
+    return Item;
+end
+
+---@param itemIndex number
+---@param locked boolean
+---@return nil
+function Loot:setLocked(itemIndex, locked)
+    local Item = self.items[itemIndex];
+    if (not Item) then
+        return;
+    end
+
+    Item.locked = locked == true;
+    self:record("SetLocked", { itemIndex = itemIndex, locked = Item.locked, });
 end
 
 ---@return nil
@@ -568,13 +833,10 @@ function Loot:close()
         return;
     end
 
+    GL:cancelTimer(DIRECT_LOOT_READY_TIMER_ID);
     self:record("CloseLoot");
-    if (_G.LootFrame and _G.LootFrame.Hide) then
-        _G.LootFrame:Hide();
-    end
-
-    if (_G.MasterLooterFrame and _G.MasterLooterFrame.Hide) then
-        _G.MasterLooterFrame:Hide();
+    if (self.Frame) then
+        self.Frame:Hide();
     end
 
     GL.Events:fire("LOOT_CLOSED");
@@ -611,14 +873,29 @@ end
 
 ---@return nil
 function Loot:ensureNativeLootButtons()
-    if (not _G.LootFrame) then
-        return;
+    -- Our own frame: showing or writing into Blizzard's LootFrame/LootButtonN from addon code would taint it
+    if (not self.Frame) then
+        local Frame = CreateFrame("Frame", "GargulTestsLootFrame", UIParent);
+        Frame:SetSize(268, 74 + (self.pageSize * 38));
+        Frame:SetPoint("LEFT", UIParent, "LEFT", 100, 0);
+        Frame:SetFrameStrata("DIALOG");
+
+        local Background = Frame:CreateTexture(nil, "BACKGROUND");
+        Background:SetAllPoints(Frame);
+        Background:SetColorTexture(0, 0, 0, .75);
+
+        local Title = Frame:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+        Title:SetPoint("TOP", Frame, "TOP", 0, -12);
+        Title:SetText("Gargul test loot");
+
+        Frame:Hide();
+        self.Frame = Frame;
     end
 
     if (not self.CreatedPageControls.previous) then
-        local Previous = CreateFrame("Button", nil, _G.LootFrame);
+        local Previous = CreateFrame("Button", nil, self.Frame);
         Previous:SetSize(28, 24);
-        Previous:SetPoint("BOTTOMLEFT", _G.LootFrame, "BOTTOMLEFT", 36, 28);
+        Previous:SetPoint("BOTTOMLEFT", self.Frame, "BOTTOMLEFT", 24, 8);
         Previous.Text = Previous:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge");
         Previous.Text:SetPoint("CENTER", Previous, "CENTER", 0, 0);
         Previous.Text:SetText("<");
@@ -629,9 +906,9 @@ function Loot:ensureNativeLootButtons()
     end
 
     if (not self.CreatedPageControls.next) then
-        local Next = CreateFrame("Button", nil, _G.LootFrame);
+        local Next = CreateFrame("Button", nil, self.Frame);
         Next:SetSize(28, 24);
-        Next:SetPoint("BOTTOMLEFT", _G.LootFrame, "BOTTOMLEFT", 72, 28);
+        Next:SetPoint("BOTTOMLEFT", self.Frame, "BOTTOMLEFT", 60, 8);
         Next.Text = Next:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge");
         Next.Text:SetPoint("CENTER", Next, "CENTER", 0, 0);
         Next.Text:SetText(">");
@@ -642,10 +919,10 @@ function Loot:ensureNativeLootButtons()
     end
 
     for buttonIndex = 1, self.pageSize do
-        if (not _G["LootButton" .. buttonIndex]) then
-            local Button = CreateFrame("Button", nil, _G.LootFrame);
+        if (not self.CreatedButtons[buttonIndex]) then
+            local Button = CreateFrame("Button", nil, self.Frame);
             Button:SetSize(220, 36);
-            Button:SetPoint("TOPLEFT", _G.LootFrame, "TOPLEFT", 24, -38 - ((buttonIndex - 1) * 38));
+            Button:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", 24, -34 - ((buttonIndex - 1) * 38));
 
             Button.Icon = Button:CreateTexture(nil, "ARTWORK");
             Button.Icon:SetSize(30, 30);
@@ -662,7 +939,7 @@ function Loot:ensureNativeLootButtons()
             Button:SetScript("OnEnter", function (button)
                 local slot = button.slot;
                 local Item = slot and self.items[slot];
-                if (not Item) then
+                if (not Item or not Item.link) then
                     return;
                 end
                 button:LockHighlight();
@@ -677,17 +954,9 @@ function Loot:ensureNativeLootButtons()
             Button:SetScript("OnMouseUp", function (button, mouseButtonPressed)
                 local slot = button.slot;
                 local Item = slot and self.items[slot];
-                if (not Item) then
+                if (not Item or not Item.link) then
                     return;
                 end
-
-                Gargul:xd({
-                    event = "Tests.Fakes.Loot:buttonClick",
-                    slot = slot,
-                    itemLink = Item.link,
-                    button = mouseButtonPressed,
-                    modified = IsModifiedClick and IsModifiedClick() or false,
-                });
 
                 if (IsModifiedClick and IsModifiedClick()) then
                     HandleModifiedItemClick(Item.link, mouseButtonPressed);
@@ -698,8 +967,10 @@ function Loot:ensureNativeLootButtons()
             end);
 
             self.CreatedButtons[buttonIndex] = Button;
-            _G["LootButton" .. buttonIndex] = Button;
         end
+
+        -- Gargul's DroppedLoot finds loot buttons by global name
+        Env:set("LootButton" .. buttonIndex, self.CreatedButtons[buttonIndex]);
     end
 end
 
@@ -721,7 +992,7 @@ function Loot:populateButtonRegions(Button, Item)
         if (Region and Region.GetObjectType) then
             local objectType = Region:GetObjectType();
             if (objectType == "FontString" and Region.SetText) then
-                Region:SetText(Item.link);
+                Region:SetText(Item.link or Item.name);
                 Details.fontStrings = Details.fontStrings + 1;
             elseif (objectType == "Texture" and Region.SetTexture and Details.textures == 0) then
                 Region:SetTexture(Item.icon);
@@ -737,7 +1008,6 @@ end
 function Loot:refreshNativeLootButtons()
     self:ensureNativeLootButtons();
     local slots = self:visibleSlots();
-    local DebugButtons = {};
     local maxPage = math.max(1, math.ceil(#self.items / self.pageSize));
 
     if (self.CreatedPageControls.previous) then
@@ -757,12 +1027,13 @@ function Loot:refreshNativeLootButtons()
     end
 
     for buttonIndex = 1, self.pageSize do
-        local Button = _G["LootButton" .. buttonIndex];
+        local Button = self.CreatedButtons[buttonIndex];
         if (Button) then
             local slot = slots[buttonIndex];
             Button.slot = slot;
             if (slot) then
                 local Item = self.items[slot];
+                local label = Item.link or Item.name;
                 if (Button.SetID) then
                     Button:SetID(slot);
                 end
@@ -773,12 +1044,12 @@ function Loot:refreshNativeLootButtons()
                 if (Button.IconTexture and Button.IconTexture.SetTexture) then
                     Button.IconTexture:SetTexture(Item.icon);
                 end
-                local RegionDetails = self:populateButtonRegions(Button, Item);
+                self:populateButtonRegions(Button, Item);
                 if (Button.Text and Button.Text.SetText) then
-                    Button.Text:SetText(Item.link);
+                    Button.Text:SetText(label);
                 end
                 if (Button.Name and Button.Name.SetText) then
-                    Button.Name:SetText(Item.link);
+                    Button.Name:SetText(label);
                 end
                 if (Button.Count and Button.Count.SetText) then
                     Button.Count:SetText(Item.quantity > 1 and Item.quantity or "");
@@ -788,48 +1059,18 @@ function Loot:refreshNativeLootButtons()
                 end
 
                 Button:Show();
-                table.insert(DebugButtons, {
-                    button = "LootButton" .. buttonIndex,
-                    slot = slot,
-                    shown = Button.IsShown and Button:IsShown() or nil,
-                    visible = Button.IsVisible and Button:IsVisible() or nil,
-                    width = Button.GetWidth and Button:GetWidth() or nil,
-                    height = Button.GetHeight and Button:GetHeight() or nil,
-                    fontStrings = RegionDetails.fontStrings,
-                    textures = RegionDetails.textures,
-                    itemLink = Item.link,
-                });
             else
                 Button.slot = nil;
                 Button:Hide();
-                table.insert(DebugButtons, {
-                    button = "LootButton" .. buttonIndex,
-                    slot = nil,
-                    shown = Button.IsShown and Button:IsShown() or nil,
-                    visible = Button.IsVisible and Button:IsVisible() or nil,
-                });
             end
-        else
-            table.insert(DebugButtons, {
-                button = "LootButton" .. buttonIndex,
-                missing = true,
-            });
         end
     end
 
-    Gargul:xd({
+    self:trace({
         event = "Tests.Fakes.Loot:refreshNativeLootButtons",
         page = self.page,
-        lootFrameShown = _G.LootFrame and _G.LootFrame.IsShown and _G.LootFrame:IsShown() or nil,
-        lootFrameVisible = _G.LootFrame and _G.LootFrame.IsVisible and _G.LootFrame:IsVisible() or nil,
-        lootFrameNumButtons = _G.LOOTFRAME_NUMBUTTONS,
         maxPage = maxPage,
         slots = slots,
-        buttons = DebugButtons,
-        pageControls = {
-            previousShown = self.CreatedPageControls.previous and self.CreatedPageControls.previous.IsShown and self.CreatedPageControls.previous:IsShown() or nil,
-            nextShown = self.CreatedPageControls.next and self.CreatedPageControls.next.IsShown and self.CreatedPageControls.next:IsShown() or nil,
-        },
     });
 end
 
@@ -837,11 +1078,6 @@ end
 ---@return nil
 function Loot:openMasterLootList(itemIndex)
     self:record("OpenMasterLootList", { itemIndex = itemIndex, });
-
-    if (_G.MasterLooterFrame and _G.MasterLooterFrame.Show) then
-        _G.MasterLooterFrame:Show();
-    end
-
     GL.Events:fire("OPEN_MASTER_LOOT_LIST", itemIndex);
 end
 
@@ -862,6 +1098,8 @@ function Loot:silentFailHandoutForItem(itemID)
     self.silentFailuresByItemID[math.floor(tonumber(itemID) or 0)] = true;
 end
 
+--- Every handout of itemID fails with reason. "unrelated" fires a UI error PackMule doesn't know.
+---
 ---@param itemID number
 ---@param reason string
 ---@return nil
@@ -879,16 +1117,21 @@ function Loot:clearSlot(itemIndex, source)
     end
 
     Item.removed = true;
-    self:record(source or "ClearSlot", { itemIndex = itemIndex, itemLink = Item.link, });
+    self:record(source or "ClearSlot", { itemIndex = itemIndex, itemID = Item.id, itemLink = Item.link, });
     self:refreshNativeLootButtons();
     GL.Events:fire("LOOT_SLOT_CLEARED", itemIndex);
     GL.Events:fire("GL.LOOT_CHANGED");
 end
 
 ---@param reason string
----@return number|nil
+---@return number
 function Loot:gameMessageIDForReason(reason)
     local constant = ERROR_CONSTANT_BY_REASON[reason or "other"] or ERROR_CONSTANT_BY_REASON.other;
+    if (self.MessageIDByConstant[constant]) then
+        return self.MessageIDByConstant[constant];
+    end
+
+    local messageID;
     local i = 1;
     while (GetGameMessageInfo) do
         local identifier = GetGameMessageInfo(i);
@@ -897,15 +1140,39 @@ function Loot:gameMessageIDForReason(reason)
         end
 
         if (identifier == constant) then
-            return i;
+            messageID = i;
+            break;
         end
 
         i = i + 1;
     end
 
-    local fakeID = -1000 - GL:count(self.FakeGameMessageIDs);
-    self.FakeGameMessageIDs[fakeID] = constant;
-    return fakeID;
+    if (not messageID) then
+        messageID = -1000 - GL:count(self.FakeGameMessageIDs);
+        self.FakeGameMessageIDs[messageID] = constant;
+    end
+
+    self.MessageIDByConstant[constant] = messageID;
+    return messageID;
+end
+
+--- Fire a UI error now, or after failureLatency. Delayed errors arrive in the order they were caused.
+---
+---@param messageID number
+---@return nil
+function Loot:fireLootError(messageID)
+    if (self.failureLatency <= 0) then
+        GL.Events:fire("UI_ERROR_MESSAGE", messageID, "Gargul test loot error");
+        return;
+    end
+
+    table.insert(self.QueuedErrors, messageID);
+    self:schedule(self.failureLatency, function ()
+        local queuedMessageID = table.remove(self.QueuedErrors, 1);
+        if (queuedMessageID) then
+            GL.Events:fire("UI_ERROR_MESSAGE", queuedMessageID, "Gargul test loot error");
+        end
+    end);
 end
 
 ---@param itemIndex number
@@ -914,60 +1181,50 @@ end
 function Loot:giveMasterLoot(itemIndex, playerIndex)
     local Item = self.items[itemIndex];
     local Player = self.players[playerIndex];
-    local reason = self.nextFailure;
+    local Entry = {
+        itemIndex = itemIndex,
+        itemID = Item and Item.id or nil,
+        itemLink = Item and Item.link or nil,
+        playerIndex = playerIndex,
+        player = Player and Player.fqn or nil,
+    };
+
+    if (not Item or Item.removed) then
+        Entry.result = "emptySlot";
+        self:record("GiveMasterLoot", Entry);
+        return;
+    end
+
+    local reason = self.failuresByItemID[Item.id] or self.nextFailure;
     self.nextFailure = nil;
 
-    if (Item and self.failuresByItemID[Item.id]) then
-        reason = self.failuresByItemID[Item.id];
-    end
+    local silent = self.nextSilentFailure or self.silentFailuresByItemID[Item.id];
+    self.nextSilentFailure = false;
 
-    if (Item and self.silentFailuresByItemID[Item.id]) then
-        self.nextSilentFailure = true;
-    end
-
-    if (self.nextSilentFailure) then
-        self.nextSilentFailure = false;
-        self:record("GiveMasterLoot", {
-            itemIndex = itemIndex,
-            itemLink = Item and Item.link or nil,
-            playerIndex = playerIndex,
-            player = Player and Player.fqn or nil,
-            result = "silentFailure",
-        });
+    if (silent) then
+        Entry.result = "silentFailure";
+        self:record("GiveMasterLoot", Entry);
         return;
     end
 
     if (reason) then
-        self:record("GiveMasterLoot", {
-            itemIndex = itemIndex,
-            itemLink = Item and Item.link or nil,
-            playerIndex = playerIndex,
-            player = Player and Player.fqn or nil,
-            result = reason,
-        });
-
-        local messageID = self:gameMessageIDForReason(reason);
-        if (messageID) then
-            GL.Events:fire("UI_ERROR_MESSAGE", messageID);
-        end
+        Entry.result = reason;
+        self:record("GiveMasterLoot", Entry);
+        self:fireLootError(self:gameMessageIDForReason(reason));
         return;
     end
 
-    self:record("GiveMasterLoot", {
-        itemIndex = itemIndex,
-        itemLink = Item and Item.link or nil,
-        playerIndex = playerIndex,
-        player = Player and Player.fqn or nil,
-        result = "success",
-    });
-    Gargul:xd({
-        event = "Tests.Fakes.Loot:GiveMasterLoot",
-        itemIndex = itemIndex,
-        playerIndex = playerIndex,
-        itemLink = Item and Item.link or nil,
-        player = Player and Player.fqn or nil,
-        result = "success",
-    });
+    Entry.result = "success";
+    self:record("GiveMasterLoot", Entry);
+    self:trace({ event = "Tests.Fakes.Loot:GiveMasterLoot", entry = Entry, });
+
+    if (self.successLatency > 0) then
+        self:schedule(self.successLatency, function ()
+            self:clearSlot(itemIndex, "GiveMasterLootSuccess");
+        end);
+        return;
+    end
+
     self:clearSlot(itemIndex, "GiveMasterLootSuccess");
 end
 
@@ -976,6 +1233,82 @@ function Loot:remainingItemCount()
     local count = 0;
     for _, Item in ipairs(self.items) do
         if (not Item.removed) then
+            count = count + 1;
+        end
+    end
+
+    return count;
+end
+
+---@param itemID number
+---@return table|nil
+function Loot:itemByID(itemID)
+    for _, Item in ipairs(self.items) do
+        if (Item.id == itemID) then
+            return Item;
+        end
+    end
+end
+
+---@param itemID number
+---@return boolean
+function Loot:itemIsInWindow(itemID)
+    for _, Item in ipairs(self.items) do
+        if (Item.id == itemID and not Item.removed) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+---@return boolean
+function Loot:moneyLooted()
+    for _, Item in ipairs(self.items) do
+        if (Item.money and Item.removed) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+---@param itemID number
+---@return number
+function Loot:handoutAttempts(itemID)
+    local count = 0;
+    for _, Entry in ipairs(self.log) do
+        if (Entry.action == "GiveMasterLoot" and Entry.itemID == itemID) then
+            count = count + 1;
+        end
+    end
+
+    return count;
+end
+
+---@return table<number, table[]>
+function Loot:handoutsByItemID()
+    local Handouts = {};
+    for _, Entry in ipairs(self.log) do
+        if (Entry.action == "GiveMasterLoot" and Entry.itemID) then
+            Handouts[Entry.itemID] = Handouts[Entry.itemID] or {};
+            table.insert(Handouts[Entry.itemID], {
+                player = Entry.player,
+                result = Entry.result,
+                itemIndex = Entry.itemIndex,
+            });
+        end
+    end
+
+    return Handouts;
+end
+
+---@param action string
+---@return number
+function Loot:countActions(action)
+    local count = 0;
+    for _, Entry in ipairs(self.log) do
+        if (Entry.action == action) then
             count = count + 1;
         end
     end

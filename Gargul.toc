@@ -243,8 +243,15 @@ Interface/Tests/Runner.lua
 Interface/Tests/Launcher.lua
 Test.lua
 Tests/Base.lua
+Tests/Fakes/Env.lua
 Tests/Fakes/Loot.lua
+Tests/Fakes/GroupLoot.lua
 Tests/E2E/Base.lua
+Tests/E2E/PackMuleBase.lua
 Tests/E2E/PackMule.lua
+Tests/E2E/PackMuleRules.lua
+Tests/E2E/PackMuleForever.lua
+Tests/E2E/PackMuleAward.lua
+Tests/E2E/PackMuleGroupLoot.lua
 Tests/E2E/GDKPMultiAuction.lua
 Tests/E2E/GDKPAuction.lua
