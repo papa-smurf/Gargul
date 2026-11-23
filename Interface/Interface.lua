@@ -510,12 +510,13 @@ end
 function Interface:addCloseButton(Element)
     ---@type Button
     local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
-    Close:SetSize(30, 30);
 
-    if (GL.isRetail) then
-        Close:SetScale(.6);
-        Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 2, -2);
+    -- Retail and Forever use edge-to-edge atlas art, older clients a texture with lots of padding
+    if (Close:GetNormalTexture():GetAtlas()) then
+        Close:SetSize(16, 16);
+        Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -2, -2);
     else
+        Close:SetSize(30, 30);
         Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
     end
 
