@@ -215,5 +215,3 @@ function ShortcutKeys:draw(Parent)
     end);
     Parent:AddChild(AuctionHotkey);
 end
-
-GL:debug("Interface/Settings/ShortcutKeys.lua");

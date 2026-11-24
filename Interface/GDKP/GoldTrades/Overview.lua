@@ -328,5 +328,3 @@ end
 function Overview:getWindow()
     return _G[self.windowName];
 end
-
-GL:debug("Auctioneer.lua");

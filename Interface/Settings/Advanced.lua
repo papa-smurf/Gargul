@@ -45,5 +45,3 @@ function Advanced:draw(Parent)
         },
     }, Parent);
 end
-
-GL:debug("Interface/Settings/Advanced.lua");

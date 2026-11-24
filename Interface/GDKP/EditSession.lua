@@ -193,5 +193,3 @@ function EditSession:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.EditSession.lua");

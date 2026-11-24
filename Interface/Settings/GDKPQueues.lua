@@ -121,5 +121,3 @@ function GDKPQueues:draw(Parent)
     end);
     Parent:AddChild(DelayInSecondsBetweenQueuedAuctions);
 end
-
-GL:debug("Interface/Settings/GDKP.lua");

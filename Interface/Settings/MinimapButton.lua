@@ -105,5 +105,3 @@ function MinimapButton:draw(Parent)
         Parent:AddChild(Dropdown);
     end
 end
-
-GL:debug("Interface/Settings/Minimap.lua");

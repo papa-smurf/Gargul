@@ -93,5 +93,3 @@ function SlashCommands:draw(Parent)
         Parent:AddChild(HorizontalSpacer);
     end
 end
-
-GL:debug("Interface/Settings/SlashCommands.lua");

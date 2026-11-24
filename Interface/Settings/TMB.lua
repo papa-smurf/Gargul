@@ -219,5 +219,3 @@ function TMB:draw(Parent)
         },
     }, Parent);
 end
-
-GL:debug("Interface/Settings/TMB.lua");

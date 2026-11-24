@@ -123,5 +123,3 @@ function DroppedLoot:draw(Parent)
     end);
     Parent:AddChild(OpenDataButton);
 end
-
-GL:debug("Interface/Settings/DroppedLoot.lua");

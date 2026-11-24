@@ -232,5 +232,3 @@ function ExportingLoot:draw(Parent)
         CustomFormatWrapper.frame:Hide();
     end
 end
-
-GL:debug("Interface/Settings/ExportingLoot.lua");

@@ -72,5 +72,3 @@ function PlusOnes:draw(Parent)
     end);
     Parent:AddChild(OpenDataButton);
 end
-
-GL:debug("Interface/Settings/PlusOnes.lua");

@@ -66,5 +66,3 @@ function SoftRes:draw(Parent)
     end);
     Parent:AddChild(OpenSoftRes);
 end
-
-GL:debug("Interface/Settings/SoftRes.lua");

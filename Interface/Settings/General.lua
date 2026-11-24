@@ -101,5 +101,3 @@ function General:draw(Parent)
     end);
     Parent:AddChild(SoundChannelDropdown);
 end
-
-GL:debug("Interface/Settings/General.lua");

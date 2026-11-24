@@ -246,5 +246,3 @@ function BoostedRolls:draw(Parent)
     end);
     Parent:AddChild(OpenDataButton);
 end
-
-GL:debug("Interface/Settings/BoostedRolls.lua");

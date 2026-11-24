@@ -114,5 +114,3 @@ function GDKPCommunication:draw(Parent)
     end);
     Parent:AddChild(FinalCallTime);
 end
-
-GL:debug("Interface/Settings/GDKP.lua");

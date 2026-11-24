@@ -368,5 +368,3 @@ function PackMuleRules:drawHigherThanQualityRule(Frame, Rule)
     Row:AddChild(HigherThanOrEqualToRuleTarget);
     self.UIComponents.Input.HigherThanOrEqualToRuleTarget = HigherThanOrEqualToRuleTarget;
 end
-
-GL:debug("Interface/Settings/PackMuleRules.lua");

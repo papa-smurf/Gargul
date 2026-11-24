@@ -176,5 +176,3 @@ function LootTradeTimers:draw(Parent)
     end);
     Parent:AddChild(DemoTradeTimersButton);
 end
-
-GL:debug("Interface/Settings/TMB.lua");

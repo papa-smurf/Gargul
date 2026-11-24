@@ -122,5 +122,3 @@ function TradeAnnouncements:draw(Parent)
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
 end
-
-GL:debug("Interface/Settings/TradeAnnouncements.lua");

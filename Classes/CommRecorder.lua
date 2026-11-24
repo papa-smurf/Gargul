@@ -761,5 +761,3 @@ function CommRecorder:export(which)
 end
 
 GL:registerForInit(CommRecorder);
-
-GL:debug("CommRecorder.lua");

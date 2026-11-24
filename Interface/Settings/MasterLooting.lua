@@ -185,5 +185,3 @@ function MasterLooting:draw(Parent)
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 end
-
-GL:debug("Interface/Settings/MasterLooting.lua");

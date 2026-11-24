@@ -275,5 +275,3 @@ end
 
 --- Store the button details (will be overwritten by the draw method)
 function RollTracking:onClose() end
-
-GL:debug("Interface/Settings/RollTracking.lua");

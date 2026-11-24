@@ -451,5 +451,3 @@ function Comm:dispatch(CommMessage, stringLength)
 end
 
 GL:registerForInit(Comm);
-
-GL:debug("Comm.lua");

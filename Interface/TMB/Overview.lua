@@ -265,5 +265,3 @@ function Overview:close()
         ShareButton:Hide();
     end
 end
-
-GL:debug("Interfaces/TMB/Overview.lua");

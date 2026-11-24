@@ -658,5 +658,3 @@ function Onboarding:build()
     _G[self.windowName] = Window;
     return Window;
 end
-
-GL:debug("Interface/Onboarding.lua");

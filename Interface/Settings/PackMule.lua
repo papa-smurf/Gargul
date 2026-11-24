@@ -66,5 +66,3 @@ function PackMule:draw(Parent)
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 end
-
-GL:debug("Interface/Settings/PackMule.lua");
