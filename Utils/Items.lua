@@ -1321,3 +1321,7 @@ function GL.LibStGearArrowCellUpdate (rowFrame, frame, data, cols, row, realrow,
         GameTooltip:Hide();
     end);
 end
+
+hooksecurefunc("HandleModifiedItemClick", function (itemLink)
+    GL:handleItemClick(itemLink, GetMouseButtonClicked());
+end);

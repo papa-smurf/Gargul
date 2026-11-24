@@ -447,3 +447,5 @@ function DroppedLoot:announceTest(...)
         };
     end);
 end
+
+GL:registerForInit(DroppedLoot);

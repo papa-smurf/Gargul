@@ -1,5 +1,3 @@
-local L;
-
 ---@class GL
 ---@field Data Data
 local GL;
@@ -28,16 +26,9 @@ GL.tocVersion = select(4, GetBuildInfo());
 GL.isEra = GL.tocVersion < 20000;
 -- Forever (Camelot): vanilla rules on the modern codebase, so Era behavior but not Era APIs.
 GL.isForever = GL.tocVersion >= 16000 and GL.tocVersion < 17000;
--- C_Seasons only exists in Season of Discovery; wrap to avoid errors on Era/BCC/Wrath/etc.
-GL.isSoD = false;
-if (GL.isEra and C_Seasons and C_Seasons.GetActiveSeason and Enum and Enum.SeasonID) then
-    local sodSeasonID = Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder;
-    GL.isSoD = sodSeasonID ~= nil and C_Seasons.GetActiveSeason() == sodSeasonID;
-end
 GL.isClassic = not GL.isEra and GL.tocVersion < 90000;
 GL.isRetail = GL.tocVersion >= 90000;
 GL.isMuted = false;
-GL.GDKPIsAllowed = true;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
@@ -95,65 +86,31 @@ function GL:bootstrap(_, _, addonName)
                     and UnitInParty("player");
             end)
         end
-
-        -- Disable any active GDKP session
-        if (not self.GDKPIsAllowed) then
-            GL.GDKP.Session:clearActive();
-        end
     end);
 end
 
 --- Callback to be fired when the addon is completely loaded
 ---@return nil
 function GL:_init()
-    if (self.isSoD
-        -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
-        and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
-    ) then
-        self.GDKPIsAllowed = false;
-    end
-
-    -- Initialize classes
     self.Events:_init(self.EventFrame);
     self.DB:_init();
     self.Version:_init();
     self.Settings:_init();
 
-    -- Determine which chat message locale to use
-    local L = Gargul_L;
-    local langMatch = false;
-    local chatLocale = GL.Settings:get("chatLocale");
+    self:registerMedia();
+    self:runInits();
 
-    -- The user previously selected a chatLocale
-    if (chatLocale) then
-        for lang, Translations in pairs(L.CHAT or {}) do
-            if (lang == chatLocale) then
-                L.CHAT = Translations;
-                langMatch = true;
-                break;
-            end
-        end
-    end
+    self:hookNativeWindowEvents();
+    self:hookTooltipSetItemEvents();
 
-    if (not chatLocale or not langMatch) then
-        L.CHAT = {};
-    end
+    -- Listeners are registered above. refresh fires the group events they handle.
+    self.User:refresh();
+end
 
-    -- Make sure enUS fallbacks are available
-    setmetatable(L.CHAT, {
-        __index = function (_, key)
-            return tostring(key)
-        end,
-    });
-
-    GL.Settings:onChange("chatLocale", function ()
-        if (GL.Settings:get("chatLocale") ~= chatLocale) then
-            GL.ReloadUI();
-        end
-    end);
-
-    -- Register media
-    local media = LibStub("LibSharedMedia-3.0")
+--- Register Gargul sounds and the default font. GL.FONT must exist before runInits.
+---@return nil
+function GL:registerMedia()
+    local media = LibStub("LibSharedMedia-3.0");
     media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/Gargul/Assets/Sounds/uh-oh.ogg");
     media:Register("sound", "Gargul: cheer", "Interface/AddOns/Gargul/Assets/Sounds/cheer.ogg");
     media:Register("sound", "Gargul: waow", "Interface/AddOns/Gargul/Assets/Sounds/waow.ogg");
@@ -166,207 +123,74 @@ function GL:_init()
         media:Register("font", "PTSansNarrow", "Interface/AddOns/Gargul/Assets/Fonts/PTSansNarrow.ttf");
         GL.FONT = media:Fetch("font", "PTSansNarrow");
     end
-
-    GL:after(2, nil, function ()
-        -- Show a welcome message
-        if (self.Settings:get("welcomeMessage")) then
-            local cc = self.Data.Constants.commandHexColor;
-            GL:message("|c00" .. self.Data.Constants.addonHexColor .. (L["Use |c00%s/gl|r to open Gargul. New to Gargul? Try |c00%s/gl start|r!"]):format(cc, cc));
-        end
-
-        if (GL.AutoRoll:enabled()) then
-            local profile = GL.Profiles:getActiveProfile(GL.Profiles.NAMESPACE_AUTOROLL);
-            local rules = GL.AutoRoll:getAllRules();
-            if (profile and profile.name and next(rules)) then
-                local msg = (L["Auto roll is active ( profile: %s )"]):format(profile.name);
-                GL:message(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, msg));
-            end
-        end
-    end);
-
-    self.Comm:_init();
-    self.User:_init();
-    self.CommRecorder:_init();
-    self.AwardedLoot:_init();
-    self.AutoRoll:_init();
-    self.ItemDataManager:_init();
-    self.SoftRes:_init();
-    self.GDKP.Auction:_init();
-    self.TMB:_init();
-    self.GDKP.Session:_init();
-    self.BoostedRolls:_init();
-    self.PlusOnes:_init();
-    self.DroppedLoot:_init();
-    self.GroupLoot:_init();
-    self.PackMule:_init();
-    self.DroppedLootLedger:_init();
-    self.TradeWindow:_init();
-    self.TradeTime:_init();
-    self.GDKP.Auctioneer:_init();
-    self.GDKP.MultiAuction.Auctioneer:_init();
-    self.GDKP.MultiAuction.Client:_init();
-    self.Interface.MasterLooterDialog:_init();
-    self.Interface.GDKP.BidderQueue:_init();
-    self.Interface.GDKP.Distribute.MailCuts:_init();
-
-    -- Hook native window events
-    self:hookNativeWindowEvents();
-
-    -- Hook item click events
-    hooksecurefunc("HandleModifiedItemClick", function (itemLink)
-        self:handleItemClick(itemLink, GetMouseButtonClicked());
-    end);
-
-    -- Hook item tooltip events
-    self:hookTooltipSetItemEvents();
-
-    -- Make sure to initialize the user last
-    self.User:refresh();
-
-    -- GargulAutoRoll migration: if they have the addon but no Gargul auto roll rules, nudge them
-    GL:after(8, "GargulAutoRollMigration", function ()
-        if (GL.IsAddOnLoaded("GargulAutoRoll")) then
-            local color = GL.Data.Constants.addonHexColor;
-            GL:message(("|c00%s%s|r"):format(color, (L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"]):format(GL.Data.Constants.commandHexColor, GL.Data.Constants.commandHexColor)));
-        end
-    end);
-
-    -- Makes testing easier for devs
-    if (self.User:isDev()) then
-        -- Make sure we keep the command descriptions up-to-date during development
-        for command in pairs(GL.Commands.Dictionary) do
-            if (not GL.Commands.CommandDescriptions[command]) then
-                GL:error("Missing description for command: " .. command);
-            end
-        end
-    end
-
-    -- Show the changelog window
-    GL.Interface.Changelog:reportChanges();
-end
-
--- Register the gl slash command
-GL.Ace:RegisterChatCommand("gl", function (...)
-    GL.Commands:_dispatch(...);
-end);
-
--- Register the gargul slash command
-GL.Ace:RegisterChatCommand("gargul", function (...)
-    GL.Commands:_dispatch(...);
-end);
-
--- Register the gdkp slash command
-GL.Ace:RegisterChatCommand("gdkp", function (...)
-    GL.Commands:call("gdkp");
-end);
-
---- Announce conflicting addons, if any
----@return nil
-function GL:announceConflictingAddons()
-    local ConflictingAddons = {};
-    local addonLoadedFunction = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
-
-    for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
-        if (addonLoadedFunction(addon)) then
-            tinsert(ConflictingAddons, addon);
-        end
-    end
-
-    -- Nothing found, steady as she goes
-    if (GL:empty(ConflictingAddons)) then
-        return;
-    end
-
-    GL:warning((L["You have one or more addons installed that can potentially cause Gargul to misfunction: %s"]):format(
-        table.concat(ConflictingAddons, ", ")
-    ));
 end
 
 --- Keep track of when native UI elements (like AH/mailbox) are active
 ---@return nil
 function GL:hookNativeWindowEvents()
+    local WindowFlags = {
+        "auctionHouseIsShown",
+        "bankIsShown",
+        "guildBankIsShown",
+        "mailIsShown",
+        "merchantIsShown",
+    };
+
     -- Make sure to reset window states when zoning
     GL.Events:register("BootstrapPlayerEnteringWorld", "PLAYER_ENTERING_WORLD", function ()
-        GL.auctionHouseIsShown = false;
-        GL.bankIsShown = false;
-        GL.guildBankIsShown = false;
-        GL.mailIsShown = false;
-        GL.merchantIsShown = false;
+        for index = 1, #WindowFlags do
+            GL[WindowFlags[index]] = false;
+        end
     end);
 
     -- Era uses legacy events; other clients use PLAYER_INTERACTION_MANAGER_FRAME_* (types 5/8/10/17/21).
     -- Don't register both: 1.15.9 fires both, which would set window state twice.
     -- Forever gets both: we don't know which it fires and setting these twice is harmless.
+    local FlagByInteractionType = {
+        [5] = "merchantIsShown",
+        [8] = "bankIsShown",
+        [10] = "guildBankIsShown",
+        [17] = "mailIsShown",
+        [21] = "auctionHouseIsShown",
+    };
+
+    local function setInteractionShown(interactionType, isShown)
+        local flag = FlagByInteractionType[interactionType];
+        if (flag) then
+            GL[flag] = isShown;
+        end
+    end
+
     if (not GL.isEra or GL.isForever) then
-        GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, type)
-            if (type == 5) then
-                self.merchantIsShown = true;
-            elseif (type == 8) then
-                self.bankIsShown = true;
-            elseif (type == 10) then
-                self.guildBankIsShown = true;
-            elseif (type == 17) then
-                self.mailIsShown = true;
-            elseif (type == 21) then
-                self.auctionHouseIsShown = true;
-            end
+        GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function (_, interactionType)
+            setInteractionShown(interactionType, true);
         end);
 
-        GL.Events:register("BootstrapPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function (_, type)
-            if (type == 5) then
-                self.merchantIsShown = false;
-            elseif (type == 8) then
-                self.bankIsShown = false;
-            elseif (type == 10) then
-                self.guildBankIsShown = false;
-            elseif (type == 17) then
-                self.mailIsShown = false;
-            elseif (type == 21) then
-                self.auctionHouseIsShown = false;
-            end
+        GL.Events:register("BootstrapPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function (_, interactionType)
+            setInteractionShown(interactionType, false);
         end);
     end
 
     if (GL.isEra) then
-        GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function ()
-            self.auctionHouseIsShown = true;
-        end);
+        local LegacyEvents = {
+            { "BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", "auctionHouseIsShown", true, },
+            { "BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", "auctionHouseIsShown", false, },
+            { "BootstrapMailShowListener", "MAIL_SHOW", "mailIsShown", true, },
+            { "BootstrapMailClosedListener", "MAIL_CLOSED", "mailIsShown", false, },
+            { "BootstrapMerchantShowListener", "MERCHANT_SHOW", "merchantIsShown", true, },
+            { "BootstrapMerchantClosedListener", "MERCHANT_CLOSED", "merchantIsShown", false, },
+            { "BootstrapBankFrameShowListener", "BANKFRAME_OPENED", "bankIsShown", true, },
+            { "BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", "bankIsShown", false, },
+            { "BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", "guildBankIsShown", true, },
+            { "BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", "guildBankIsShown", false, },
+        };
 
-        GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function ()
-            self.auctionHouseIsShown = false;
-        end);
-
-        GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function ()
-            self.mailIsShown = true;
-        end);
-
-        GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function ()
-            self.mailIsShown = false;
-        end);
-
-        GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function ()
-            self.merchantIsShown = true;
-        end);
-
-        GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function ()
-            self.merchantIsShown = false;
-        end);
-
-        GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function ()
-            self.bankIsShown = true;
-        end);
-
-        GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function ()
-            self.bankIsShown = false;
-        end);
-
-        GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function ()
-            self.guildBankIsShown = true;
-        end);
-
-        GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function ()
-            self.guildBankIsShown = false;
-        end);
+        for index = 1, #LegacyEvents do
+            local identifier, event, flag, isShown = unpack(LegacyEvents[index]);
+            GL.Events:register(identifier, event, function ()
+                GL[flag] = isShown;
+            end);
+        end
     end
 end
 

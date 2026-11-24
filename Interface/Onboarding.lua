@@ -504,8 +504,7 @@ function Onboarding:build()
         end,
     });
 
-    if (GL.GDKPIsAllowed) then
-        table.insert(SlidesConfig, {
+    table.insert(SlidesConfig, {
             title = L["GDKP"],
             subtitle = L["Auction loot, split the gold"],
             icon = "Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow",
@@ -540,7 +539,6 @@ function Onboarding:build()
                 GL.Commands:call("gdkp");
             end,
         });
-    end
 
     table.insert(SlidesConfig, {
         title = L["Soft Reserves"],

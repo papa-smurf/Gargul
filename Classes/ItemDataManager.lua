@@ -250,3 +250,5 @@ function ItemDataManager:_init()
         end
     end
 end
+
+GL:registerForInit(ItemDataManager);

@@ -760,4 +760,6 @@ function CommRecorder:export(which)
     GL:notice(L["The Gargul comm recorder hasn't captured anything yet. Enable it in Settings > Advanced, reproduce the issue, then try again."]);
 end
 
+GL:registerForInit(CommRecorder);
+
 GL:debug("CommRecorder.lua");

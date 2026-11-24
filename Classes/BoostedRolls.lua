@@ -1401,3 +1401,6 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
 
     GL:sendChatMessage(chatMessage, "WHISPER", nil, sender);
 end
+
+-- materializeData stamps names with User.realm
+GL:registerForInit(BoostedRolls, { "User", });

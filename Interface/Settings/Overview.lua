@@ -22,11 +22,11 @@ GL.Interface.Settings.Overview = {
         { "Minimap Icon", "MinimapButton", },
         { "Softres", "SoftRes", },
         { "TMB and DFT", "TMB", },
-        GL.GDKPIsAllowed and { "GDKP", "GDKP", } or nil,
-        GL.GDKPIsAllowed and { "    Communication", "GDKPCommunication", } or nil,
-        GL.GDKPIsAllowed and { "    Prices", "GDKPPrices", } or nil,
-        GL.GDKPIsAllowed and { "    Mutators", "GDKPMutators", } or nil,
-        GL.GDKPIsAllowed and { "    Queues", "GDKPQueues", } or nil,
+        { "GDKP", "GDKP", },
+        { "    Communication", "GDKPCommunication", },
+        { "    Prices", "GDKPPrices", },
+        { "    Mutators", "GDKPMutators", },
+        { "    Queues", "GDKPQueues", },
         { "Dropped Loot", "DroppedLoot", },
         { "Exporting Loot", "ExportingLoot", },
         { "Loot trade timers", "LootTradeTimers", },
@@ -530,5 +530,3 @@ function Overview:drawSpacer(Parent, width, height)
     Spacer:SetHeight(height);
     Parent:AddChild(Spacer);
 end
-
-GL:debug("Interface/Settings/Overview.lua");

@@ -1007,3 +1007,5 @@ function TradeWindow:announceTradeDetails(Details)
         ), channel, nil, recipient);
     end
 end
+
+GL:registerForInit(TradeWindow);

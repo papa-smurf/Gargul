@@ -1410,10 +1410,6 @@ end
 ---@param CommMessage CommMessage
 ---@return nil
 function Auction:start(CommMessage)
-    if (not GL.GDKPIsAllowed) then
-        return;
-    end
-
     local content = CommMessage.content;
     self.waitingForStart = false;
 
@@ -2087,3 +2083,5 @@ function Auction:messageToBid(message, minBid)
 
     return bid;
 end
+
+GL:registerForInit(Auction);

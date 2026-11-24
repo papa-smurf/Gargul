@@ -426,3 +426,5 @@ function DroppedLootLedger:receivedItemDetails(message)
     itemCount = tonumber(itemCount) or 1;
     return itemLink, playerName, itemCount, isBonusLoot;
 end
+
+GL:registerForInit(DroppedLootLedger);

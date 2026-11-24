@@ -50,10 +50,6 @@ function Session:_init()
     GDKPAuction = GDKP.Auction;
     self._initialized = true;
 
-    if (not GL.GDKPIsAllowed) then
-        return;
-    end
-
     -- Make sure trades involving gold are logged
     Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
         self:registerGoldTrade(Details);
@@ -1096,3 +1092,5 @@ function Session:announceRestoredGoldTrade(sessionID, playerGUID, given, receive
         GL:sendChatMessage((L.CHAT["I restored a gold trade in which I received %s from %s"]):format(GL:copperToMoney(received), playerName), "GROUP");
     end
 end
+
+GL:registerForInit(Session);

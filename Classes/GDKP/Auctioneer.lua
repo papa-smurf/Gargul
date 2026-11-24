@@ -814,3 +814,5 @@ function Auctioneer:award()
         end,
     });
 end
+
+GL:registerForInit(Auctioneer);

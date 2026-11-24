@@ -1334,3 +1334,5 @@ function PackMule:assignLootToPlayer(itemID, playerName)
         GL.Events:unregister(eventID);
     end);
 end
+
+GL:registerForInit(PackMule);

@@ -494,3 +494,5 @@ function MailCuts:enableSendButton()
 
     _G.SendMailMailButton:SetEnabled(true);
 end
+
+GL:registerForInit(MailCuts);

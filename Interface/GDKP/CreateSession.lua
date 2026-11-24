@@ -25,10 +25,6 @@ local CreateSession = GL.Interface.GDKP.CreateSession;
 
 ---@return Frame
 function CreateSession:build()
-    if (not GL.GDKPIsAllowed) then
-        return GL:error(L["GDKP raids are not allowed in this version of World of Warcraft"]);
-    end
-
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(200);

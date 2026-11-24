@@ -433,3 +433,5 @@ end
 function BidderQueue:getWindow()
     return _G[self.windowName];
 end
+
+GL:registerForInit(BidderQueue);

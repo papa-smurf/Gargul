@@ -106,3 +106,5 @@ end
 function TradeTime:getState()
     return self.State;
 end
+
+GL:registerForInit(TradeTime);

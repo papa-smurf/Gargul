@@ -445,3 +445,5 @@ function User:isDev()
         "4270976097-2384770663",
     }, self:bth());
 end
+
+GL:registerForInit(User);

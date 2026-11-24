@@ -1968,3 +1968,5 @@ end
 function SoftRes:userIsAllowedToBroadcast()
     return not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.hasAssist);
 end
+
+GL:registerForInit(SoftRes);

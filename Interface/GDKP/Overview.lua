@@ -155,10 +155,6 @@ end
 
 ---@return nil
 function Overview:open()
-    if (not GL.GDKPIsAllowed) then
-        return GL:error(L["GDKP raids are not allowed in this version of World of Warcraft"]);
-    end
-
     local Window = Interface:get(self, "GDKPOverview");
 
     if (not Window) then

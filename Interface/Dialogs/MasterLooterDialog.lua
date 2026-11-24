@@ -51,7 +51,7 @@ function MasterLooterDialog:_init()
         -- Announce potential addon conflicts
         if (not self.announcedConflictingAddons) then
             self.announcedConflictingAddons = true;
-            GL:announceConflictingAddons();
+            self:announceConflictingAddons();
         end
 
         -- Make sure we periodically check whether the master looter's Gargul version is up-to-date
@@ -276,3 +276,26 @@ function MasterLooterDialog:close()
 
     self.isVisible = false;
 end
+
+--- Announce conflicting addons, if any
+---@return nil
+function MasterLooterDialog:announceConflictingAddons()
+    local ConflictingAddons = {};
+    local addonLoadedFunction = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
+
+    for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
+        if (addonLoadedFunction(addon)) then
+            tinsert(ConflictingAddons, addon);
+        end
+    end
+
+    if (GL:empty(ConflictingAddons)) then
+        return;
+    end
+
+    GL:warning((L["You have one or more addons installed that can potentially cause Gargul to misfunction: %s"]):format(
+        table.concat(ConflictingAddons, ", ")
+    ));
+end
+
+GL:registerForInit(MasterLooterDialog);

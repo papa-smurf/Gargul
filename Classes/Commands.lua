@@ -7,11 +7,11 @@ local Settings = GL.Settings;
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
         --[[ GDKP commands ]]
-            auction = GL.GDKPIsAllowed and "Open the Auctioneer UI where you can auction off items for a GDKP session (requires an active GDKP session!)" or nil,
-            bid = GL.GDKPIsAllowed and "Open the window which lets you bid during a GDKP multi-auction" or nil,
-            gdkp = GL.GDKPIsAllowed and "Open the GDKP UI where you can manage your GDKP sessions" or nil,
-            importprices = GL.GDKPIsAllowed and "Open an import window with which you can import per-product minimum and increment settings" or nil,
-            multiauction = GL.GDKPIsAllowed and "Auction off multiple items at once in your GDKP raids. This requires all participants to have an up-to-date version of Gargul!" or nil,
+            auction = "Open the Auctioneer UI where you can auction off items for a GDKP session (requires an active GDKP session!)",
+            bid = "Open the window which lets you bid during a GDKP multi-auction",
+            gdkp = "Open the GDKP UI where you can manage your GDKP sessions",
+            importprices = "Open an import window with which you can import per-product minimum and increment settings",
+            multiauction = "Auction off multiple items at once in your GDKP raids. This requires all participants to have an up-to-date version of Gargul!",
 
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
@@ -52,15 +52,15 @@ GL.Commands = GL.Commands or {
     ShorthandDictionary = {
         --[[ GDKP SHORTHANDS ]]
             -- auction
-            au = GL.GDKPIsAllowed and "auction" or nil,
+            au = "auction",
 
             -- gdkp
-            gd = GL.GDKPIsAllowed and "gdkp" or nil,
+            gd = "gdkp",
 
             -- multiauction
-            ma = GL.GDKPIsAllowed and "multiauction" or nil,
-            ba = GL.GDKPIsAllowed and "multiauction" or nil,
-            batchauction = GL.GDKPIsAllowed and "multiauction" or nil,
+            ma = "multiauction",
+            ba = "multiauction",
+            batchauction = "multiauction",
 
         -- awardondate
         aod = "awardondate",
@@ -435,3 +435,31 @@ function Commands:_dispatch(str)
         self:help();
     end
 end;
+
+GL.Ace:RegisterChatCommand("gl", function (...)
+    GL.Commands:_dispatch(...);
+end);
+
+GL.Ace:RegisterChatCommand("gargul", function (...)
+    GL.Commands:_dispatch(...);
+end);
+
+GL.Ace:RegisterChatCommand("gdkp", function (...)
+    GL.Commands:call("gdkp");
+end);
+
+--- Complain about commands that have no help text. Dev accounts only.
+---@return nil
+function Commands:_init()
+    if (not GL.User:isDev()) then
+        return;
+    end
+
+    for command in pairs(self.Dictionary) do
+        if (not self.CommandDescriptions[command]) then
+            GL:error("Missing description for command: " .. command);
+        end
+    end
+end
+
+GL:registerForInit(Commands, { "User", });

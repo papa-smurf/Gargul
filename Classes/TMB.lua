@@ -1900,3 +1900,5 @@ function TMB:RRobinAnnounceDetailsOfItemInChat(itemID, Entries)
         "GROUP"
     );
 end
+
+GL:registerForInit(TMB);

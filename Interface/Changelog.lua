@@ -375,3 +375,10 @@ function Changelog:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
+
+---@return nil
+function Changelog:_init()
+    self:reportChanges();
+end
+
+GL:registerForInit(Changelog, { "Version", });

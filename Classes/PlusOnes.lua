@@ -891,3 +891,6 @@ end
 function PlusOnes:triggerChangeEvent()
     GL.Events:fire("GL.PLUSONES_CHANGED");
 end
+
+-- materializeData stamps names with User.realm
+GL:registerForInit(PlusOnes, { "User", });

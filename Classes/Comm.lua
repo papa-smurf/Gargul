@@ -450,4 +450,6 @@ function Comm:dispatch(CommMessage, stringLength)
     WarnedAboutCommAction[action] = true;
 end
 
+GL:registerForInit(Comm);
+
 GL:debug("Comm.lua");

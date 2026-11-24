@@ -38,6 +38,29 @@ function AutoRoll:_init()
     GL.Events:register("AutoRollItemAwardedListener", "GL.ITEM_AWARDED", onItemWon);
     GL.Events:register("AutoRollItemAwardedEditedListener", "GL.ITEM_AWARD_EDITED", onItemWon);
 
+    GL:after(2, nil, function ()
+        if (GL.Settings:get("welcomeMessage")) then
+            local cc = GL.Data.Constants.commandHexColor;
+            GL:message("|c00" .. GL.Data.Constants.addonHexColor .. (L["Use |c00%s/gl|r to open Gargul. New to Gargul? Try |c00%s/gl start|r!"]):format(cc, cc));
+        end
+
+        if (self:enabled()) then
+            local profile = Profiles:getActiveProfile(Profiles.NAMESPACE_AUTOROLL);
+            local rules = self:getAllRules();
+            if (profile and profile.name and next(rules)) then
+                local msg = (L["Auto roll is active ( profile: %s )"]):format(profile.name);
+                GL:message(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, msg));
+            end
+        end
+    end);
+
+    GL:after(8, "GargulAutoRollMigration", function ()
+        if (GL.IsAddOnLoaded("GargulAutoRoll")) then
+            local color = GL.Data.Constants.addonHexColor;
+            GL:message(("|c00%s%s|r"):format(color, (L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"]):format(GL.Data.Constants.commandHexColor, GL.Data.Constants.commandHexColor)));
+        end
+    end);
+
     self._initialized = true;
     return true;
 end
@@ -239,3 +262,6 @@ function AutoRoll:onRollStart(itemLink, itemID, SupportedRolls)
     end);
     return true, "rolled";
 end
+
+-- Active profile is stored per character, keyed by User.fqn
+GL:registerForInit(AutoRoll, { "User", });

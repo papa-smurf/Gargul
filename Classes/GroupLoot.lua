@@ -55,3 +55,5 @@ function GroupLoot:highlightItemsOfInterest()
         end
     end
 end
+
+GL:registerForInit(GroupLoot);

@@ -1266,3 +1266,5 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
         });
     end
 end
+
+GL:registerForInit(Auctioneer);

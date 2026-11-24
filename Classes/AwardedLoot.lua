@@ -1363,3 +1363,5 @@ function AwardedLoot:processAwardMutations(CommMessage)
         end
     end
 end
+
+GL:registerForInit(AwardedLoot);
