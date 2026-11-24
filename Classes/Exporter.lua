@@ -485,7 +485,7 @@ function Exporter:drawDatesTable(Parent, Dates)
         OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
-            GL.Ace:ScheduleTimer(function ()
+            GL:after(.1, nil, function ()
                 self.SelectedDates = {};
                 for _, row in pairs(Table:GetSelection() or {}) do
                     local Row = Table:GetRow(row) or {};
@@ -500,7 +500,7 @@ function Exporter:drawDatesTable(Parent, Dates)
                 end
 
                 self:refreshExportString();
-            end, .1);
+            end);
         end
     });
 

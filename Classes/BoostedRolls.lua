@@ -51,16 +51,16 @@ function BoostedRolls:_init()
         local maxWaitSeconds = 10;
 
         GL.Interface.BoostedRolls.Overview:refreshTable();
-        GL.Ace:CancelTimer(self.QueuedUpdateBroadcastTimer);
+        GL:cancelTimer(self.QueuedUpdateBroadcastTimer);
 
         self.QueuedUpdateFirstQueuedAt = self.QueuedUpdateFirstQueuedAt or GetServerTime();
         local waitedSoFar = GetServerTime() - self.QueuedUpdateFirstQueuedAt;
         local delay = math.max(0, math.min(debounceSeconds, maxWaitSeconds - waitedSoFar));
 
-        self.QueuedUpdateBroadcastTimer = GL.Ace:ScheduleTimer(function ()
+        self.QueuedUpdateBroadcastTimer = GL:after(delay, nil, function ()
             self.QueuedUpdateFirstQueuedAt = false;
             self:broadcastQueuedUpdates();
-        end, delay);
+        end);
     end);
 
     self:materializeData();
@@ -1130,9 +1130,9 @@ function BoostedRolls:requestData()
     -- Keep the guard up for a bit instead of resetting it immediately, so that
     -- multiple requestData() calls in quick succession (e.g. repeated group-join events)
     -- don't all fire off a whisper
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(5, nil, function ()
         self.requestingData = false;
-    end, 5);
+    end);
 end
 
 --- Reply to a player's BoostedRolls data request

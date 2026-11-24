@@ -65,13 +65,13 @@ function Overview:_init()
         { "GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED", },
         { "GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED", },
     }, function ()
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.1, nil, function ()
             self:updatePot();
 
             if (not self.isVisible) then return; end
             self:refreshLedger();
             self.styleWindowAfterResize();
-        end, .1);
+        end);
     end);
 
     GL.Events:register({
@@ -528,9 +528,9 @@ function Overview:build()
         self.styleWindowAfterResize();
     end
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(.05, nil, function ()
         self.styleWindowAfterResize();
-    end, .05);
+    end);
 
     return Window;
 end
@@ -1102,11 +1102,11 @@ function Overview:refreshSessions()
     -- Highlight the correct section in the table on the left
     -- This nasty delay is necessary because of how lib-st handles click and selection events
     Table:ClearSelection();
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(.1, nil, function ()
         if (Table and Table:GetSelection() ~= selectedTableItem) then
             Table:SetSelection(selectedTableItem);
         end
-    end, .1);
+    end);
 
     Events:fire("GL.GDKP_OVERVIEW_SESSIONS_REFRESHED");
 end

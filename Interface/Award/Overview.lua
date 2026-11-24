@@ -350,10 +350,10 @@ function Overview:build()
         { "AwardOverviewItemEditedListener", "GL.ITEM_AWARD_EDITED", },
         { "AwardOverviewItemEditedListener", "GL.ITEM_UNAWARDED", },
     }, function ()
-        GL.Ace:CancelTimer(self.RefreshTimer);
-        self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
+        GL:cancelTimer(self.RefreshTimer);
+        self.RefreshTimer = GL:after(.3, nil, function ()
             self:refreshItems();
-        end, .3);
+        end);
     end);
 
     return Window;
@@ -386,7 +386,7 @@ function Overview:buildDatesTable(Window)
         OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
-            GL.Ace:ScheduleTimer(function ()
+            GL:after(.1, nil, function ()
                 self.SelectedDates = {};
                 for _, row in pairs(Table:GetSelection() or {}) do
                     local Row = Table:GetRow(row) or {};
@@ -401,7 +401,7 @@ function Overview:buildDatesTable(Window)
                 end
 
                 self:refreshItems();
-            end, .1);
+            end);
         end
     });
 

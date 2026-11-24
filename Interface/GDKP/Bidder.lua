@@ -314,9 +314,9 @@ function Bidder:showBidDeniedNotification(Window)
     BidDeniedNotification:AddChild(Text);
     Text:SetJustifyH("CENTER");
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(2, nil, function ()
         BidDeniedNotification.frame:Hide();
-    end, 2);
+    end);
 end
 
 function Bidder:refresh()

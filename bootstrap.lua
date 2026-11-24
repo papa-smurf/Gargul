@@ -49,7 +49,7 @@ GL.merchantIsShown = false;
 GL.loadedOn = 32503680000; -- Year 3000
 
 -- Register our addon with the Ace framework
-GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
+GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0");
 
 -- Bootstrap the addon
 ---@return nil

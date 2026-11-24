@@ -85,11 +85,11 @@ function User:groupSetupChanged()
         return;
     end
 
-    User.groupSetupChangedTimer = GL.Ace:ScheduleTimer(function ()
+    User.groupSetupChangedTimer = GL:after(1, nil, function ()
         User:refresh();
         User.groupSetupChangedTimer = false;
         GL.Events:fire("GL.GROUP_ROSTER_UPDATE_THROTTLED");
-    end, 1);
+    end);
 end
 
 --- Refresh the user's details

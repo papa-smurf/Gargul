@@ -1277,10 +1277,10 @@ function Interface:openScaler(Parent)
     Scaler.Slider.Input:SetText(currentStep);
 
     -- Guarantee that the scaler window is on the foreground
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(.1, nil, function ()
         Scaler:SetFrameLevel(Parent:GetFrameLevel() + 100);
         Scaler:Show();
-    end, .1);
+    end);
 
     _G[self.scalerName] = Scaler;
 

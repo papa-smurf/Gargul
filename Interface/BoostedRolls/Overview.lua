@@ -351,7 +351,7 @@ function Overview:updateShareButton()
         return;
     end
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(1.5, nil, function ()
         -- The user doesn't have sufficient permissions to broadcast the data
         -- Or a broadcast is already in process
         if (GL.BoostedRolls.broadcastInProgress
@@ -362,7 +362,7 @@ function Overview:updateShareButton()
         end
 
         ShareButton:Enable();
-    end, 1.5);
+    end);
 end
 
 function Overview:drawBoostedRollDataTable(Parent)

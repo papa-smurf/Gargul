@@ -438,12 +438,12 @@ function Overview:showSection(section)
 
     -- Highlight the correct section in the table on the left
     -- This delay is necessary because of how lib-st handles click and selection events
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(.1, nil, function ()
         local Table = GL.Interface:get(self, "Table.Sections");
         if (Table and Table:GetSelection() ~= sectionIndex) then
             Table:SetSelection(sectionIndex);
         end
-    end, .1);
+    end);
 
     return true;
 end

@@ -234,8 +234,8 @@ GL.Commands = GL.Commands or {
         -- Generate a bug report
         bugreport = function () GL:bugReport(); end,
 
-        -- Show xd output buffer in frame (selectable, copyable)
-        xda = function () GL:xda(); end,
+        -- Show xd output buffer. /gl xda [seconds] also lists interval timers running at least that long.
+        xda = function (minSeconds) GL:xda(minSeconds); end,
 
         -- Export the recorded comm session trace (see Settings > Advanced). Accepts "prev" or "clear".
         commtrace = function (...) GL.CommRecorder:export(...); end,

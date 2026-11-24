@@ -561,14 +561,14 @@ function Test.TradeState:all(secondsBetweenScenarios)
         for _, name in ipairs(Names) do
             delay = delay + secondsBetweenScenarios;
 
-            GL.Ace:ScheduleTimer(function ()
+            GL:after(delay, nil, function ()
                 Test.TradeState[name](Test.TradeState);
-            end, delay);
+            end);
         end
 
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(delay + secondsBetweenScenarios, nil, function ()
             GL:success("Done with Test.TradeState:all()!");
-        end, delay + secondsBetweenScenarios);
+        end);
     end);
 end
 
@@ -612,13 +612,13 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(1, nil, function ()
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
         GL.User.isInParty = oldIsInParty;
-    end, 1);
+    end);
 end
 
 --[[ Enable a random trade time remaining for a specific item
@@ -1123,11 +1123,11 @@ function Test.ItemLinks:chatLimit(maxLinks)
         local message = ("#%s %s [END]"):format(links, table.concat(Links, " "));
         delay = delay + 1.5;
 
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(delay, nil, function ()
             GL:xd(("[chatLimit] #%s: %s links, %s bytes"):format(links, links, strlen(message)));
 
             SendChatMessage(message, chatType);
-        end, delay);
+        end);
     end
 end
 
@@ -1194,7 +1194,7 @@ function Test.ItemLinks:chatLimitCause()
     for _, Case in ipairs(Cases) do
         delay = delay + 1.5;
 
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(delay, nil, function ()
             GL:xd(("[chatLimitCause] #%s: %s links, %s visible, %s bytes"):format(
                 Case.label,
                 Case.links,
@@ -1203,7 +1203,7 @@ function Test.ItemLinks:chatLimitCause()
             ));
 
             SendChatMessage(Case.message, chatType);
-        end, delay);
+        end);
     end
 end
 

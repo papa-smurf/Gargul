@@ -306,20 +306,20 @@ function TradeWindow:open(playerName, callback, alwaysExecuteCallback)
     if (type(callback) == "function") then
         -- Even with jitter/lag opening a trade window should never take longer than a second
         -- If it does take longer however then we delete the eventlistener manually
-        local timerID = GL.Ace:ScheduleTimer(function ()
+        local timerID = GL:after(1, nil, function ()
             GL.Events:unregister(TRADE_SHOW_LISTENER_ID);
 
             if (alwaysExecuteCallback) then
                 callback(false);
             end
-        end, 1);
+        end);
 
         GL.Events:register(TRADE_SHOW_LISTENER_ID, "GL.TRADE_SHOW", function ()
             -- Remove our trade window show event listener, we no longer need it
             GL.Events:unregister(TRADE_SHOW_LISTENER_ID);
 
             -- We can cancel our timer now
-            GL.Ace:CancelTimer(timerID);
+            GL:cancelTimer(timerID);
 
             -- Perform the callback
             local playerNameMatches = GL:playerNamesMatch(self.State.partner, playerName) or GL:playerNamesMatch(GL:stripRealm(self.State.partner), playerName);

@@ -138,7 +138,7 @@ function Version:checkForUpdate(byReadyCheck)
         return;
     end
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(15, nil, function ()
         if (self.isOutOfDate
             or UnitAffectingCombat("player") -- We don't check guild in combat, can't risk hiccups
             or byReadyCheck -- We don't check the guild after a ready check: we're about to FIGHT!
@@ -154,10 +154,10 @@ function Version:checkForUpdate(byReadyCheck)
             acceptsResponse = true,
         }):send();
 
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(15, nil, function ()
             self.checkingForUpdate = false;
-        end, 15);
-    end, 15);
+        end);
+    end);
 end
 
 ---@param Message CommMessage

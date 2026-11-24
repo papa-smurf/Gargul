@@ -45,7 +45,7 @@ function SoftRes:_init()
     end
 
     --- Connect to LootReserve
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(5, nil, function ()
         if (type(_G.LootReserve) ~= "table"
             or type(_G.LootReserve.RegisterListener) ~= "function"
         ) then
@@ -68,7 +68,7 @@ function SoftRes:_init()
             GL:error(L["Failed to connect to LootReserve, contact support (include message below)"]);
             DevTools_Dump{ success, result };
         end
-    end, 5);
+    end);
 
     --- Register listener for whisper command.
     GL.Events:register("SoftResWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
@@ -1719,10 +1719,10 @@ function SoftRes:broadcast()
         channel = "GROUP",
     }):send();
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(10, nil, function ()
         GL:success(L["Broadcast finished!"]);
         self.broadcastInProgress = false;
-    end, 10);
+    end);
 
     return true;
 end

@@ -929,7 +929,7 @@ end
 ---@return nil
 function RollerUI:showRollAcceptedNotification(anchorFrame)
     if (self.RollAcceptedTimer) then
-        GL.Ace:CancelTimer(self.RollAcceptedTimer);
+        GL:cancelTimer(self.RollAcceptedTimer);
         self.RollAcceptedTimer = nil;
     end
     if (self.RollAcceptedNotification) then
@@ -959,14 +959,14 @@ function RollerUI:showRollAcceptedNotification(anchorFrame)
     RollAcceptedNotification.frame:Show();
 
     self.RollAcceptedNotification = RollAcceptedNotification;
-    self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+    self.RollAcceptedTimer = GL:after(2, nil, function ()
         if (self.RollAcceptedNotification) then
             self.RollAcceptedNotification.frame:Hide();
             GL.Interface:release(self.RollAcceptedNotification);
             self.RollAcceptedNotification = nil;
         end
         self.RollAcceptedTimer = nil;
-    end, 2);
+    end);
 end
 
 --- Handle a roll off coming to an end
@@ -1042,7 +1042,7 @@ function RollerUI:reopen()
 
         local secondsLeft = 0;
         if (RollOff.inProgress and RollOff.StopRollOffTimer) then
-            secondsLeft = math.max(math.ceil(GL.Ace:TimeLeft(RollOff.StopRollOffTimer) or 0), 0);
+            secondsLeft = math.max(math.ceil(GL:timeLeft(RollOff.StopRollOffTimer) or 0), 0);
         end
 
         self:draw(
@@ -1083,7 +1083,7 @@ function RollerUI:hide()
     self.rollOffEnded = false;
 
     if (self.RollAcceptedTimer) then
-        GL.Ace:CancelTimer(self.RollAcceptedTimer);
+        GL:cancelTimer(self.RollAcceptedTimer);
         self.RollAcceptedTimer = nil;
     end
     if (self.RollAcceptedNotification) then

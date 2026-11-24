@@ -516,9 +516,9 @@ function RollOff:start(CommMessage)
             end
 
             -- Make sure the rolloff stops when time is up
-            self.StopRollOffTimer = GL.Ace:ScheduleTimer(function ()
+            self.StopRollOffTimer = GL:after(time, nil, function ()
                 self:stop();
-            end, time);
+            end);
 
             -- Send a countdown in chat when enabled
             local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
@@ -528,11 +528,11 @@ function RollOff:start(CommMessage)
             ) then
                 local SecondsAnnounced = {};
 
-                self.InitiateCountDownTimer = GL.Ace:ScheduleTimer(function ()
-                    self.CountDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                self.InitiateCountDownTimer = GL:after(time - numberOfSecondsToCountdown - 2, nil, function ()
+                    self.CountDownTimer = GL:interval(.2, "RollOff.CountDownTimer", function ()
                         GL:debug("Run RollOff.CountDownTimer");
 
-                        local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.StopRollOffTimer));
+                        local secondsLeft = math.ceil(GL:timeLeft(self.StopRollOffTimer));
                         if (secondsLeft <= numberOfSecondsToCountdown
                             and secondsLeft > 0
                             and not SecondsAnnounced[secondsLeft]
@@ -544,12 +544,12 @@ function RollOff:start(CommMessage)
                             if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
                                 GL:debug("Cancel RollOff.CountDownTimer");
 
-                                GL.Ace:CancelTimer(self.CountDownTimer);
+                                GL:cancelTimer(self.CountDownTimer);
                                 self.CountDownTimer = nil;
                             end
                         end
-                    end, .2);
-                end, time - numberOfSecondsToCountdown - 2);
+                    end);
+                end);
             end
 
             local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
@@ -735,9 +735,9 @@ function RollOff:requestBoostedRanges(CommMessage, hash)
         end,
     }):send();
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(10, nil, function ()
         self.pendingBoostedRangeRequests[requestKey] = nil;
-    end, 10);
+    end);
 end
 
 --- Reply to a whispered request for our currently cached boosted-roll range map
@@ -801,19 +801,19 @@ function RollOff:stop(CommMessage)
     end
 
     -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-    self.rollListenerCancelTimerID = GL.Ace:ScheduleTimer(function ()
+    self.rollListenerCancelTimerID = GL:after(GL.Settings:get("RollTracking.rollOffEndLeeway", 1), nil, function ()
         self:stopListeningForRolls();
-    end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
+    end);
 
     if (self.InitiateCountDownTimer) then
-        GL.Ace:CancelTimer(self.InitiateCountDownTimer);
+        GL:cancelTimer(self.InitiateCountDownTimer);
         self.InitiateCountDownTimer = nil;
     end
 
     if (self.CountDownTimer) then
         GL:debug("Cancel RollOff.CountDownTimer");
 
-        GL.Ace:CancelTimer(self.CountDownTimer);
+        GL:cancelTimer(self.CountDownTimer);
         self.CountDownTimer = nil;
     end
 
@@ -821,7 +821,7 @@ function RollOff:stop(CommMessage)
     GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
 
     RollOff.inProgress = false;
-    GL.Ace:CancelTimer(RollOff.StopRollOffTimer);
+    GL:cancelTimer(RollOff.StopRollOffTimer);
 
     GL.RollerUI:rollOffStopped();
 
@@ -1060,7 +1060,7 @@ end
 function RollOff:listenForRolls()
     -- Make sure the timer to cancel listening for rolls is cancelled
     if (self.rollListenerCancelTimerID) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerID);
+        GL:cancelTimer(self.rollListenerCancelTimerID);
     end
 
     if (self.listeningForRolls) then
@@ -1079,7 +1079,7 @@ end
 ---@return nil
 function RollOff:stopListeningForRolls()
     if (self.rollListenerCancelTimerID) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerID);
+        GL:cancelTimer(self.rollListenerCancelTimerID);
     end
 
     self.listeningForRolls = false;

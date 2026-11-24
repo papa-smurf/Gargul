@@ -90,7 +90,7 @@ function PackMule:_init()
         if (self.LootChangedTimer) then
             GL:debug("Cancel PackMule.LootChangedTimer");
 
-            GL.Ace:CancelTimer(self.LootChangedTimer);
+            GL:cancelTimer(self.LootChangedTimer);
             self.LootChangedTimer = nil;
         end
 
@@ -107,11 +107,11 @@ function PackMule:_init()
         -- There was money in the loot window
         -- The player has another weak aura or addon that distributes specific items
         GL:debug("Schedule new PackMule.LootChangedTimer");
-        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        self.LootChangedTimer = GL:interval(.2, "PackMule.LootChangedTimer", function ()
             GL:debug("Run PackMule.LootChangedTimer");
 
             self:lootReady();
-        end, .2);
+        end);
     end);
 
     -- Make sure to auto accept BoP loot when rolling on items
@@ -205,7 +205,7 @@ function PackMule:_init()
         if (self.LootChangedTimer) then
             GL:debug("Cancel PackMule.LootChangedTimer");
 
-            GL.Ace:CancelTimer(self.LootChangedTimer);
+            GL:cancelTimer(self.LootChangedTimer);
             self.LootChangedTimer = nil;
         end
 
@@ -337,14 +337,14 @@ function PackMule:isItemIDIgnored(itemID, callback)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(2, nil, function ()
         self.getValidRules = OriginalGetValidRulesFunction;
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
         GL.User.isInParty = oldIsInParty;
-    end, 2);
+    end);
 end
 
 ---@param itemID number
@@ -396,13 +396,13 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(2, nil, function ()
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
         GL.User.isInParty = oldIsInParty;
-    end, 2);
+    end);
 end
 
 --- Disable PackMule after leaving a group
@@ -584,8 +584,7 @@ function PackMule:giveMasterLoot(itemIndex, playerIndex, itemLink, playerName)
     GL:after(1.5, "PackMule.Handout." .. handoutID, function ()
         local Handout = self.PendingHandouts[handoutID];
 
-        -- Drops the registry entry AND clears this hand-out's unique timer from
-        -- GL.Timers (it never gets reused, so it'd otherwise linger as a dead entry).
+        -- Drop the hand-out from the registry. The one-shot has already cleared its timer.
         self:resolveHandout(handoutID);
 
         if (not Handout
@@ -1331,7 +1330,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     self:giveMasterLoot(itemIndex, playerIndex, GetLootSlotLink(itemIndex), playerName);
 
     -- Make sure the event listener doesn't linger
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(1, nil, function ()
         GL.Events:unregister(eventID);
-    end, 1);
+    end);
 end

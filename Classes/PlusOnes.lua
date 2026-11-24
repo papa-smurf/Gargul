@@ -37,11 +37,11 @@ function PlusOnes:_init()
 
     -- Make sure PlusOnes changes are only broadcasted once every 3 seconds
     GL.Events:register("PlusOnesUpdateQueuedListener", "GL.PLUSONES_UPDATE_QUEUED", function ()
-        GL.Ace:CancelTimer(self.QueuedUpdateBroadcastTimer);
+        GL:cancelTimer(self.QueuedUpdateBroadcastTimer);
 
-        self.QueuedUpdateBroadcastTimer = GL.Ace:ScheduleTimer(function ()
+        self.QueuedUpdateBroadcastTimer = GL:after(3, nil, function ()
             self:broadcastQueuedUpdates();
-        end, 3);
+        end);
     end);
 
     self:materializeData();

@@ -129,9 +129,9 @@ function Auction:_init()
         DB:set("GDKP.Queue", self.Queue or {});
     end);
     self.Queue = DB:get("GDKP.Queue", {});
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(1, nil, function ()
         self:_initializeQueue();
-    end, 1);
+    end);
 
     self._initialized = true;
     return true;
@@ -165,12 +165,12 @@ function Auction:_initializeQueue()
     self.Queue = {};
     local QueueAddTimer;
     -- Add items in intervals to alleviate UI/performance strain
-    QueueAddTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+    QueueAddTimer = GL:interval(.1, "GDKP.Auction.QueueAddTimer", function ()
         GL:debug("Run Auction._initializeQueue");
         local Queued = SortedQueue[i];
         if (not Queued) then
             GL:debug("Cancel Auction._initializeQueue");
-            GL.Ace:CancelTimer(QueueAddTimer);
+            GL:cancelTimer(QueueAddTimer);
             SortedQueue = nil;
 
             self._broadcastingDisabled = false;
@@ -187,7 +187,7 @@ function Auction:_initializeQueue()
 
         i = i + 1;
         return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier, false);
-    end, .1);
+    end);
 end
 
 ---@return nil
@@ -1032,7 +1032,7 @@ function Auction:broadcastQueue(immediately)
         return;
     end
 
-    GL.Ace:CancelTimer(self.QueueBroadcastTimer);
+    GL:cancelTimer(self.QueueBroadcastTimer);
     self:sanitizeQueue();
 
     if (not Auctioneer:allowedToBroadcast()) then
@@ -1083,9 +1083,9 @@ function Auction:broadcastQueue(immediately)
         return;
     end
 
-    self.QueueBroadcastTimer = GL.Ace:ScheduleTimer(function ()
+    self.QueueBroadcastTimer = GL:after(BROADCAST_QUEUE_DELAY_IN_SECONDS, nil, function ()
         broadcast();
-    end, BROADCAST_QUEUE_DELAY_IN_SECONDS);
+    end);
 end
 
 ---@return nil
@@ -1293,7 +1293,7 @@ function Auction:announceExtension(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
+    local secondsLeft = GL:timeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
     local newDuration = math.ceil(secondsLeft + time);
 
     if (newDuration < time) then
@@ -1317,7 +1317,7 @@ function Auction:announceShortening(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
+    local secondsLeft = GL:timeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
     local newDuration = math.ceil(secondsLeft - time);
 
     -- In order to prevent funny business we won't allow anything lower than 5 for the new time
@@ -1379,14 +1379,14 @@ function Auction:reschedule(CommMessage)
     self.Current.duration = time;
     GL.Interface.GDKP.Bidder:changeDuration(time);
     SecondsAnnounced = {};
-    GL.Ace:CancelTimer(self.timerID);
+    GL:cancelTimer(self.timerID);
 
     if (self:startedByMe()) then
-        self.timerID = GL.Ace:ScheduleTimer(function ()
+        self.timerID = GL:after(math.ceil(time + GL.Settings:get("GDKP.auctionEndLeeway", 2)), nil, function ()
             self:stop();
             self:announceStop();
             Auctioneer:timeRanOut();
-        end, math.ceil(time + GL.Settings:get("GDKP.auctionEndLeeway", 2)));
+        end);
     end
 
     self.waitingForReschedule = false;
@@ -1400,7 +1400,7 @@ function Auction:timeRemaining()
         return false;
     end
 
-    return math.ceil(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+    return math.ceil(GL:timeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
 end
 
 --- Start an auction
@@ -1530,11 +1530,11 @@ function Auction:start(CommMessage)
                 end
             end
 
-            self.timerID = GL.Ace:ScheduleTimer(function ()
+            self.timerID = GL:after(math.ceil(duration + GL.Settings:get("GDKP.auctionEndLeeway", 2)), nil, function ()
                 self:stop();
                 self:announceStop();
                 Auctioneer:timeRanOut();
-            end, math.ceil(duration + GL.Settings:get("GDKP.auctionEndLeeway", 2)));
+            end);
         end
 
         -- Send a countdown in chat when enabled
@@ -1556,8 +1556,8 @@ function Auction:start(CommMessage)
                 or duration >= numberOfFiveSecondsToCountdown
             )
         ) then
-            self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+            self.countDownTimer = GL:interval(.2, "GDKP.Auction.countDownTimer", function ()
+                local secondsLeft = math.ceil(GL:timeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
                 if ((secondsLeft <= numberOfSecondsToCountdown
                         or GL:inTable(FiveSecondsToAnnounce, secondsLeft)
                     )
@@ -1579,7 +1579,7 @@ function Auction:start(CommMessage)
                         false
                     );
                 end
-            end, .2);
+            end);
         end
 
         -- Play raid warning sound
@@ -1645,7 +1645,7 @@ function Auction:stop(CommMessage)
     GL:playSound(SOUNDKIT.RAID_WARNING);
 
     self.inProgress = false;
-    GL.Ace:CancelTimer(self.timerID);
+    GL:cancelTimer(self.timerID);
 
     GL.Interface.GDKP.Bidder:hide();
 
@@ -1664,7 +1664,7 @@ function Auction:stop(CommMessage)
         end
     end
 
-    GL.Ace:CancelTimer(self.countDownTimer);
+    GL:cancelTimer(self.countDownTimer);
     self.countDownTimer = nil;
 
     Events:fire("GL.GDKP_AUCTION_STOPPED");
@@ -1690,7 +1690,7 @@ function Auction:listenForBids()
     end
 
     -- Make sure the timer to cancel listening for bids is cancelled
-    GL.Ace:CancelTimer(self.bidListenerCancelTimerID);
+    GL:cancelTimer(self.bidListenerCancelTimerID);
 
     self.listeningForBids = true;
     self.lastBidReceivedAt = 0;
@@ -1718,7 +1718,7 @@ end
 ---@return nil
 function Auction:stopListeningForBids()
     if (self.bidListenerCancelTimerID) then
-        GL.Ace:CancelTimer(self.bidListenerCancelTimerID);
+        GL:cancelTimer(self.bidListenerCancelTimerID);
     end
 
     self.listeningForBids = false;
@@ -1846,7 +1846,7 @@ function Auction:stopAutoBid()
     self.autoBiddingIsActive = nil;
     self.maxBid = nil;
 
-    GL.Ace:CancelTimer(self.AutoBidTimer);
+    GL:cancelTimer(self.AutoBidTimer);
     self.AutoBidTimer = nil;
 
     GL.Interface.GDKP.Bidder:autoBidStopped();
@@ -1882,9 +1882,9 @@ function Auction:autoBid()
 
     -- Make sure we only bid once every Xs (spam throttle)
     if (GetTime() - self.lastBidAt < AUTO_BID_THROTTLE_IN_SECONDS) then
-        GL.Ace:CancelTimer(self.AutoBidTimer);
+        GL:cancelTimer(self.AutoBidTimer);
 
-        self.AutoBidTimer = GL.Ace:ScheduleTimer(function ()
+        self.AutoBidTimer = GL:after(1, nil, function ()
             -- Looks like we got back on top in the meantime
             if (self:userIsTopBidder()) then
                 return;
@@ -1895,7 +1895,7 @@ function Auction:autoBid()
             end
 
             self:minimumBid();
-        end, 1);
+        end);
 
         return true;
     end
@@ -1993,7 +1993,7 @@ function Auction:processBid(message, bidder)
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
             self.lastBidReceivedAt = GetTime();
-            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+            local secondsLeft = math.floor(GL:timeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (GL:lt(secondsLeft, self.Current.antiSnipe)) then
                 self:announceReschedule(self.Current.antiSnipe);
             end

@@ -30,7 +30,7 @@ function MasterLooterDialog:_init()
         if (self.VersionCheckTimer) then
             GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
 
-            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            GL:cancelTimer(self.VersionCheckTimer);
             self.VersionCheckTimer = nil;
         end
 
@@ -56,11 +56,11 @@ function MasterLooterDialog:_init()
 
         -- Make sure we periodically check whether the master looter's Gargul version is up-to-date
         GL:debug("Schedule new MasterLooterDialog.VersionCheckTimer");
-        self.VersionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        self.VersionCheckTimer = GL:interval(1800, "Dialogs.MasterLooterDialog.VersionCheckTimer", function ()
             GL:debug("Run MasterLooterDialog.VersionCheckTimer");
 
             GL.Version:inspectQuietly();
-        end, 1800);
+        end);
 
         GL.Version:inspectQuietly();
     end);
@@ -69,7 +69,7 @@ function MasterLooterDialog:_init()
         if (self.VersionCheckTimer) then
             GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
 
-            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            GL:cancelTimer(self.VersionCheckTimer);
             self.VersionCheckTimer = nil;
         end
     end);

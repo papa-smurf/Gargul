@@ -771,7 +771,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         -- Safety net: if ContinueOnItemLoad never fires (e.g. item exists
         -- in client DB but server data is unavailable), don't block forever
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.5, nil, function ()
             if (itemLoaded) then
                 return;
             end
@@ -780,7 +780,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             lastError = "Timed out loading item with identifier " .. itemIdentifier;
 
             tryCallback();
-        end, .5);
+        end);
     end
 
     ---@param itemLinkOrID string|number

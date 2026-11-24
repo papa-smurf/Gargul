@@ -430,7 +430,7 @@ end
 
 ---@return nil
 function Auctioneer:stop()
-    GL.Ace:CancelTimer(self.PopTimer);
+    GL:cancelTimer(self.PopTimer);
     Auction:announceStop(true);
 end
 
@@ -481,11 +481,11 @@ function Auctioneer:timeRanOut()
                 Auction:reset(); -- Reset the actual auction object
                 AuctioneerUI:closeAuctioneerShortcut();
 
-                GL.Ace:CancelTimer(self.PopTimer);
+                GL:cancelTimer(self.PopTimer);
                 if (delayBetweenQueuedAuctions > 0) then
-                    self.PopTimer = GL.Ace:ScheduleTimer(function ()
+                    self.PopTimer = GL:after(delayBetweenQueuedAuctions, nil, function ()
                         self:start();
-                    end, delayBetweenQueuedAuctions);
+                    end);
                 else
                     self:start();
                 end
@@ -547,11 +547,11 @@ function Auctioneer:timeRanOut()
     Auction:reset(); -- Reset the actual auction object
     AuctioneerUI:closeAuctioneerShortcut();
 
-    GL.Ace:CancelTimer(self.PopTimer);
+    GL:cancelTimer(self.PopTimer);
     if (delayBetweenQueuedAuctions > 0) then
-        self.PopTimer = GL.Ace:ScheduleTimer(function ()
+        self.PopTimer = GL:after(delayBetweenQueuedAuctions, nil, function ()
             self:start();
-        end, delayBetweenQueuedAuctions);
+        end);
     else
         self:start();
     end
@@ -701,7 +701,7 @@ end
 function Auctioneer:announceBid(Bid)
     local bidApprovedMessage = (L.CHAT["%s is the highest bidder - %s"]):format(Bid.Bidder.name, GL:goldToMoney(Bid.bid));
 
-    GL.Ace:CancelTimer(self.BidAnnouncementThrottler);
+    GL:cancelTimer(self.BidAnnouncementThrottler);
 
     if (not GL.User.isInRaid or not Settings:get("GDKP.announceNewBidInRW")) then
         return GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
@@ -717,7 +717,7 @@ function Auctioneer:announceBid(Bid)
     end
 
     --[[ WE NEED TO WAIT BEFORE WE CAN ANNOUNCE AGAIN ]]
-    self.BidAnnouncementThrottler = GL.Ace:ScheduleTimer(function ()
+    self.BidAnnouncementThrottler = GL:after(1, nil, function ()
         local currentTopBid = GL:tableGet(Auction.Current, "TopBid.bid");
         local bidder = GL:tableGet(Auction.Current, "TopBid.Bidder.name");
 
@@ -728,7 +728,7 @@ function Auctioneer:announceBid(Bid)
         bidApprovedMessage = (bidApprovedMessage):format(bidder, currentTopBid);
         GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
         self.lastBidAnnouncementAt = GetTime();
-    end, 1);
+    end);
 end
 
 ---@return nil

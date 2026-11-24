@@ -569,9 +569,9 @@ function AuctioneerUI:build()
             if (Auctioneer:extend()) then
                 ExtendButton:SetEnabled(false);
 
-                GL.Ace:ScheduleTimer(function ()
+                GL:after(2, nil, function ()
                     ExtendButton:SetEnabled(true);
-                end, 2);
+                end);
             end
         end);
 
@@ -583,9 +583,9 @@ function AuctioneerUI:build()
             if (Auctioneer:shorten()) then
                 ShortenButton:SetEnabled(false);
 
-                GL.Ace:ScheduleTimer(function ()
+                GL:after(2, nil, function ()
                     ShortenButton:SetEnabled(true);
-                end, 2);
+                end);
             end
         end);
 
@@ -597,9 +597,9 @@ function AuctioneerUI:build()
             if (Auctioneer:finalCall()) then
                 FinalCallButton:SetEnabled(false);
 
-                GL.Ace:ScheduleTimer(function ()
+                GL:after(2, nil, function ()
                     FinalCallButton:SetEnabled(true);
-                end, 2);
+                end);
             end
         end);
     end
@@ -786,14 +786,14 @@ function AuctioneerUI:build()
         StartedButtonFrame:Show();
 
         --[[ SHOW TIME REMAINING ON STOP BUTTON ]]
-        GL.Ace:CancelTimer(self.CountdownTimer);
-        self.CountdownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:cancelTimer(self.CountdownTimer);
+        self.CountdownTimer = GL:interval(.2, "GDKP.Auctioneer.CountdownTimer", function ()
             local secondsRemaining = Auction:timeRemaining();
 
             if (not secondsRemaining
                 or not Auction.inProgress
             ) then
-                GL.Ace:CancelTimer(self.CountdownTimer);
+                GL:cancelTimer(self.CountdownTimer);
                 StopButton:SetText(L["Stop"]);
                 return;
             end
@@ -803,7 +803,7 @@ function AuctioneerUI:build()
             MinimizedStopButton:SetText(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]));
             MinimizedOpenButton:Hide();
             MinimizedStopButton:Show();
-        end, .2);
+        end);
     end;
 
     _G[self.windowName] = Window;
@@ -1033,7 +1033,7 @@ function AuctioneerUI:buildQueue(Window)
                     local itemRowHeight = ItemRow:GetHeight();
                     ItemRow:StartMoving();
 
-                    MoveTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                    MoveTimer = GL:interval(.1, "GDKP.Auctioneer.MoveTimer", function ()
                         local _, newMouseY = GetCursorPosition();
 
                         newPosition = math.ceil(originalPosition - ((newMouseY - mouseY) / (itemRowHeight * uiScale)));
@@ -1056,10 +1056,10 @@ function AuctioneerUI:buildQueue(Window)
 
                             LCG.PixelGlow_Start(RowWithGlow, { 1, 1, 1, 1, }, 20, .05, 5, 3);
                         end
-                    end, .1);
+                    end);
                 end);
                 ItemRow:SetScript("OnDragStop", function ()
-                    GL.Ace:CancelTimer(MoveTimer);
+                    GL:cancelTimer(MoveTimer);
                     ItemRow:Hide();
 
                     if (RowWithGlow) then

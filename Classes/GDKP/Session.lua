@@ -108,7 +108,7 @@ function Session:_init()
     -- Make sure the user is made aware that a GDKP session is still active
     local Instance = self:getActive();
     if (Instance and not Instance.lockedAt) then
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(5, nil, function ()
             if (not self:userIsAllowedToBroadcast()) then
                 return;
             end
@@ -117,7 +117,7 @@ function Session:_init()
                 message = ("|c00BE3333%s|r"):format(L["GDKP Active!"]),
                 onClick = function () GL.Interface.GDKP.Overview:open(); end,
             });
-        end, 5);
+        end);
     end
 end
 

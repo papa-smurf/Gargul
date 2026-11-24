@@ -277,11 +277,11 @@ end
 
 ---@return nil
 function Overview:throttledRefresh()
-    GL.Ace:CancelTimer(self.RefreshTimer);
+    GL:cancelTimer(self.RefreshTimer);
 
-    self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
+    self.RefreshTimer = GL:after(.2, nil, function ()
         self:refresh();
-    end, .2);
+    end);
 end
 
 ---@return nil

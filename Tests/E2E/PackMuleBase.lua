@@ -334,7 +334,7 @@ function Base:cancelPackMuleTimers()
     GL:cancelTimer(timerIDs);
 
     if (GL.PackMule.LootChangedTimer) then
-        GL.Ace:CancelTimer(GL.PackMule.LootChangedTimer);
+        GL:cancelTimer(GL.PackMule.LootChangedTimer);
         GL.PackMule.LootChangedTimer = nil;
     end
 end

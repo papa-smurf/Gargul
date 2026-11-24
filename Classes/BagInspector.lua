@@ -58,12 +58,12 @@ function BagInspector:inspect(items)
     }):send();
 
     -- After a period of X seconds inspect the results
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(5, nil, function ()
         GL:success(L["Inspection finished"]);
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
-    end, 5);
+    end);
 end
 
 -- Someone requested an item count, report back!

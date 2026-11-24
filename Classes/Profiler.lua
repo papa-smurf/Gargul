@@ -84,10 +84,10 @@ function Profiler:draw()
     end;
 
     -- Make sure the usage gets updated every X seconds
-    GL.Ace:CancelTimer(self.RefreshTimer); -- Just in case
-    self.RefreshTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+    GL:cancelTimer(self.RefreshTimer); -- Just in case
+    self.RefreshTimer = GL:interval(self.updateRateInSeconds, "Profiler.RefreshTimer", function ()
         updateMemoryUsage();
-    end, self.updateRateInSeconds);
+    end);
 
     updateMemoryUsage();
 end
@@ -119,7 +119,7 @@ function Profiler:close()
         return;
     end
 
-    GL.Ace:CancelTimer(self.RefreshTimer);
+    GL:cancelTimer(self.RefreshTimer);
     self:storePosition();
     self.Window:Hide();
     self.isVisible = false;

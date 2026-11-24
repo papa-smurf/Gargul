@@ -107,13 +107,13 @@ local Events = {
 
         -- Make sure the dialog can be closed using the escape key, unless the
         -- caller called DisableEscape before this fires
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.1, nil, function ()
             if (self.escapeDisabled) then
                 return;
             end
 
             table.insert(UISpecialFrames, self.frame:GetName());
-        end, .1);
+        end);
 
         self:SetPoint(GL.Interface:getPosition("PopupDialog"));
         self:Show();

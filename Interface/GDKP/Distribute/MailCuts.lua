@@ -397,8 +397,8 @@ function MailCuts:mailPlayerCut(player, callback)
         { "MailCutsMailTimedOut", "GL.MAIL_TIMED_OUT" },
     }, function (event)
         -- Remove all event listeners and scheduled timers FIRST
-        GL.Ace:CancelTimer(MailDisableTimer);
-        GL.Ace:CancelTimer(MailTimeOutTimer);
+        GL:cancelTimer(MailDisableTimer);
+        GL:cancelTimer(MailTimeOutTimer);
         Events:unregister({"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", });
 
         local message;
@@ -410,7 +410,7 @@ function MailCuts:mailPlayerCut(player, callback)
             self.mailErrors = 0;
 
             Events:register("MailCutsPlayerMoney", "PLAYER_MONEY", function ()
-                GL.Ace:CancelTimer(MoneyChangedTimer);
+                GL:cancelTimer(MoneyChangedTimer);
                 Events:unregister("MailCutsPlayerMoney");
 
                 local copperLeftMatchesExpectation = GetMoney() == copperLeftAfterMailing;
@@ -428,14 +428,14 @@ function MailCuts:mailPlayerCut(player, callback)
                 callback(success, outstandingCopper, message);
             end);
 
-            MoneyChangedTimer = GL.Ace:ScheduleTimer(function ()
+            MoneyChangedTimer = GL:after(15, nil, function ()
                 Events:unregister("MailCutsPlayerMoney");
 
                 message = L["Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?"];
                 GL:error(message);
 
                 callback(success, outstandingCopper, message);
-            end, 15);
+            end);
 
             return;
         else
@@ -443,7 +443,7 @@ function MailCuts:mailPlayerCut(player, callback)
         end
 
         -- We add a delay to further decrease chances of nasty race conditions from occurring
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.5, nil, function ()
             message = event == "GL.MAIL_TIMED_OUT"
                 and L["Failed to send cut to %s within %s seconds. Please check your remaining gold or Blizzard mail return to determine whether it went through."]
                 or L["Failed to send cut to %s"];
@@ -455,7 +455,7 @@ function MailCuts:mailPlayerCut(player, callback)
             callback(success, outstandingCopper, message);
 
             self:enableSendButton();
-        end, .5);
+        end);
     end);
 
     ClearSendMail();
@@ -468,13 +468,13 @@ function MailCuts:mailPlayerCut(player, callback)
         player = player,
     }));
 
-    MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+    MailDisableTimer = GL:interval(.2, "GDKP.Distribute.MailCuts.MailDisableTimer", function ()
         self:disableSendButton();
-    end, .2);
+    end);
 
-    MailTimeOutTimer = GL.Ace:ScheduleTimer(function ()
+    MailTimeOutTimer = GL:after(MAIL_SEND_WAIT_TIMEOUT, nil, function ()
         Events:fire("GL.MAIL_TIMED_OUT");
-    end, MAIL_SEND_WAIT_TIMEOUT);
+    end);
 end
 
 ---@return nil

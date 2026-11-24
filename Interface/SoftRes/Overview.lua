@@ -287,7 +287,7 @@ end
 function Overview:updateShareButton()
     local ShareButton = GL.Interface:get(self, "Frame.ShareButton")
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(1.5, nil, function ()
         -- The user doesn't have sufficient permissions to broadcast the data
         if (not GL.SoftRes:userIsAllowedToBroadcast()) then
             ShareButton:Disable();
@@ -295,7 +295,7 @@ function Overview:updateShareButton()
         end
 
         ShareButton:Enable();
-    end, 1.5);
+    end);
 end
 
 --- Update the SoftRes details frame to show the information of the selected player

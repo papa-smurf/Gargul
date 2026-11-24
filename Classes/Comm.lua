@@ -208,9 +208,9 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
         _G.ChatThrottleLib.MAX_CPS = 200;
 
         -- Make sure we reset the values even if the message couldn't be sent
-        throttleResetTimer = GL.Ace:ScheduleTimer(function ()
+        throttleResetTimer = GL:after(20, nil, function ()
             stopThrottling();
-        end, 20);
+        end);
     end
 
     -- Make sure we can keep an eye on comm behavior
@@ -233,7 +233,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, wowRecipient, priority, function (_, sent, textlen)
         -- Cancel the throttle reset timer if it exists
         if (throttleResetTimer) then
-            GL.Ace:CancelTimer(throttleResetTimer);
+            GL:cancelTimer(throttleResetTimer);
         end
 
         GL.CommRecorder:recordSent(action, GL.CommRecorder:msSince(sendStartedAt), sent, textlen, traceID);
@@ -254,9 +254,9 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
             end
         else
             -- Make sure we reset the values even if the message couldn't be sent in full
-            throttleResetTimer = GL.Ace:ScheduleTimer(function ()
+            throttleResetTimer = GL:after(5, nil, function ()
                 stopThrottling();
-            end, 5);
+            end);
         end
     end);
 end

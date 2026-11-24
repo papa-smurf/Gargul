@@ -1449,9 +1449,9 @@ function TMB:broadcastToWhitelist()
 
     local broadcastsFinished = 0;
     local broadcast = function ()
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(10, nil, function ()
             self.broadcastInProgress = false;
-        end, 10);
+        end);
 
         Events:fire("GL.TMB_BROADCAST_STARTED");
 
@@ -1492,9 +1492,9 @@ function TMB:broadcastToGroup()
     self.broadcastInProgress = true;
 
     local broadcast = function ()
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(10, nil, function ()
             self.broadcastInProgress = false;
-        end, 10);
+        end);
 
         Events:fire("GL.TMB_BROADCAST_STARTED");
 

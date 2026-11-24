@@ -144,9 +144,16 @@ function GL:xd(mixed)
 end
 
 --- Show xd output buffer in a frame (selectable, copyable). Use /gl xda after GL:xd() calls.
+--- Pass seconds to first record interval timers that have been running at least that long.
 ---
+---@param minSeconds? number|string
 ---@return nil
-function GL:xda()
+function GL:xda(minSeconds)
+    if (minSeconds ~= nil and minSeconds ~= "") then
+        GL:xdIntervals(minSeconds);
+        return;
+    end
+
     if (not GL.XDOutputBuffer or #GL.XDOutputBuffer == 0) then
         GL:notice("xd buffer is empty. Run GL:xd() first.");
         return;

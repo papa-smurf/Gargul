@@ -78,9 +78,9 @@ local Events = {
         self.frame:SetFrameStrata("FULLSCREEN_DIALOG");
 
         -- Make sure the dialog can be closed using the escape key
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.1, nil, function ()
             table.insert(UISpecialFrames, self.frame:GetName());
-        end, .1);
+        end);
 
         self:SetPoint(GL.Interface:getPosition("PopupDialog"));
         self:Show();

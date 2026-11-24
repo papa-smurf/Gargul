@@ -802,13 +802,13 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
     if (index < numberOfMigrations) then
         local nextIndex = index + 1;
 
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(.5, nil, function ()
             RaidGroups:processMigrations(Migrations, numberOfMigrations, nextIndex);
-        end, .5);
+        end);
     else
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(2, nil, function ()
             self.migrationInProgress = false;
             GL:success(L["Finished applying raid roster"]);
-        end, 2);
+        end);
     end
 end

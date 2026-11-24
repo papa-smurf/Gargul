@@ -229,7 +229,7 @@ function Overview:build()
     -- Keep switching the text in the header from how to roll to how to award
     if (not self.HeaderSwitchTimer) then
         GL:debug("Schedule new TimeLeft.HeaderSwitchTimer");
-        self.HeaderSwitchTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        self.HeaderSwitchTimer = GL:interval(10, "TradeTime.Overview.HeaderSwitchTimer", function ()
             GL:debug("Run TimeLeft.HeaderSwitchTimer");
 
             if (Title.headerTextType == "howToRoll") then
@@ -244,10 +244,10 @@ function Overview:build()
             if (not Window:IsVisible()) then
                 GL:debug("Cancel TimeLeft.HeaderSwitchTimer");
 
-                GL.Ace:CancelTimer(self.HeaderSwitchTimer);
+                GL:cancelTimer(self.HeaderSwitchTimer);
                 self.HeaderSwitchTimer = nil;
             end
-        end, 10);
+        end);
     end
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]

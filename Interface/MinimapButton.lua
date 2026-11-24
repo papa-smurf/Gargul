@@ -109,9 +109,9 @@ function MinimapButton:_init()
 
     MinimapButton:Register("Gargul", GLDataBroker,  GL.DB.MinimapButton);
 
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(.4, nil, function ()
         self:drawOrHide();
-    end, .4);
+    end);
 end
 
 ---@type void
