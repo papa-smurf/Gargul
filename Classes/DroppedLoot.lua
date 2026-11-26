@@ -140,7 +140,7 @@ end
 -- The player navigated to a different page in the loot window
 function DroppedLoot:lootChanged()
     local lootChanged = false;
-    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, GL.LOOTFRAME_NUMBUTTONS do
         local buttonName = "LootButton" .. buttonIndex;
         local Button = getglobal("LootButton" .. buttonIndex);
         local itemLink = "";
@@ -174,7 +174,7 @@ function DroppedLoot:removeHighlights()
         return;
     end
 
-    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, GL.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
         if (Button) then
@@ -189,7 +189,7 @@ function DroppedLoot:highlightItemsOfInterest()
 
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
-    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, GL.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
         if (Button and Button:IsVisible() and Button.slot) then
@@ -231,7 +231,7 @@ function DroppedLoot:hookClickEvents()
 
     --- Note: the default UI only supports 4 actionable buttons.
     --- Even though Add-ons like XLoot show more than 4 at a time, you can only interact with the first 4
-    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, GL.LOOTFRAME_NUMBUTTONS do
         self.ButtonsHooked[buttonProvider] = self.ButtonsHooked[buttonProvider] or {};
 
         if (not self.ButtonsHooked[buttonProvider][buttonIndex]) then

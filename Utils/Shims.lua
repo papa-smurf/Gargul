@@ -29,6 +29,9 @@ GL.LE_ITEM_CLASS_MISCELLANEOUS = LE_ITEM_CLASS_MISCELLANEOUS or (Enum and Enum.I
 -- Numeric value 2 per wowpedia GetLootSlotType
 GL.LOOT_SLOT_MONEY = LOOT_SLOT_MONEY or (Enum and Enum.LootSlotType and Enum.LootSlotType.Money) or 2;
 
+-- Number of buttons in the default loot frame (LOOTFRAME_NUMBUTTONS is nil on Forever)
+GL.LOOTFRAME_NUMBUTTONS = tonumber(LOOTFRAME_NUMBUTTONS) or 4;
+
 -- Item bind types (Enum.ItemBind.* may not exist in all clients)
 -- Numeric values: None=0, OnAcquire=1, Quest=4 (verified in-game)
 GL.LE_ITEM_BIND_NONE = (Enum and Enum.ItemBind and Enum.ItemBind.None) or 0;

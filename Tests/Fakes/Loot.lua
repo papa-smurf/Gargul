@@ -406,10 +406,11 @@ function Loot:install()
     self.Originals.GLIsGameMessageID = GL.isGameMessageID;
     self.Originals.GLError = GL.error;
     self.Originals.GLWarning = GL.warning;
+    self.Originals.GLLootFrameNumButtons = GL.LOOTFRAME_NUMBUTTONS;
     self.Originals.AlertsFire = GL.Interface.Alerts and GL.Interface.Alerts.fire;
 
     Env:activate();
-    Env:set("LOOTFRAME_NUMBUTTONS", self.pageSize);
+    GL.LOOTFRAME_NUMBUTTONS = self.pageSize;
 
     Env:set("GetNumLootItems", function ()
         self:trace({ event = "Tests.Fakes.Loot:GetNumLootItems", count = #self.items, });
@@ -617,6 +618,7 @@ function Loot:uninstall()
     GL.isGameMessageID = self.Originals.GLIsGameMessageID;
     GL.error = self.Originals.GLError;
     GL.warning = self.Originals.GLWarning;
+    GL.LOOTFRAME_NUMBUTTONS = self.Originals.GLLootFrameNumButtons;
     if (GL.Interface.Alerts and self.Originals.AlertsFire) then
         GL.Interface.Alerts.fire = self.Originals.AlertsFire;
     end
