@@ -57,21 +57,27 @@ GL.Interface.Settings.AutoRollRules = AutoRollRules;
 
 local PROFILE_ICON_PATH = "Interface/AddOns/Gargul/Assets/Buttons/";
 
--- Hook HandleModifiedItemClick so shift-click works when Auto Roll Rules item box is the target.
--- ChatEdit_InsertLink is only called when chat is "active"; HandleModifiedItemClick is called for all bag shift-clicks.
-do
-    local orig = HandleModifiedItemClick;
-    function HandleModifiedItemClick(link, ...)
-        if (IsModifiedClick("CHATLINK") and link and type(link) == "string" and #link > 0) then
-            local editbox = AutoRollRules._linkTargetEditBox;
-            if (editbox) then
-                editbox:SetText((editbox:GetText() or "") .. link);
-                return true;
-            end
-        end
-        return orig(link, ...);
+-- Shift-click links into the Auto Roll Rules item box. ChatEdit_InsertLink is only called when chat is "active";
+-- HandleModifiedItemClick is called for all bag shift-clicks. Must stay a post-hook: replacing the global
+-- taints every secure path that calls it (e.g. bag item clicks)
+hooksecurefunc("HandleModifiedItemClick", function (link)
+    if (not IsModifiedClick("CHATLINK") or type(link) ~= "string" or link == "") then
+        return;
     end
-end
+
+    local editbox = AutoRollRules._linkTargetEditBox;
+    if (not editbox or not editbox:IsVisible()) then
+        return;
+    end
+
+    -- Another editbox (e.g. chat) has focus, Blizzard already inserted the link there
+    local focus = GetCurrentKeyBoardFocus();
+    if (focus and focus ~= editbox) then
+        return;
+    end
+
+    editbox:SetText((editbox:GetText() or "") .. link);
+end);
 
 ---@param RulesList table|nil
 ---@return nil

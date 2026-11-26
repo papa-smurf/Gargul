@@ -30,20 +30,18 @@ GL.Interface.Settings.PackMuleRules = {
 };
 local PackMuleRules = GL.Interface.Settings.PackMuleRules; ---@type PackMuleRulesSettings
 
--- Hook HandleModifiedItemClick so shift-click works when a PackMule specific item editbox is focused.
-do
-    local orig = HandleModifiedItemClick;
-    function HandleModifiedItemClick(link, ...)
-        if (IsModifiedClick("CHATLINK") and link and type(link) == "string" and #link > 0) then
-            local editbox = PackMuleRules._linkTargetEditBox;
-            if (editbox) then
-                editbox:SetText(link);
-                return true;
-            end
-        end
-        return orig(link, ...);
+-- Shift-click links into a focused PackMule specific item editbox. Must stay a post-hook:
+-- replacing the global taints every secure path that calls it (e.g. bag item clicks)
+hooksecurefunc("HandleModifiedItemClick", function (link)
+    if (not IsModifiedClick("CHATLINK") or type(link) ~= "string" or link == "") then
+        return;
     end
-end
+
+    local editbox = PackMuleRules._linkTargetEditBox;
+    if (editbox and GetCurrentKeyBoardFocus() == editbox) then
+        editbox:SetText(link);
+    end
+end);
 
 ---@return nil
 function PackMuleRules:draw(Parent)
