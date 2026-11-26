@@ -19,6 +19,12 @@ Tests/
     PackMuleForever.lua -- PackMule Forever name handling (GL.Tests.E2E.PackMuleForever)
     PackMuleAward.lua   -- Award-driven assignLootToPlayer and disenchant (GL.Tests.E2E.PackMuleAward)
     PackMuleGroupLoot.lua -- Group-loot auto rolls and auto confirm (GL.Tests.E2E.PackMuleGroupLoot)
+    RollOffBase.lua     -- Shared steps for the RollOff scenarios (real Master Looter UI, RollerUI and dialog clicks)
+    RollOffAward.lua    -- Roll, stop, award via the award dialog (GL.Tests.E2E.RollOffAward)
+    RollOffTimer.lua    -- Re-roll the same item, timer expiry, "Name [2]" row (GL.Tests.E2E.RollOffTimer)
+    RollOffReminder.lua -- "New roll without awarding" reminder and Clear (GL.Tests.E2E.RollOffReminder)
+    RollOffReopen.lua   -- Reopen master looter button mid-roll (GL.Tests.E2E.RollOffReopen)
+    RollOffDisenchant.lua -- Disenchant button, player selector, disenchanter popup (GL.Tests.E2E.RollOffDisenchant)
     GDKPAuction.lua     -- Single-item GDKP auction E2E (GL.Tests.E2E.GDKPAuction)
     GDKPMultiAuction.lua -- MultiAuction E2E (GL.Tests.E2E.GDKPMultiAuction)
 ```
@@ -46,6 +52,10 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 /run Gargul.Tests.E2E.GDKPAuction:start()
 /run Gargul.Tests.E2E.GDKPAuction:stop()
 
+-- RollOff E2Es (swap RollOffAward for RollOffTimer, RollOffReminder, RollOffReopen or RollOffDisenchant)
+/run Gargul.Tests.E2E.RollOffAward:start()
+/run Gargul.Tests.E2E.RollOffAward:stop()
+
 -- MultiAuction E2E
 /run Gargul.Tests.E2E.GDKPMultiAuction:start()
 /run Gargul.Tests.E2E.GDKPMultiAuction:stop()
@@ -60,6 +70,7 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 
 ## Prerequisites
 
+- **RollOff E2Es:** Be solo (not in a group), have no unlocked GDKP session, and carry at least one item in your bags (two different items for Reminder). They pin and restore the roll settings, delete the awards they create, and use real clicks. Alt-click can't be faked, so Reminder passes items through `MasterLooterUI:draw(link)` and the others insert the link into the focused item box.
 - **GDKP Auction E2E:** Tradeable item in bags, active GDKP session (test creates one).
 - **GDKP MultiAuction E2E:** Be in a group (2+ players), tradeable items in bags.
 - **PackMule E2Es:** No real group or loot required. They temporarily replace loot and group APIs until cleanup, so don't queue them with scenarios that need real state. Item data is warmed in the Setup step; the Award scenario adds and removes its own award history entries.

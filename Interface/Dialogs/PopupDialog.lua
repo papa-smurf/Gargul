@@ -31,4 +31,6 @@ function PopupDialog:open(Dialog)
     if (Dialog.withCancel) then
         Frame:IncludeCancel();
     end
+
+    self.Current = Frame; -- Handle for E2E tests
 end

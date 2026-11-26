@@ -747,6 +747,8 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     RollCountText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE");
     RollCountText:SetPoint("BOTTOMLEFT", RollCountLabel, "BOTTOMLEFT");
 
+    Button.RollCountText = RollCountText;
+
     Button:SetScript("OnMouseUp", function (_, button)
         if (button == "LeftButton") then
             self:draw();
@@ -780,6 +782,8 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     PlayStopButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/play");
     PlayStopButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/stop");
     PlayStopButton:SetHighlightTexture(PlayStopButtonHighlight);
+
+    Button.PlayStopButton = PlayStopButton;
 
     GL.Interface:addTooltip(PlayStopButton, ("%s / %s"):format(L["Start"], L["Stop"]), "TOP");
 

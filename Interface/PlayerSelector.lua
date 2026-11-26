@@ -129,6 +129,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
         callback(player);
     end);
 
+    GL.Interface:set(self, "Ok", ConfirmButton);
     Window:AddChild(ConfirmButton);
 
     if (type(PlayerNames) ~= "table") then

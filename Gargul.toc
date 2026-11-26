@@ -254,5 +254,11 @@ Tests/E2E/PackMuleRules.lua
 Tests/E2E/PackMuleForever.lua
 Tests/E2E/PackMuleAward.lua
 Tests/E2E/PackMuleGroupLoot.lua
+Tests/E2E/RollOffBase.lua
+Tests/E2E/RollOffAward.lua
+Tests/E2E/RollOffTimer.lua
+Tests/E2E/RollOffReminder.lua
+Tests/E2E/RollOffReopen.lua
+Tests/E2E/RollOffDisenchant.lua
 Tests/E2E/GDKPMultiAuction.lua
 Tests/E2E/GDKPAuction.lua

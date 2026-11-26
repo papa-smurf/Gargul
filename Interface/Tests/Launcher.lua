@@ -36,6 +36,11 @@ local E2E_SCENARIOS = {
     end, },
     { key = "PackMuleAward", label = "PackMule Award E2E", },
     { key = "PackMuleGroupLoot", label = "PackMule Group Loot E2E", },
+    { key = "RollOffAward", label = "RollOff Stop & Award E2E", },
+    { key = "RollOffTimer", label = "RollOff Timer & Re-roll E2E", },
+    { key = "RollOffReminder", label = "RollOff Reminder & Clear E2E", },
+    { key = "RollOffReopen", label = "RollOff Reopen Button E2E", },
+    { key = "RollOffDisenchant", label = "RollOff Disenchant E2E", },
     { key = "GDKPMultiAuction", label = "GDKP Multi-Auction E2E", },
     { key = "GDKPAuction", label = "GDKP Auction E2E", },
 };

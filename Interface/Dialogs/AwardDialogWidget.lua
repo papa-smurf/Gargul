@@ -350,6 +350,7 @@ local function constructor()
             Widget.yesCallback();
         end
     end);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Yes", YesButton);
     PopupDialogInstance:AddChild(YesButton);
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
@@ -368,6 +369,7 @@ local function constructor()
             Widget.noCallback();
         end
     end);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "No", NoButton);
     PopupDialogInstance:AddChild(NoButton);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
