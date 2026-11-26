@@ -267,6 +267,11 @@ function RollOffBase:stop()
         self.SavedSettings = nil;
     end
 
+    if (self.SavedActiveSessionID) then
+        GL.DB:set("GDKP.activeSession", self.SavedActiveSessionID);
+        self.SavedActiveSessionID = nil;
+    end
+
     self:log("Stopped and cleaned up");
 end
 
@@ -287,12 +292,6 @@ function RollOffBase:stepSetup()
         return;
     end
 
-    local activeSessionID = GL.GDKP.Session:activeSessionID();
-    if (activeSessionID and not GL.GDKP.Session:getActive().lockedAt) then
-        self:error("Lock or delete your active GDKP session first: the award dialog would ask for a price");
-        return;
-    end
-
     self.itemLinks = self:collectBagItems();
     if (#self.itemLinks < self.itemsNeeded) then
         self:error(("Need %d different items in your bags, found %d"):format(self.itemsNeeded, #self.itemLinks));
@@ -309,6 +308,13 @@ function RollOffBase:stepSetup()
 
     for key, value in pairs(PINNED_SETTINGS) do
         GL.Settings:set(key, type(value) == "function" and value() or value, true);
+    end
+
+    -- An active GDKP session makes the award dialog ask for a price, set it aside until stop()
+    local activeSessionID = GL.GDKP.Session:activeSessionID();
+    if (activeSessionID) then
+        self.SavedActiveSessionID = activeSessionID;
+        GL.DB:set("GDKP.activeSession", nil);
     end
 
     GL.Events:register(LISTENER_ID, "GL.ITEM_AWARDED", function (_, AwardEntry)
