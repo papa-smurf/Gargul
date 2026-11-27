@@ -144,8 +144,8 @@ function Auction:_initializeQueue()
     -- We're not allowed to populate the queue
     if (not Auctioneer:allowedToBroadcast()
         or (GL.User.isInGroup
-            and GL.GetLootMethod() == "master"
-            and not GL.User.isMasterLooter
+            and GL.User:hasEffectiveMasterLooter()
+            and not GL.User:isEffectiveMasterLooter()
         )
     ) then
         return;

@@ -230,6 +230,12 @@ function Player:isMasterLooter(playerNameOrID)
         return GL:playerNamesMatch(GL:groupMemberIdentity(masterLooterName), playerName);
     end
 
+    -- Gargul Master Loot (master loot via group loot) is active
+    local effectiveMasterLooter = GL.User:effectiveMasterLooter();
+    if (effectiveMasterLooter) then
+        return GL:playerNamesMatch(effectiveMasterLooter, playerName);
+    end
+
     return false;
 end
 

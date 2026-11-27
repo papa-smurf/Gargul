@@ -31,6 +31,13 @@ local PriorityByAction = {
     [Actions.startRollOff] = "NORMAL",
     [Actions.stopRollOff] = "NORMAL",
     [Actions.broadcastLootCouncilVotes] = "NORMAL",
+    [Actions.gmlActivate] = "NORMAL",
+    [Actions.gmlOptInRequest] = "NORMAL",
+    [Actions.gmlPassReport] = "NORMAL",
+    [Actions.gmlHeartbeat] = "NORMAL",
+    [Actions.gmlStateChange] = "NORMAL",
+    [Actions.gmlEnd] = "NORMAL",
+    [Actions.gmlSyncRequest] = "NORMAL",
 };
 
 Comm.Actions = {
@@ -143,6 +150,27 @@ Comm.Actions = {
     end,
     [Actions.broadcastLootCouncilVotes] = function (Message)
         GL.LootCouncil:receiveVotes(Message);
+    end,
+    [Actions.gmlOptInRequest] = function (Message)
+        GL.GargulMasterLoot.Mode:onOptInRequest(Message);
+    end,
+    [Actions.gmlActivate] = function (Message)
+        GL.GargulMasterLoot.Mode:onActivate(Message);
+    end,
+    [Actions.gmlEnd] = function (Message)
+        GL.GargulMasterLoot.Mode:onEnd(Message);
+    end,
+    [Actions.gmlSyncRequest] = function (Message)
+        GL.GargulMasterLoot.Mode:onSyncRequest(Message);
+    end,
+    [Actions.gmlHeartbeat] = function (Message)
+        GL.GargulMasterLoot.Monitor:onHeartbeat(Message);
+    end,
+    [Actions.gmlPassReport] = function (Message)
+        GL.GargulMasterLoot.Monitor:onPassReport(Message);
+    end,
+    [Actions.gmlStateChange] = function (Message)
+        GL.GargulMasterLoot.Monitor:onStateChange(Message);
     end,
 };
 

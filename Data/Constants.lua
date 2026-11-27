@@ -678,7 +678,28 @@ GL.Data.Constants = {
             broadcastAwardMutations = 35,
             requestRollOffBoostedRanges = 36,
             broadcastLootCouncilVotes = 37,
+            gmlActivate = 38,
+            gmlOptInRequest = 39,
+            gmlPassReport = 40,
+            gmlHeartbeat = 41,
+            gmlStateChange = 42,
+            gmlEnd = 43,
+            gmlSyncRequest = 44,
         },
+    },
+
+    --[[
+        GARGUL MASTER LOOT (master loot via group loot)
+    ]]
+    GargulMasterLoot = {
+        -- Everyone in the group needs at least this version to take part
+        ---@todo bump to the release that ships this feature
+        minimumVersion = "8.1.2",
+
+        heartbeatInterval = 15,
+        heartbeatTimeout = 45,
+        graceSeconds = 30,
+        missingPassGraceSeconds = 5,
     },
 
     --[[

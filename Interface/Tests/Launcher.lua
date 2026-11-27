@@ -36,6 +36,7 @@ local E2E_SCENARIOS = {
     end, },
     { key = "PackMuleAward", label = "PackMule Award E2E", },
     { key = "PackMuleGroupLoot", label = "PackMule Group Loot E2E", },
+    { key = "GargulMasterLoot", label = "Gargul Master Loot E2E", },
     { key = "RollOffAward", label = "RollOff Stop & Award E2E", },
     { key = "RollOffLootCouncil", label = "RollOff Loot Council E2E", },
     { key = "RollOffTimer", label = "RollOff Timer & Re-roll E2E", },

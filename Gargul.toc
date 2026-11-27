@@ -135,6 +135,9 @@ Classes/CommMessage.lua
 Classes/CommRecorder.lua
 Classes/RaidGroups.lua
 Classes/DroppedLootLedger.lua
+Classes/GargulMasterLoot/Mode.lua
+Classes/GargulMasterLoot/Monitor.lua
+Classes/GargulMasterLoot/Client.lua
 
 # UI objects
 Interface/AceGUIWidget-LibScrollingTable.lua
@@ -148,6 +151,10 @@ Interface/Importer.lua
 Interface/BonusFeatures.lua
 Interface/Onboarding.lua
 Interface/GroupVersionCheck.lua
+Interface/GargulMasterLoot/OptInDialog.lua
+Interface/GargulMasterLoot/ViolationPopup.lua
+Interface/GargulMasterLoot/RosterCheck.lua
+Interface/GargulMasterLoot/UnitMenu.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
 Interface/Settings/TradeAnnouncements.lua
@@ -256,6 +263,7 @@ Tests/E2E/PackMuleRules.lua
 Tests/E2E/PackMuleForever.lua
 Tests/E2E/PackMuleAward.lua
 Tests/E2E/PackMuleGroupLoot.lua
+Tests/E2E/GargulMasterLoot.lua
 Tests/E2E/RollOffBase.lua
 Tests/E2E/RollOffAward.lua
 Tests/E2E/RollOffLootCouncil.lua

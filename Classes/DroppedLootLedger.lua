@@ -114,11 +114,11 @@ function DroppedLootLedger:_shouldTrackItems()
     end
 
     if (whenToLog == WHENHASML) then
-        return GL.GetLootMethod() == "master";
+        return User:hasEffectiveMasterLooter();
     end
 
     if (whenToLog == WHENISML) then
-        return User.isMasterLooter;
+        return User:isEffectiveMasterLooter();
     end
 
     if (whenToLog == WHENRL) then

@@ -1,5 +1,7 @@
 local _, GL = ...;
 
+local L = Gargul_L;
+
 ---@type Settings
 local Settings = GL.Settings;
 
@@ -27,6 +29,7 @@ GL.Commands = GL.Commands or {
         cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
         rrobin = "Open the RRobin importer. Data exported from https://rrobin.net/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
+        gml = "Gargul Master Loot (master loot via group loot): /gl gml starts it, /gl gml stop ends it",
         gear = "Open the worn gear window which shows the equipped gear Gargul picked up for everyone in your group during roll offs",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, Softres or loot priority importers",
@@ -271,6 +274,20 @@ GL.Commands = GL.Commands or {
 
         -- Open the window showing everyone's worn gear
         gear = function () GL.Interface.GearOverview:toggle(); end,
+        gml = function (action)
+            local Mode = GL.GargulMasterLoot.Mode;
+
+            if (strlower(tostring(action or "")) == "stop") then
+                return Mode:stop();
+            end
+
+            if (Mode:isActive() or Mode.Check) then
+                GL:warning(L["Gargul Master Loot is already running, use /gl gml stop to end it"]);
+                return false;
+            end
+
+            return Mode:start();
+        end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,

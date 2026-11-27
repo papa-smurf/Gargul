@@ -100,6 +100,11 @@ function Env:activate()
         self:swapNamespace(GL[namespace]);
     end
 
+    -- Gargul Master Loot (Mode, Monitor, Client) lives one level deeper
+    for _, Namespace in pairs(GL.GargulMasterLoot or {}) do
+        self:swapNamespace(Namespace);
+    end
+
     for _, Listeners in pairs(GL.Events.Registry.EventListeners or {}) do
         self:swapNamespace(Listeners);
     end

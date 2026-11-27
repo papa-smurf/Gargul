@@ -19,6 +19,9 @@ GL.User = {
     Guild = {},
     isOfficer = false,
     isMasterLooter = false,
+
+    -- True while this user is the master looter of an active Gargul Master Loot session
+    isPseudoMasterLooter = false,
     isInRaid = IsInRaid(),
     isInParty = IsInGroup() and not IsInRaid(),
     isInGroup = IsInGroup(),
@@ -224,6 +227,45 @@ function User:refresh()
     ) then
         GL.Events:fire("GL.USER_LOST_ASSIST");
     end
+end
+
+--- The name of whoever is master looting: the real master looter or
+--- the master looter of an active Gargul Master Loot session
+---
+---@return string|nil
+function User:effectiveMasterLooter()
+    local lootMethod, masterLooterIndex = GL.GetLootMethod();
+
+    if (lootMethod == "master") then
+        if (self.isMasterLooter) then
+            return self.name;
+        end
+
+        local masterLooterName = masterLooterIndex and GetRaidRosterInfo(masterLooterIndex);
+        return masterLooterName and GL:groupMemberIdentity(masterLooterName) or nil;
+    end
+
+    local Mode = GL.GargulMasterLoot and GL.GargulMasterLoot.Mode;
+    if (Mode and Mode:isActive()) then
+        return Mode:masterLooterName();
+    end
+
+    return nil;
+end
+
+--- Whether someone (real or Gargul Master Loot) is master looting
+---
+---@return boolean
+function User:hasEffectiveMasterLooter()
+    -- The name of a real master looter can't always be resolved, but there is one
+    return GL.GetLootMethod() == "master" or self:effectiveMasterLooter() ~= nil;
+end
+
+--- Whether the current user is the real or Gargul Master Loot master looter
+---
+---@return boolean
+function User:isEffectiveMasterLooter()
+    return self.isMasterLooter or self.isPseudoMasterLooter;
 end
 
 --- Get all of the people who are in the same guild as the current user

@@ -8,6 +8,7 @@ local Events = GL.Events;
 ---@field AwardHistory table
 ---@field BoostedRolls table
 ---@field CommTrace table
+---@field GargulMasterLoot table
 ---@field GDKP table
 ---@field LoadDetails table
 ---@field LootPriority table
@@ -26,6 +27,7 @@ local DB = {
         "AwardHistory",
         "BoostedRolls",
         "CommTrace",
+        "GargulMasterLoot",
         "GDKP",
         "LoadDetails",
         "LootPriority",

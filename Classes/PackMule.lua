@@ -240,6 +240,11 @@ function PackMule:processGroupLootItems(rollID)
         return;
     end
 
+    -- Gargul Master Loot owns every roll while it's active
+    if (GL.GargulMasterLoot and GL.GargulMasterLoot.Mode:isActive()) then
+        return;
+    end
+
     -- Check if the user has PackMule enabled for group loot
     if (not GL.Settings:get("PackMule.enabledForGroupLoot")) then
         return;
@@ -263,6 +268,76 @@ function PackMule:processGroupLootItems(rollID)
             RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
         end
     end);
+end
+
+--- Whether an item may be automatically handled (PackMule quality rules, Gargul Master Loot)
+---
+---@param Details table Item details as returned by GL:onItemLoadDo
+---@param itemID number
+---@param context string "master", "group" or "gml" (Gargul Master Loot)
+---@return boolean
+function PackMule:isItemPassable(Details, itemID, context)
+    if (type(Details) ~= "table" or not Details.quality) then
+        return false;
+    end
+
+    local bindType = Details.bindType or GL.LE_ITEM_BIND_NONE;
+    local bindOnPickup = GL:inTable({ GL.LE_ITEM_BIND_ON_ACQUIRE, GL.LE_ITEM_BIND_QUEST, }, bindType);
+
+    -- Check whether the item is whitelisted
+    if (GL:inTable(GL.Data.Constants.TradableItems, itemID)) then
+        return true;
+    end
+
+    -- We ignore legendary+ loot for obvious reasons
+    if (Details.quality >= 5) then
+        return false;
+    end
+
+    -- When group looting we have some additional rules
+    if (context ~= "master") then
+        -- Skip companion pets in group loot even if they're BoE!
+        if (Details.classID == GL.LE_ITEM_CLASS_MISCELLANEOUS
+            and Details.subclassID == GL.LE_ITEM_MISCELLANEOUS_SUBCLASS_COMPANION_PET
+        ) then
+            return false;
+        end
+
+        -- Always skip recipes and quest items
+        if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
+            return false;
+        end
+    end
+
+    -- Untradable items are skipped in quality rules whether they're BoP or not!
+    if (GL:inTable(GL.Data.Constants.UntradableItems, itemID)) then
+        return false;
+    end
+
+    -- The item is not BoP so we can safely PackMule it
+    if (not bindOnPickup) then
+        return true;
+    end
+
+    -- Recipes and Quest Items are skipped in quality rules
+    if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
+        return false;
+    end
+
+    -- Retail BoP items can't be traded when they're an upgrade for whoever looted them,
+    -- so Gargul Master Loot can't promise the master looter is able to hand them out
+    if (context == "gml" and GL.isRetail) then
+        return false;
+    end
+
+    -- PackMule doesn't pack BoP items unless in a raid or heroic instance
+    if (not GL.User.isInRaid
+        and not self.playerIsInHeroicInstance ---@todo: ADD ALL RAID FORMS TO THIS TO REPLACE isInRaid
+    ) then
+        return false;
+    end
+
+    return true;
 end
 
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
@@ -796,58 +871,16 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 local bindOnPickup = GL:inTable({ GL.LE_ITEM_BIND_ON_ACQUIRE, GL.LE_ITEM_BIND_QUEST, }, bindType);
 
                 local ruleApplies = (function ()
-                    -- Check whether the item is whitelisted
-                    if (GL:inTable(GL.Data.Constants.TradableItems, itemID)) then
-                        return true;
-                    end
-
-                    -- We ignore legendary+ loot for obvious reasons
-                    if (Details.quality >= 5) then
+                    if (not self:isItemPassable(Details, itemID, GL.User.isMasterLooter and "master" or "group")) then
                         return false;
-                    end
-
-                    -- When group looting we have some additional rules
-                    if (not GL.User.isMasterLooter) then
-                        -- Skip companion pets in group loot even if they're BoE!
-                        if (Details.classID == GL.LE_ITEM_CLASS_MISCELLANEOUS
-                            and Details.subclassID == GL.LE_ITEM_MISCELLANEOUS_SUBCLASS_COMPANION_PET
-                        ) then
-                            return false;
-                        end
-
-                        -- Always skip recipes and quest items
-                        if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
-                            return false;
-                        end
-                    end
-
-                    -- Untradable items are skipped in quality rules whether they're BoP or not!
-                    if (GL:inTable(GL.Data.Constants.UntradableItems, itemID)) then
-                        return false;
-                    end
-
-                    -- The item is not BoP so we can safely PackMule it
-                    if (not bindOnPickup) then
-                        return true;
                     end
 
                     -- When in group loot never auto need anything that's BoP unless you have lead or assist!
-                    if (not GL.User.isMasterLooter
+                    if (bindOnPickup
+                        and not GL.User.isMasterLooter
                         and not GL.User.hasAssist
                         and not GL.Settings:get("PackMule.needWithoutAssist")
                         and strfind(target, L["NEED"])
-                    ) then
-                        return false;
-                    end
-
-                    -- Recipes and Quest Items are skipped in quality rules
-                    if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
-                        return false;
-                    end
-
-                    -- PackMule doesn't pack BoP items unless in a raid or heroic instance
-                    if (not GL.User.isInRaid
-                        and not self.playerIsInHeroicInstance ---@todo: ADD ALL RAID FORMS TO THIS TO REPLACE isInRaid
                     ) then
                         return false;
                     end
