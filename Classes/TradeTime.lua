@@ -11,6 +11,9 @@ GL.TradeTime = {
 
     State = {},
     TestItems = {},
+
+    -- Item GUIDs we know have no trade time, these never gain one later
+    WithoutTradeTime = {},
 };
 
 ---@type TradeTime
@@ -59,15 +62,32 @@ end
 ---@return nil
 function TradeTime:process()
     local Details = {};
+    local WithoutTradeTime = {};
     local somethingChanged = false;
+    local skipKnownItems = not GL.Interface.Settings.LootTradeTimers.testEnabled and GL:empty(self.TestItems);
+
     GL:forEachItemInBags(function (Location, bag, slot)
-        -- Item is not soulbound or does not have any trade time remaining
-        local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-        if (timeRemaining < 1 or timeRemaining == Constants.itemIsNotBound) then
+        local itemGUID = C_Item.GetItemGUID(Location);
+
+        if (skipKnownItems and itemGUID and self.WithoutTradeTime[itemGUID]) then
+            WithoutTradeTime[itemGUID] = true;
             return;
         end
 
-        local itemGUID = C_Item.GetItemGUID(Location);
+        -- Item is not soulbound or does not have any trade time remaining
+        local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
+        if (timeRemaining < 1 or timeRemaining == Constants.itemIsNotBound) then
+            -- An uncached item can have an incomplete tooltip, check it again next time
+            if (itemGUID
+                and C_Item.IsItemDataCached
+                and C_Item.IsItemDataCached(Location)
+            ) then
+                WithoutTradeTime[itemGUID] = true;
+            end
+
+            return;
+        end
+
         Details[itemGUID] = {
             itemIcon = C_Item.GetItemIcon(Location),
             itemID = C_Item.GetItemID(Location),
@@ -82,6 +102,8 @@ function TradeTime:process()
             somethingChanged = true;
         end
     end);
+
+    self.WithoutTradeTime = WithoutTradeTime;
 
     -- We didn't gain any new items, lets see if we lost some
     if (not somethingChanged) then

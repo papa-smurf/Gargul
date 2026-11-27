@@ -198,9 +198,10 @@ end
 ---@return nil
 function GL:hookTooltipSetItemEvents()
     GL.onTooltipSetItemFunc = function (Tooltip)
-        -- No valid item tooltip was provided
+        -- No valid item tooltip was provided, or it's our own hidden scanning tooltip
         if (not Tooltip
             or not Tooltip.GetItem
+            or Tooltip == GL.TooltipFrame
         ) then
             return false;
         end

@@ -542,28 +542,42 @@ end
 ---
 ---@return number Seconds or 0
 function GL:tooltipItemTradeTimeRemaining()
-    local timeRemainingLine;
-    local needle = self:createPattern(BIND_TRADE_TIME_REMAINING):gsub("%%s", ".*");
-    local itemIsSoulBound = false;
+    local Lines = {};
 
-    -- Attempt to find a tooltip line that holds the remaining trading time
     for i = 1, GL.TooltipFrame:NumLines() do
         local line = _G["GargulTooltipFrameTextLeft" .. i];
 
         if (line) then
-            timeRemainingLine = line:GetText() or "";
+            table.insert(Lines, line:GetText() or "");
+        end
+    end
 
-            -- The item is actually soulbound!
-            if (timeRemainingLine == ITEM_SOULBOUND) then
-                itemIsSoulBound = true;
-            end
+    return self:tradeTimeRemainingFromTooltipLines(Lines);
+end
 
-            -- The time remaining line was found, no need to continue searching!
-            if (timeRemainingLine:find(needle)) then
-                break;
-            end
+local tradeTimeNeedle;
 
-            timeRemainingLine = nil;
+--- See if there's time remaining to trade the item based on its tooltip lines
+---
+---@param Lines string[] Left text of each tooltip line
+---@return number Seconds or 0
+function GL:tradeTimeRemainingFromTooltipLines(Lines)
+    tradeTimeNeedle = tradeTimeNeedle or self:createPattern(BIND_TRADE_TIME_REMAINING):gsub("%%s", ".*");
+
+    local timeRemainingLine;
+    local itemIsSoulBound = false;
+
+    -- Attempt to find a tooltip line that holds the remaining trading time
+    for _, line in ipairs(Lines) do
+        -- The item is actually soulbound!
+        if (line == ITEM_SOULBOUND) then
+            itemIsSoulBound = true;
+        end
+
+        -- The time remaining line was found, no need to continue searching!
+        if (line:find(tradeTimeNeedle)) then
+            timeRemainingLine = line;
+            break;
         end
     end
 
@@ -622,11 +636,25 @@ end
 ---@param slot number
 ---@return number Seconds or 0
 function GL:inventoryItemTradeTimeRemaining(bag, slot)
-    GL.TooltipFrame:ClearLines();
-    GL.TooltipFrame:SetBagItem(bag, slot);
+    local timeRemaining;
 
-    local timeRemaining = GL:tooltipItemTradeTimeRemaining();
-    GL.TooltipFrame:ClearLines();
+    -- Reading tooltip data directly is cheaper than filling in a tooltip frame
+    if (C_TooltipInfo and C_TooltipInfo.GetBagItem) then
+        local Lines = {};
+        local TooltipData = C_TooltipInfo.GetBagItem(bag, slot);
+
+        for _, Line in ipairs(TooltipData and TooltipData.lines or {}) do
+            table.insert(Lines, Line.leftText or "");
+        end
+
+        timeRemaining = GL:tradeTimeRemainingFromTooltipLines(Lines);
+    else
+        GL.TooltipFrame:ClearLines();
+        GL.TooltipFrame:SetBagItem(bag, slot);
+
+        timeRemaining = GL:tooltipItemTradeTimeRemaining();
+        GL.TooltipFrame:ClearLines();
+    end
 
     -- General purpose test mode is enabled
     if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
