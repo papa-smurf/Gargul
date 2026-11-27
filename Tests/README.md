@@ -21,6 +21,7 @@ Tests/
     PackMuleGroupLoot.lua -- Group-loot auto rolls and auto confirm (GL.Tests.E2E.PackMuleGroupLoot)
     RollOffBase.lua     -- Shared steps for the RollOff scenarios (real Master Looter UI, RollerUI and dialog clicks)
     RollOffAward.lua    -- Roll, stop, award via the award dialog (GL.Tests.E2E.RollOffAward)
+    RollOffLootCouncil.lua -- Vote after the timer, retract, award with votes (GL.Tests.E2E.RollOffLootCouncil)
     RollOffTimer.lua    -- Re-roll the same item, timer expiry, "Name [2]" row (GL.Tests.E2E.RollOffTimer)
     RollOffReminder.lua -- "New roll without awarding" reminder and Clear (GL.Tests.E2E.RollOffReminder)
     RollOffReopen.lua   -- Reopen master looter button mid-roll (GL.Tests.E2E.RollOffReopen)
@@ -52,7 +53,7 @@ Open the E2E launcher (via the addon’s test entry point), select scenarios, an
 /run Gargul.Tests.E2E.GDKPAuction:start()
 /run Gargul.Tests.E2E.GDKPAuction:stop()
 
--- RollOff E2Es (swap RollOffAward for RollOffTimer, RollOffReminder, RollOffReopen or RollOffDisenchant)
+-- RollOff E2Es (swap RollOffAward for RollOffLootCouncil, RollOffTimer, RollOffReminder, RollOffReopen or RollOffDisenchant)
 /run Gargul.Tests.E2E.RollOffAward:start()
 /run Gargul.Tests.E2E.RollOffAward:stop()
 
