@@ -453,6 +453,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     BRCost = winner.BRCost;
     RollBracket = winner.RollBracket;
     Rolls = winner.Rolls;
+    local LootCouncilDetails = type(winner.LootCouncil) == "table" and winner.LootCouncil or nil;
 
     winner = winner.winner;
     local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
@@ -607,6 +608,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         TMB = isWishlisted or isPrioritized,
         winningRollType = RollBracket and RollBracket[1],
         Rolls = Rolls or {},
+        LC = LootCouncilDetails ~= nil,
+        LCVotes = LootCouncilDetails and LootCouncilDetails.votes or nil,
+        LCVoters = LootCouncilDetails and LootCouncilDetails.Voters or nil,
     };
 
     if (AwardEntry.BRCost and GL:gt(AwardEntry.BRCost, 0)) then
@@ -661,6 +665,10 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
                 awardedTo
             );
 
+        end
+
+        if (AwardEntry.LC and GL.Settings:get("LootCouncil.showVotesOnAward", true)) then
+            awardMessage = awardMessage .. (L.CHAT[" (LC votes: %s)"]):format(AwardEntry.LCVotes or 0);
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
@@ -1172,6 +1180,8 @@ function AwardedLoot:awardEntryForComm(AwardEntry)
         SR = AwardEntry.SR,
         WL = AwardEntry.WL,
         PL = AwardEntry.PL,
+        LC = AwardEntry.LC and 1 or nil,
+        LCVotes = AwardEntry.LCVotes,
         Rolls = Rolls,
     };
 end
@@ -1225,6 +1235,8 @@ function AwardedLoot:awardEntryFromComm(Award, Sender)
         WL = GL:toboolean(Award.WL),
         PL = GL:toboolean(Award.PL),
         TMB = GL:toboolean(Award.WL) or GL:toboolean(Award.PL),
+        LC = GL:toboolean(Award.LC),
+        LCVotes = Award.LCVotes,
         Rolls = self:rollsFromComm(Award.Rolls, Award.timestamp),
     };
 end

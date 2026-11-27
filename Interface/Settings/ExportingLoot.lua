@@ -195,6 +195,8 @@ function ExportingLoot:draw(Parent)
             "@WL |c00A79EFF(tmb wish?)|r",
             "@PL |c00A79EFF(tmb prio?)|r",
             "@TMB |c00A79EFF(tmb wish/prio?)|r",
+            "@LOOTCOUNCIL |c00A79EFF(loot council voted?)|r",
+            "@LCVOTES |c00A79EFF(loot council votes)|r",
             "@ROLLTYPE |c00A79EFF(MS, OS etc)|r",
             "@CHECKSUM",
             "@YEAR",
