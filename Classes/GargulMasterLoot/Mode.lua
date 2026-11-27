@@ -122,6 +122,13 @@ end
 ---@return boolean
 function Mode:groupLootActive()
     local method = GL.GetLootMethod();
+
+    -- Retail doesn't let you pick a loot method and it can fluctuate (dungeons, instance changes),
+    -- so the loot method says nothing about whether the session is still valid there
+    if (GL.isRetail) then
+        return true;
+    end
+
     return method == "group" or method == "needbeforegreed";
 end
 

@@ -130,7 +130,10 @@ function E2E:stepAssertDisenchantAward()
             error("Expected exactly one disenchant award");
         end
 
-        if (not GL:playerNamesMatch(GL.PackMule.disenchanter, GL.User.name)) then
+        if (not GL:playerNamesMatch(GL.PackMule.disenchanter, GL.User.name)
+            and not GL:playerNamesMatch(GL.PackMule.disenchanter, GL.User.fqn)
+            and not GL:playerNamesMatch(GL:stripRealm(GL.PackMule.disenchanter), GL:stripRealm(GL.User.name))
+        ) then
             error("You were not set as disenchanter");
         end
 

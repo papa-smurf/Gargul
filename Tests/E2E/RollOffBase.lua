@@ -571,7 +571,10 @@ function RollOffBase:stepAssertAwarded()
             error("More than one award was recorded");
         end
 
-        if (not GL:playerNamesMatch(Entry.awardedTo, GL.User.name)) then
+        if (not GL:playerNamesMatch(Entry.awardedTo, GL.User.name)
+            and not GL:playerNamesMatch(Entry.awardedTo, GL.User.fqn)
+            and not GL:playerNamesMatch(GL:stripRealm(Entry.awardedTo), GL:stripRealm(GL.User.name))
+        ) then
             error(("Awarded to %s, expected you"):format(tostring(Entry.awardedTo)));
         end
 
