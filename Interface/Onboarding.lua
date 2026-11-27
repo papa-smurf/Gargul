@@ -326,6 +326,45 @@ local function buildSoftResMockup(Parent)
     PlayerNames:SetWordWrap(true);
 end
 
+--- Loot council mockup: 3 roll rows with vote counts and +/- buttons.
+---
+---@param Parent Frame
+---@return nil
+local function buildLootCouncilMockup(Parent)
+    local rolls = {
+        { color = COLORS.WARRIOR, name = "WarriorGuy", roll = 87, votes = 2, },
+        { color = COLORS.PALADIN, name = "PaladinJane", roll = 95, votes = 1, },
+        { color = COLORS.HUNTER, name = "HunterBob", roll = 42, votes = 0, },
+    };
+
+    for i, entry in ipairs(rolls) do
+        local rowY = -10 + (i - 1) * -26;
+
+        local Name = Interface:createFontString(Parent, ("|c00%s%s|r"):format(entry.color, entry.name));
+        Name:SetPoint("TOPLEFT", Parent, "TOPLEFT", 14, rowY);
+        Name:SetFont(1.4, "");
+
+        local Roll = Interface:createFontString(Parent, ("|c00FFFFFF%s|r  |c00808080%s|r"):format(entry.roll, L["MS"]));
+        Roll:SetPoint("TOPLEFT", Parent, "TOPLEFT", 200, rowY);
+        Roll:SetFont(1.4, "");
+
+        local Minus = Parent:CreateTexture(nil, "ARTWORK");
+        Minus:SetSize(16, 16);
+        Minus:SetPoint("TOPRIGHT", Parent, "TOPRIGHT", -14, rowY + 1);
+        Minus:SetTexture("Interface/Buttons/UI-MinusButton-Up");
+        Minus:SetAlpha(entry.votes > 0 and 1 or .4);
+
+        local Plus = Parent:CreateTexture(nil, "ARTWORK");
+        Plus:SetSize(16, 16);
+        Plus:SetPoint("RIGHT", Minus, "LEFT", -4, 0);
+        Plus:SetTexture("Interface/Buttons/UI-PlusButton-Up");
+
+        local Votes = Interface:createFontString(Parent, ("|c00%s%s|r"):format(COLORS.YELLOW, (L["%s votes"]):format(entry.votes)));
+        Votes:SetPoint("RIGHT", Plus, "LEFT", -10, 0);
+        Votes:SetFont(1.4, "");
+    end
+end
+
 --- PackMule mockup: 3 quality-based loot rules.
 ---
 ---@param Parent Frame
@@ -556,6 +595,24 @@ function Onboarding:build()
         action = function ()
             Onboarding:close();
             GL.Commands:call("softreserves");
+        end,
+    });
+
+    table.insert(SlidesConfig, {
+        title = L["Loot Council"],
+        subtitle = L["Let a council vote on who gets the loot"],
+        icon = "Interface/AddOns/Gargul/Assets/Buttons/council",
+        mockupHeight = 96,
+        buildMockup = buildLootCouncilMockup,
+        steps = {
+            L["Add council members by name or guild rank in |c00FFF569/gl|r -> Loot Council"],
+            L["Members vote with |c00FFF569+|r and |c00FFF569-|r in the roll window, even after the timer ends"],
+            L["Rolls are sorted by votes, award messages and exports show them"],
+        },
+        buttonText = L["Set up Loot Council"],
+        action = function ()
+            Onboarding:close();
+            GL.Settings:draw("LootCouncil");
         end,
     });
 
