@@ -37,6 +37,10 @@ local PINNED_SETTINGS = {
     ["Rolling.dontShowOnUnusableItems"] = false,
     ["Rolling.showRollTracker"] = true,
     ["AutoRoll.enabled"] = false,
+    ["LootCouncil.enabled"] = false,
+    ["LootCouncil.minimumQuality"] = 0,
+    ["LootCouncil.guildRunsOnly"] = false,
+    ["LootCouncil.votesPerMember"] = 1,
     ["AwardingLoot.skipAwardConfirmationDialog"] = false,
     ["RollTracking.Brackets"] = function ()
         return {
@@ -244,6 +248,7 @@ function RollOffBase:stop()
     -- Forget the item so the next roll starts from a clean slate
     GL.RollOff:reset();
     GL.RollOff.CurrentRollOff.Rolls = {};
+    GL.LootCouncil:endSession();
 
     GL.RollerUI:hide();
     GL.MasterLooterUI:closeReopenMasterLooterUIButton();

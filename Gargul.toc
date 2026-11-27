@@ -258,6 +258,7 @@ Tests/E2E/PackMuleAward.lua
 Tests/E2E/PackMuleGroupLoot.lua
 Tests/E2E/RollOffBase.lua
 Tests/E2E/RollOffAward.lua
+Tests/E2E/RollOffLootCouncil.lua
 Tests/E2E/RollOffTimer.lua
 Tests/E2E/RollOffReminder.lua
 Tests/E2E/RollOffReopen.lua
