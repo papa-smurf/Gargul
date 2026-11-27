@@ -10,9 +10,141 @@ GL.Profiler = {
     updateRateInSeconds = 5,
     RefreshTimer = nil,
     Window = nil,
+
+    -- CPU tracking of Gargul's own code, toggled with /gl perf
+    tracking = false,
+    trackingStartedAt = nil,
+    Stats = {},
+    Spikes = {},
 }
 
 local Profiler = GL.Profiler; ---@type Profiler
+
+local SPIKE_THRESHOLD_IN_MS = 10;
+local MAXIMUM_NUMBER_OF_SPIKES = 50;
+local NUMBER_OF_REPORT_ROWS = 30;
+
+--- Start tracking how long Gargul's own code takes, or stop and show the results
+---
+---@return nil
+function Profiler:togglePerformanceTracking()
+    if (self.tracking) then
+        self.tracking = false;
+        self:showPerformanceReport();
+
+        return;
+    end
+
+    self.Stats = {};
+    self.Spikes = {};
+    self.trackingStartedAt = GetTime();
+    self.tracking = true;
+
+    GL:notice(L["Tracking Gargul's CPU usage. Type /gl perf again to stop and see the results"]);
+end
+
+---@param label string
+---@param startedAt number
+---@return any
+local function finishMeasurement(label, startedAt, ...)
+    Profiler:record(label, debugprofilestop() - startedAt);
+
+    return ...;
+end
+
+--- Call func and, while tracking, record how long it took
+---
+---@param label string
+---@param func function
+---@return any
+function Profiler:measure(label, func, ...)
+    if (not self.tracking) then
+        return func(...);
+    end
+
+    local startedAt = debugprofilestop();
+
+    return finishMeasurement(label, startedAt, func(...));
+end
+
+---@param label string
+---@param milliseconds number
+---@return nil
+function Profiler:record(label, milliseconds)
+    local Entry = self.Stats[label];
+
+    if (not Entry) then
+        Entry = { calls = 0, total = 0, max = 0, };
+        self.Stats[label] = Entry;
+    end
+
+    Entry.calls = Entry.calls + 1;
+    Entry.total = Entry.total + milliseconds;
+
+    if (milliseconds > Entry.max) then
+        Entry.max = milliseconds;
+        Entry.maxAt = date("%H:%M:%S");
+    end
+
+    if (milliseconds >= SPIKE_THRESHOLD_IN_MS) then
+        table.insert(self.Spikes, { at = date("%H:%M:%S"), label = label, milliseconds = milliseconds, });
+
+        if (#self.Spikes > MAXIMUM_NUMBER_OF_SPIKES) then
+            table.remove(self.Spikes, 1);
+        end
+    end
+end
+
+--- Show the slowest calls recorded since tracking started
+---
+---@return nil
+function Profiler:showPerformanceReport()
+    local Rows = {};
+
+    for label, Entry in pairs(self.Stats) do
+        table.insert(Rows, { label = label, Entry = Entry, });
+    end
+
+    table.sort(Rows, function (a, b)
+        return a.Entry.max > b.Entry.max;
+    end);
+
+    local Lines = {
+        ("Gargul v%s, tracked for %d seconds. Times are in ms, a call's time includes any Gargul calls it made."):format(
+            GL.version,
+            math.floor(GetTime() - (self.trackingStartedAt or GetTime()))
+        ),
+        "",
+        ("Calls that took %dms or longer (last %d):"):format(SPIKE_THRESHOLD_IN_MS, MAXIMUM_NUMBER_OF_SPIKES),
+    };
+
+    if (#self.Spikes == 0) then
+        table.insert(Lines, "  None");
+    end
+
+    for _, Spike in ipairs(self.Spikes) do
+        table.insert(Lines, ("  %s  %.1f  %s"):format(Spike.at, Spike.milliseconds, Spike.label));
+    end
+
+    table.insert(Lines, "");
+    table.insert(Lines, ("Slowest %d by worst call (max at time | avg | total | calls | label):"):format(NUMBER_OF_REPORT_ROWS));
+
+    for index = 1, math.min(#Rows, NUMBER_OF_REPORT_ROWS) do
+        local Row = Rows[index];
+        local Entry = Row.Entry;
+
+        table.insert(Lines, ("  %.1f at %s | %.2f | %.1f | %d | %s"):format(
+            Entry.max,
+            Entry.maxAt or "-",
+            Entry.total / Entry.calls,
+            Entry.total,
+            Entry.calls,
+            Row.label
+        ));
+    end
+
+    GL:frameMessage(table.concat(Lines, "\n"));
+end
 
 --- Draw the profiler window and keep it updated
 ---

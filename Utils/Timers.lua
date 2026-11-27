@@ -26,6 +26,7 @@ end
 ---@param func function
 ---@return table
 function GL:after(seconds, identifier, func)
+    local label = ("Timer %s"):format(identifier or "(anonymous)");
     identifier = identifier or GetTime() .. GL:uuid();
     GL:debug("Schedule " .. identifier);
 
@@ -44,7 +45,7 @@ function GL:after(seconds, identifier, func)
             GL.Timers[identifier] = nil;
         end
 
-        func();
+        GL.Profiler:measure(label, func);
     end);
 
     GL.Timers[identifier] = Timer;
@@ -68,10 +69,12 @@ function GL:interval(seconds, identifier, func)
         ends = GetTime() + seconds,
     };
 
+    local label = ("Interval %s"):format(identifier);
+
     Timer.handle = C_Timer.NewTicker(seconds, function ()
         GL:debug("Run recurring " .. identifier);
 
-        func(identifier);
+        GL.Profiler:measure(label, func, identifier);
 
         if (GL.Timers[identifier] == Timer) then
             Timer.ends = GetTime() + seconds;

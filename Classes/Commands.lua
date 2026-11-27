@@ -35,6 +35,7 @@ GL.Commands = GL.Commands or {
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
         minimap = "Open the minimap icon settings",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
+        perf = "Start tracking how much CPU time Gargul's own code uses. Type /gl perf again to stop and see the slowest calls",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
         resetui = "Reset Gargul's UI sizes and positions. Useful in case something went out of bounds!",
@@ -310,6 +311,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the pack mule window
         packmule = function () Settings:draw("PackMule"); end,
+
+        -- Start or stop tracking Gargul's CPU usage
+        perf = function () GL.Profiler:togglePerformanceTracking(); end,
 
         -- Open the loot priority window
         lootpriority = function () GL.LootPriority:drawImporter(); end,

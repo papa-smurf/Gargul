@@ -160,9 +160,16 @@ end
 ---@param ... any
 function Events:listen(event, ...)
     local args = {...};
+    local Profiler = GL.Profiler;
 
-    for _, listener in pairs(GL.Events.Registry.EventListeners[event] or {}) do
-        pcall(function () listener(event, unpack(args)); end);
+    for identifier, listener in pairs(GL.Events.Registry.EventListeners[event] or {}) do
+        if (Profiler.tracking) then
+            local startedAt = debugprofilestop();
+            pcall(function () listener(event, unpack(args)); end);
+            Profiler:record(("Event %s: %s"):format(event, identifier), debugprofilestop() - startedAt);
+        else
+            pcall(function () listener(event, unpack(args)); end);
+        end
     end
 end
 

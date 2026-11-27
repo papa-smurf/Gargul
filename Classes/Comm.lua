@@ -155,7 +155,9 @@ function Comm:_init()
     self.channel = GL.Data.Constants.Comm.channel;
 
     -- Register the Ace Comm channel listener
-    GL.Ace:RegisterComm(self.channel, Comm.listen);
+    GL.Ace:RegisterComm(self.channel, function (...)
+        return GL.Profiler:measure("Comm receive", Comm.listen, ...);
+    end);
 
     -- Store the default ChatThrottleLib burst and CPS values
     self.defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
@@ -415,6 +417,7 @@ function Comm:listen(payload, distribution, playerName)
 end
 
 local WarnedAboutCommAction = {};
+local ActionNames;
 --- Dispatch incoming messages to their handlers
 ---
 ---@param CommMessage CommMessage
@@ -439,6 +442,12 @@ function Comm:dispatch(CommMessage, stringLength)
             else
                 GL:xd(("Received: %s | B: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0));
             end
+        end
+
+        if (GL.Profiler.tracking) then
+            ActionNames = ActionNames or GL:tableFlip(Actions);
+
+            return GL.Profiler:measure(("Comm %s"):format(tostring(ActionNames[action] or action)), Comm.Actions[action], CommMessage);
         end
 
         return Comm.Actions[action](CommMessage);
