@@ -92,11 +92,7 @@ end
 --- Callback to be fired when the addon is completely loaded
 ---@return nil
 function GL:_init()
-    self.Events:_init(self.EventFrame);
-    self.DB:_init();
-    self.Version:_init();
-    self.Settings:_init();
-
+    self:initCore();
     self:registerMedia();
     self:runInits();
 
@@ -105,6 +101,15 @@ function GL:_init()
 
     -- Listeners are registered above. refresh fires the group events they handle.
     self.User:refresh();
+end
+
+--- Initialize the core classes every registered class relies on. Must run before runInits.
+---@return nil
+function GL:initCore()
+    self.Events:_init(self.EventFrame);
+    self.DB:_init();
+    self.Version:_init();
+    self.Settings:_init();
 end
 
 --- Register Gargul sounds and the default font. GL.FONT must exist before runInits.
