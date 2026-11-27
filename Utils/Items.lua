@@ -321,8 +321,13 @@ function GL:normalizeItem(ItemMixin)
     end
 
     -- Keep in mind that this data all refers to the base version of the item since we're using an ID
+    local itemInfoSource = ItemMixin:GetItemLink() or itemID;
+    if (not itemInfoSource) then
+        return false;
+    end
+
     local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL.GetItemInfo(ItemMixin:GetItemLink());
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL.GetItemInfo(itemInfoSource);
 
     if (not itemLink) then
         return false;
