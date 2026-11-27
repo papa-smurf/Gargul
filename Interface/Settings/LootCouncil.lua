@@ -75,11 +75,16 @@ function LootCouncil:draw(Parent)
         MembersList:ReleaseChildren();
 
         for index, name in ipairs(GL.Settings:get("LootCouncil.Members", {})) do
+            local Row = AceGUI:Create("SimpleGroup");
+            Row:SetLayout("Flow");
+            Row:SetFullWidth(true);
+            MembersList:AddChild(Row);
+
             local Name = AceGUI:Create("Label");
             Name:SetText(name);
             Name:SetFontObject(_G.GameFontNormal);
             Name:SetWidth(200);
-            MembersList:AddChild(Name);
+            Row:AddChild(Name);
 
             local RemoveButton = AceGUI:Create("Button");
             RemoveButton:SetText("Remove");
@@ -90,7 +95,7 @@ function LootCouncil:draw(Parent)
                 GL.Settings:set("LootCouncil.Members", Members);
                 drawMembers();
             end);
-            MembersList:AddChild(RemoveButton);
+            Row:AddChild(RemoveButton);
         end
 
         Parent:DoLayout();
