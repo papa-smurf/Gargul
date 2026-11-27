@@ -112,6 +112,8 @@ function MasterLooterUI:draw(itemLink)
             Window:Show();
         end
 
+        self:updateCouncilButton();
+
         return;
     end
 
@@ -425,6 +427,7 @@ function MasterLooterUI:draw(itemLink)
                 MasterLooterUI:reset();
                 GL.RollOff:reset();
                 GL.RollOff.CurrentRollOff.Rolls = {};
+                GL.LootCouncil:endSession();
             end);
             ThirdRow:AddChild(ClearButton);
             GL.Interface:set(self, "Clear", ClearButton);
@@ -514,7 +517,7 @@ function MasterLooterUI:draw(itemLink)
 
             HorizonalSpacer = AceGUI:Create("SimpleGroup");
             HorizonalSpacer:SetLayout("Flow");
-            HorizonalSpacer:SetWidth(24);
+            HorizonalSpacer:SetWidth(47);
             HorizonalSpacer:SetHeight(20);
             ThirdRow:AddChild(HorizonalSpacer);
 
@@ -549,6 +552,41 @@ function MasterLooterUI:draw(itemLink)
             AwardHistoryButton:SetScript("OnClick", function ()
                 GL.Interface.Award.Overview:open();
             end);
+
+            --[[
+                LOOT COUNCIL BUTTON
+            ]]
+
+            local CouncilButton = GL.UI:createFrame("Button", "MasterLooterUICouncilButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+            CouncilButton:SetSize(22, 20);
+            CouncilButton:SetPoint("TOPLEFT", AwardHistoryButton, "TOPRIGHT", 1, 0);
+
+            local CouncilButtonHighlight = CouncilButton:CreateTexture();
+            CouncilButtonHighlight:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/council");
+            CouncilButtonHighlight:SetPoint("CENTER", CouncilButton, "CENTER", 0, 0);
+            CouncilButtonHighlight:SetSize(22, 20);
+            CouncilButton:SetHighlightTexture(CouncilButtonHighlight);
+
+            CouncilButton:SetScript("OnEnter", function ()
+                GameTooltip:SetOwner(CouncilButton, "ANCHOR_TOP");
+                GameTooltip:SetText(GL.LootCouncil:enabled() and L["Loot council (enabled)"] or L["Loot council (disabled)"]);
+                GameTooltip:Show();
+            end);
+
+            CouncilButton:SetScript("OnLeave", function ()
+                GameTooltip:Hide();
+            end);
+
+            CouncilButton:SetScript("OnClick", function ()
+                self:close();
+
+                GL.Settings:draw("LootCouncil", function ()
+                    self:draw();
+                end);
+            end);
+
+            self.CouncilButton = CouncilButton;
+            self:updateCouncilButton();
 
             --[[
                 DISENCHANT BUTTON
@@ -874,8 +912,8 @@ function MasterLooterUI:drawPlayersTable(parent)
         OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             if not (row or realrow) then return true end -- Disable sort
 
-            if (column == 10 and button == "LeftButton") then
-                local arrowCell = data[realrow] and data[realrow].cols[10];
+            if (column == 12 and button == "LeftButton") then
+                local arrowCell = data[realrow] and data[realrow].cols[12];
                 if (arrowCell and not GL:empty(arrowCell._playerFQN)) then
                     GL.MasterLooterUI:toggleGearPanel(arrowCell._playerFQN);
                 end
@@ -883,7 +921,7 @@ function MasterLooterUI:drawPlayersTable(parent)
             end
         end,
         -- Show a tooltip that contains the items that the roller already won so far
-        OnEnter = function (rowFrame, _, data, _, _, realrow)
+        OnEnter = function (rowFrame, _, data, _, _, realrow, column)
             -- Make sure something is actually highlighted, better safe than lua error
             if (not GL:higherThanZero(realrow)
                 or type(data) ~= "table"
@@ -895,6 +933,24 @@ function MasterLooterUI:drawPlayersTable(parent)
             end
 
             local roller = data[realrow].cols[1].value;
+
+            -- The votes column lists who voted for this player
+            if (column == 6 and GL.LootCouncil:active()) then
+                local Voters = GL.LootCouncil:votersFor(data[realrow].cols[6]._player or roller);
+
+                if (not GL:empty(Voters)) then
+                    GameTooltip:ClearLines();
+                    GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+                    GameTooltip:AddLine(L["Voted for this player by:"]);
+
+                    for _, voter in ipairs(Voters) do
+                        GameTooltip:AddLine(voter, 1, 1, 1);
+                    end
+
+                    GameTooltip:Show();
+                    return;
+                end
+            end
 
             -- If the roller has a roll number suffixed to his name
             -- e.g. "playerName [2]" then make sure to remove that number
@@ -1010,6 +1066,10 @@ function MasterLooterUI:tableColumns()
         sortByPlusOne = sortByPlusOne == "ASC" and "ASC" or "DESC";
     end
 
+    local showVotes = GL.LootCouncil:active();
+    local sortByVotes = GL.LootCouncil:sortByVotes();
+    self.columnsKey = ("%s%s"):format(tostring(showVotes), tostring(sortByVotes));
+
     return {
         --[[ 1. Player name ]]
         {
@@ -1067,7 +1127,7 @@ function MasterLooterUI:tableColumns()
         --[[ 5. Reserved / TMB etc ]]
         {
             name = L["Note"],
-            width = 120,
+            width = showVotes and 79 or 118,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -1077,7 +1137,20 @@ function MasterLooterUI:tableColumns()
             },
             colorargs = nil,
         },
-        --[[ 6. PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
+        --[[ 6. Loot council votes (only wide enough to see during a council roll) ]]
+        {
+            name = L["Votes"],
+            width = showVotes and 40 or 1,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ 7. PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
         {
             name = "",
             width = 1,
@@ -1089,10 +1162,11 @@ function MasterLooterUI:tableColumns()
                 a = 0
             },
             colorargs = nil,
-            sort = GL.Data.Constants.ScrollingTable.ascending,
-            sortnext = sortByPlusOne ~= 0 and 7 or 2,
+            sort = not sortByVotes and GL.Data.Constants.ScrollingTable.ascending or nil,
+            defaultsort = GL.Data.Constants.ScrollingTable.ascending, -- lib-st sorts chained columns descending without it
+            sortnext = sortByPlusOne ~= 0 and 8 or 2,
         },
-        --[[ 7. PLUSONES (NOT VISIBLE, FOR SORTING ONLY! ]]
+        --[[ 8. PLUSONES (NOT VISIBLE, FOR SORTING ONLY! ]]
         {
             name = "",
             width = 1,
@@ -1107,21 +1181,36 @@ function MasterLooterUI:tableColumns()
             defaultsort = sortByPlusOne == "ASC" and GL.Data.Constants.ScrollingTable.ascending or GL.Data.Constants.ScrollingTable.descending,
             sortnext = 2,
         },
-        --[[ 8. Relevant worn gear icon 1 ]]
+        --[[ 9. VOTES (NOT VISIBLE, FOR SORTING ONLY! ]]
+        {
+            name = "",
+            width = 1,
+            align = "LEFT",
+            color = {
+                r = 0,
+                g = 0,
+                b = 0,
+                a = 0
+            },
+            colorargs = nil,
+            sort = sortByVotes and GL.Data.Constants.ScrollingTable.descending or nil,
+            sortnext = 7,
+        },
+        --[[ 10. Relevant worn gear icon 1 ]]
         {
             name = "",
             width = 20,
             align = "LEFT",
             DoCellUpdate = GL.LibStItemCellUpdate,
         },
-        --[[ 9. Relevant worn gear icon 2 ]]
+        --[[ 11. Relevant worn gear icon 2 ]]
         {
             name = "",
             width = 20,
             align = "LEFT",
             DoCellUpdate = GL.LibStItemCellUpdate,
         },
-        --[[ 10. Show all worn gear ]]
+        --[[ 12. Show all worn gear ]]
         {
             name = "",
             width = 15,
@@ -1129,6 +1218,19 @@ function MasterLooterUI:tableColumns()
             DoCellUpdate = GL.LibStGearArrowCellUpdate,
         },
     };
+end
+
+--- Grey out the loot council icon while loot council is disabled.
+---@return nil
+function MasterLooterUI:updateCouncilButton()
+    local Button = self.CouncilButton;
+
+    if (not Button) then
+        return;
+    end
+
+    local suffix = GL.LootCouncil:enabled() and "" or "-disabled";
+    Button:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/council" .. suffix);
 end
 
 --- Enable the share button only when there's gear worth broadcasting.

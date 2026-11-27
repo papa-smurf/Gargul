@@ -157,6 +157,17 @@ GL.Data.DefaultSettings = {
             {L["OS"], 1, 99, 3, true, false},
         },
     },
+    LootCouncil = {
+        enabled = false,
+        minimumQuality = 0,
+        Members = {},
+        GuildRanks = {},
+        guildRunsOnly = false,
+        guildRunThreshold = 50,
+        votesPerMember = 1,
+        sortByVotes = true,
+        showVotesOnAward = true,
+    },
     SoftRes = {
         announceInfoInChat = true,
         announceInfoWhenRolling = true,

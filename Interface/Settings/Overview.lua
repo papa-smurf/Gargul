@@ -38,6 +38,7 @@ GL.Interface.Settings.Overview = {
         { "Master Looting", "MasterLooting", },
         { "    Roll Tracking", "RollTracking", },
         { "    Awarding Loot", "AwardingLoot", },
+        { "    Loot Council", "LootCouncil", },
         { "Shortcut Keys", "ShortcutKeys", },
         { "Trade Announcements", "TradeAnnouncements", },
         { "Rolling", "Rolling", },

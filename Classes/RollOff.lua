@@ -198,6 +198,7 @@ function RollOff:announceStart(itemLink, time, note)
             g = self.gearSessionID,
             SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
             b = b,
+            lc = GL.LootCouncil:payloadForStart(itemLink),
         },
         channel = "GROUP",
     }):send();
@@ -490,6 +491,8 @@ function RollOff:start(CommMessage)
             self.CurrentRollOff.bth = content.bth;
             self.CurrentRollOff.boostedRollIdentifier = boostedRollIdentifier;
 
+            GL.LootCouncil:beginSession(content.lc, CommMessage.Sender, Details.link);
+
             self.inProgress = true;
             self.pendingStart = false;
             GL:cancelTimer("RollOff.startWatchdog");
@@ -507,9 +510,11 @@ function RollOff:start(CommMessage)
             local autoRollHandled, autoRollAction = GL.AutoRoll:onRollStart(Details.link, Details.id, SupportedRolls);
 
             -- Don't show the roll UI if the user disabled it, or if Auto Roll handled it (pass always hides; roll hides when closeAfterRoll)
-            if (GL.Settings:get("Rolling.showRollOffWindow"))
-                and not (autoRollHandled and (autoRollAction == "passed" or GL.Settings:get("Rolling.closeAfterRoll")))
-            then
+            if (GL.LootCouncil:userIsMember()
+                or (GL.Settings:get("Rolling.showRollOffWindow")
+                    and not (autoRollHandled and (autoRollAction == "passed" or GL.Settings:get("Rolling.closeAfterRoll")))
+                )
+            ) then
                 GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth, self.CurrentRollOff.boostedRollIdentifier, autoRollHandled and autoRollAction == "rolled");
             elseif (autoRollHandled and autoRollAction == "rolled") then
                 GL.RollerUI:showRollAcceptedNotification();
@@ -893,7 +898,9 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 BRCost = BRCost,
                 Rolls = Rolls,
                 RollBracket = RollBracket,
+                LootCouncil = GL.LootCouncil:awardDetails(roller),
             });
+            GL.LootCouncil:endSession();
 
             -- Add a +1 if that's expected for this roll bracket
             if (addPlusOne) then
@@ -968,7 +975,9 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
+                    LootCouncil = GL.LootCouncil:awardDetails(roller),
                 });
+                GL.LootCouncil:endSession();
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -1036,7 +1045,9 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
+                    LootCouncil = GL.LootCouncil:awardDetails(roller),
                 });
+                GL.LootCouncil:endSession();
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -1981,6 +1992,7 @@ function RollOff:buildSortedRollData()
             amount = Roll.amount,
             plusOnes = plusOnes,
             plusOnesRaw = plusOnes or 0,
+            votes = GL.LootCouncil:votesFor(Roll.player),
             classification = Roll.classification,
             sortPriority = rollPriority,
             rollNotes = rollNotes,
@@ -1988,7 +2000,13 @@ function RollOff:buildSortedRollData()
         });
     end
 
+    local sortByVotes = GL.LootCouncil:sortByVotes();
+
     table.sort(EnrichedRolls, function (a, b)
+        if (sortByVotes and a.votes ~= b.votes) then
+            return a.votes > b.votes;
+        end
+
         if (a.sortPriority ~= b.sortPriority) then
             return a.sortPriority < b.sortPriority;
         end
@@ -2016,6 +2034,20 @@ function RollOff:refreshRollsTable()
 
     if (not RollsTable) then
         return;
+    end
+
+    -- The votes column and sort order depend on the loot council session
+    local columnsKey = ("%s%s"):format(tostring(GL.LootCouncil:active()), tostring(GL.LootCouncil:sortByVotes()));
+    if (GL.MasterLooterUI.columnsKey ~= columnsKey) then
+        RollsTable:SetDisplayCols(GL.MasterLooterUI:tableColumns());
+    end
+
+    -- Remember the selected player, a late vote can change the order
+    local selectedPlayer;
+    local selectedRow = RollsTable:GetSelection();
+    if (selectedRow) then
+        local SelectedData = RollsTable:GetRow(selectedRow);
+        selectedPlayer = SelectedData and SelectedData.cols and SelectedData.cols[1] and SelectedData.cols[1].value;
     end
 
     local EnrichedRolls = self:buildSortedRollData();
@@ -2047,10 +2079,18 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(Entry.class),
                 },
                 {
+                    value = Entry.votes > 0 and Entry.votes or "",
+                    color = GL:classRGBAColor(Entry.class),
+                    _player = Entry.player,
+                },
+                {
                     value = Entry.sortPriority,
                 },
                 {
                     value = Entry.plusOnesRaw,
+                },
+                {
+                    value = Entry.votes,
                 },
                 {
                     value = Gear.leftLink,
@@ -2073,6 +2113,18 @@ function RollOff:refreshRollsTable()
 
     RollsTable:SetData(RollTableData);
     RollsTable:SortData();
+
+    if (selectedPlayer) then
+        local selection;
+        for realrow, rowData in ipairs(RollTableData) do
+            if (rowData.cols[1].value == selectedPlayer) then
+                selection = realrow;
+                break;
+            end
+        end
+
+        RollsTable:SetSelection(selection);
+    end
 end
 
 -- Reset the last rolloff. This happens when the master looter

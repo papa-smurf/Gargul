@@ -30,6 +30,7 @@ local OutdatedActionLabels = {
 local PriorityByAction = {
     [Actions.startRollOff] = "NORMAL",
     [Actions.stopRollOff] = "NORMAL",
+    [Actions.broadcastLootCouncilVotes] = "NORMAL",
 };
 
 Comm.Actions = {
@@ -139,6 +140,9 @@ Comm.Actions = {
     end,
     [Actions.requestRollOffBoostedRanges] = function (Message)
         GL.RollOff:respondToBoostedRangesRequest(Message);
+    end,
+    [Actions.broadcastLootCouncilVotes] = function (Message)
+        GL.LootCouncil:receiveVotes(Message);
     end,
 };
 

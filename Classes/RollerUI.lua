@@ -29,6 +29,7 @@ function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth, boos
     GL:canUserUseItem(itemLink, function (userCanUseItem)
         if (not userCanUseItem
             and GL.Settings:get("Rolling.dontShowOnUnusableItems", false)
+            and not GL.LootCouncil:userIsMember()
         ) then
             return false;
         end
@@ -166,7 +167,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         Button:SetScript("OnClick", function ()
             RandomRoll(min, max);
 
-            if (GL.Settings:get("Rolling.closeAfterRoll")) then
+            if (GL.Settings:get("Rolling.closeAfterRoll") and not GL.LootCouncil:userIsMember()) then
                 self:hide();
             else
                 self:showRollAcceptedNotification(Window);
@@ -198,6 +199,12 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
+        -- Council members keep the window for voting, passing only removes the roll buttons
+        if (GL.LootCouncil:userIsMember() and not self.rollOffEnded) then
+            self:markRollOffEnded();
+            return;
+        end
+
         self:hide();
     end);
     self.PassButton = PassButton;
@@ -336,6 +343,117 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 end
 
+--- Show what the vote buttons do, how many votes are left and the current tallies
+---
+---@param Button Button
+---@param description string
+---@return nil
+function RollerUI:showVoteTooltip(Button, description)
+    local LootCouncil = GL.LootCouncil;
+
+    GameTooltip:SetOwner(Button, "ANCHOR_TOP");
+    GameTooltip:SetText(description);
+    GameTooltip:AddLine((L["Votes left: %s of %s"]):format(LootCouncil:votesLeft(), LootCouncil:votesPerMember()), 1, 1, 1);
+
+    for _, Tally in ipairs(LootCouncil:tallies()) do
+        GameTooltip:AddLine(("%s - %s"):format(Tally.name, Tally.votes), .8, .8, .8);
+    end
+
+    GameTooltip:Show();
+end
+
+--- Add the loot council vote count and +/- buttons to a roll row (hidden until filled)
+---
+---@param Row Frame
+---@return nil
+function RollerUI:createVoteWidgets(Row)
+    local VoteText = Row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+    VoteText:SetPoint("LEFT", Row.TypeText, "RIGHT", 2, 0);
+    VoteText:SetWidth(18);
+    VoteText:SetJustifyH("RIGHT");
+    VoteText:Hide();
+
+    local createButton = function (kind)
+        local Button = CreateFrame("Button", nil, Row);
+        Button:SetSize(14, 14);
+        Button:SetNormalTexture(("Interface/Buttons/UI-%sButton-Up"):format(kind));
+        Button:SetPushedTexture(("Interface/Buttons/UI-%sButton-Down"):format(kind));
+        Button:SetHighlightTexture("Interface/Buttons/UI-PlusButton-Hilight");
+        Button:SetMotionScriptsWhileDisabled(true);
+        Button:SetScript("OnLeave", function ()
+            GameTooltip:Hide();
+        end);
+        Button:Hide();
+
+        return Button;
+    end;
+
+    local PlusButton = createButton("Plus");
+    PlusButton:SetPoint("LEFT", VoteText, "RIGHT", 2, 0);
+
+    local MinusButton = createButton("Minus");
+    MinusButton:SetPoint("LEFT", PlusButton, "RIGHT", 1, 0);
+
+    Row.VoteText = VoteText;
+    Row.VotePlus = PlusButton;
+    Row.VoteMinus = MinusButton;
+end
+
+--- Update the vote widgets of a row, only council members get to see them
+---
+---@param Row Frame
+---@param Entry table
+---@return nil
+function RollerUI:fillVoteWidgets(Row, Entry)
+    if (not Row.VotePlus) then
+        return;
+    end
+
+    local LootCouncil = GL.LootCouncil;
+
+    if (not LootCouncil:userIsMember()) then
+        Row.VoteText:Hide();
+        Row.VotePlus:Hide();
+        Row.VoteMinus:Hide();
+        return;
+    end
+
+    local player = Entry.player;
+    local voted = LootCouncil:iVotedFor(player);
+    local canVote = not voted and LootCouncil:votesLeft() > 0;
+
+    Row.VoteText:SetText((Entry.votes or 0) > 0 and tostring(Entry.votes) or "");
+    Row.VoteText:SetTextColor(1, 1, 1);
+    Row.VoteText:Show();
+
+    Row.VotePlus:SetEnabled(canVote);
+    Row.VotePlus:SetAlpha(canVote and 1 or .35);
+    Row.VotePlus:Show();
+    Row.VotePlus:SetScript("OnClick", function ()
+        LootCouncil:toggleVote(player, true);
+    end);
+    Row.VotePlus:SetScript("OnEnter", function ()
+        self:showVoteTooltip(Row.VotePlus, L["Vote for this player"]);
+    end);
+
+    Row.VoteMinus:SetEnabled(voted);
+    Row.VoteMinus:SetAlpha(voted and 1 or .35);
+    Row.VoteMinus:Show();
+    Row.VoteMinus:SetScript("OnClick", function ()
+        LootCouncil:toggleVote(player, false);
+    end);
+    Row.VoteMinus:SetScript("OnEnter", function ()
+        self:showVoteTooltip(Row.VoteMinus, L["Take back your vote for this player"]);
+    end);
+
+    -- Keep an open tooltip in sync with the latest votes
+    for _, Button in pairs({ Row.VotePlus, Row.VoteMinus, }) do
+        if (GameTooltip:IsOwned(Button)) then
+            Button:GetScript("OnEnter")(Button);
+        end
+    end
+end
+
 --- Create a single roll row frame with 4 text columns and gear widgets.
 ---
 ---@param parent Frame
@@ -369,6 +487,7 @@ function RollerUI:createRollRow(parent, width)
     Row.RollText = RollText;
     Row.PlusOneText = PlusOneText;
     Row.TypeText = TypeText;
+    self:createVoteWidgets(Row);
 
     -- Gear panel toggle, matching the master looter table's cell
     local GearArrow = CreateFrame("Button", nil, Row);
@@ -425,6 +544,7 @@ function RollerUI:fillRollRow(Row, Entry)
     Row.TypeText:SetText(Entry.classification or "");
     Row.TypeText:SetTextColor(.8, .8, .8);
 
+    self:fillVoteWidgets(Row, Entry);
     self:fillGearWidgets(Row, Entry);
 end
 
@@ -525,11 +645,16 @@ function RollerUI:drawRollTracker(width)
         return;
     end
 
-    if (not GL.Settings:get("Rolling.showRollTracker")) then
+    if (not GL.Settings:get("Rolling.showRollTracker") and not GL.LootCouncil:userIsMember()) then
         return;
     end
 
     self.rollTrackerScrollOffset = 0;
+
+    -- Council members need to see every roll to vote on them
+    if (GL.LootCouncil:userIsMember()) then
+        self.rollTrackerExpanded = true;
+    end
 
     local Window = self.Window;
     local Tracker = CreateFrame("Frame", nil, Window);
@@ -639,6 +764,7 @@ function RollerUI:drawRollTracker(width)
     TopRow.RollText = RollText;
     TopRow.PlusOneText = PlusOneText;
     TopRow.TypeText = TypeText;
+    self:createVoteWidgets(TopRow);
     TopRow.ToggleButton = ToggleButton;
     self.RollTrackerTopRow = TopRow;
 
@@ -815,6 +941,7 @@ function RollerUI:refreshRollTracker()
     TopRow.TypeText:SetText(TopEntry.classification or "");
     TopRow.TypeText:SetTextColor(.8, .8, .8);
 
+    self:fillVoteWidgets(TopRow, TopEntry);
     self:fillGearWidgets(TopRow, TopEntry);
 
     if (self.rollTrackerExpanded) then
@@ -977,7 +1104,7 @@ end
 ---@return nil
 function RollerUI:rollOffStopped()
     if (not self.Window
-        or not self.rollTrackerExpanded
+        or not (self.rollTrackerExpanded or GL.LootCouncil:userIsMember())
         or not self.RollTrackerFrame
         or not self.RollTrackerFrame:IsShown()
     ) then

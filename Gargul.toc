@@ -111,6 +111,7 @@ Classes/GDKP/MultiAuction/Client.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
+Classes/LootCouncil.lua
 Classes/RollerUI.lua
 Classes/AutoRoll.lua
 Classes/ItemDataManager.lua
@@ -173,6 +174,7 @@ Interface/Settings/MinimapButton.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua
+Interface/Settings/LootCouncil.lua
 Interface/Settings/ExportingLoot.lua
 Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
